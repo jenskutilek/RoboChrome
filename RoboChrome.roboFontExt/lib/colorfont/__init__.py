@@ -468,7 +468,7 @@ class ColorGlyph(object):
                 ).png(optimized=True)
 
     def _get_drawing(self, palette_index=0):
-        box = self.get_box()
+        box = self.get_box() # FIXME rasterizing fails if the box is too small, i.e. when the layers are bigger than the base glyph.
         width = box[2] - box[0]
         height = box[3] - box[1]
         d = document(width+2, height+2, "pt")
