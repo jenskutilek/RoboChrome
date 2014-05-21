@@ -351,7 +351,7 @@ class ColorFontEditor(BaseWindowController):
         # save current glyph as PNG
         from robofab.interface.all.dialogs import PutFile
         _file = -1
-        _file = PutFile("Save current glyph as PNG")
+        _file = PutFile("Save current glyph as PNG", "%s.png" % self.glyph)
         if _file > -1:
             png_str = self.cfont[self.glyph].get_png(self.palette_index, 1000)
             png = open(_file, "wb")
