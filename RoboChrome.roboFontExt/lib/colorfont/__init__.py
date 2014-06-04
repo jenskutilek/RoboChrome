@@ -239,11 +239,12 @@ class ColorFont(object):
     
     def _export_svg(self, otfpath, palette=0, parent_window=None):
         font = TTFont(otfpath)
-        if font.has_key("SVG"):
+        if font.has_key("SVG "):
             print "    WARNING: Replacing existing SVG table in %s" % otfpath
         
-        svg = table_S_V_G_("SVG")
+        svg = table_S_V_G_("SVG ")
         svg.version = 0
+        svg.docList = []
         
         if parent_window is not None:
             progress = ProgressWindow("Rendering SVG ...", tickCount=len(self.keys()), parentWindow=parent_window)
@@ -281,22 +282,23 @@ class ColorFont(object):
                     r, g, b, a = (0, 0, 0, 1)
                 else:
                     r, g, b, a = _svg_palette[_color_index]
-                _layer = u'<g fill="#%02x%02x%02x%02x">\n' % (r, g, b, a)
+                _layer = u'<g fill="#%02x%02x%02x%02x">' % (r, g, b, a)
                 _pen.d = u""
                 rglyph.draw(_pen)
                 if _pen.d:
-                    _svg_doc += _layer + u'<path d="%s"/>' % _pen.d + '\n</g>'
+                    _svg_doc += _layer + u'<path d="%s"/>' % _pen.d + '</g>'
                 
             #svg[glyphname] = _svg_doc
             print "SVG glyph", glyphname
             print _svg_doc
+            svg.docList.append((_svg_doc, gid, gid))
         
         if parent_window is not None:
             progress.close()
         
         # save
-        #font["SVG"] = svg
-        #font.save(otfpath[:-4] + "_svg" + otfpath[-4:])
+        font["SVG "] = svg
+        font.save(otfpath[:-4] + "_svg" + otfpath[-4:])
         font.close()
     
     def _format_outlines_special(self, font, replace_outlines=False):
