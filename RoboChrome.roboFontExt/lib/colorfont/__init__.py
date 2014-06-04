@@ -8,10 +8,14 @@ from tables.C_O_L_R_ import table_C_O_L_R_, LayerRecord
 from tables._s_b_i_x import table__s_b_i_x
 from tables.sbixBitmapSet import BitmapSet
 from tables.sbixBitmap import Bitmap
+from tables.S_V_G_ import table_S_V_G_
 
 # for png generation
 from flat import document, shape, rgba
 from flatPen import FlatPen
+
+# for svg generation
+from svgPen import SVGpen
 
 from defconAppKit.windows.progressWindow import ProgressWindow
 
@@ -157,7 +161,7 @@ class ColorFont(object):
         for g in self:
             self[g].rasterize(palette_index, sizes)
 
-    def export_to_otf(self, otfpath, write_colr=True, write_sbix=True, palette_index=0, bitmap_sizes=[512], parent_window=None):
+    def export_to_otf(self, otfpath, write_colr=True, write_sbix=True, write_svg=True, palette_index=0, bitmap_sizes=[512], parent_window=None):
         if write_sbix:
             # export sbix first because it adds glyphs
             # (alternates for windows so it doesn't display the special outlines)
@@ -172,6 +176,10 @@ class ColorFont(object):
         if write_colr:
             print "Exporting COLR/CPAL format ..."
             self._export_colr(otfpath)
+            print "Done."
+        if write_svg:
+            print "Exporting SVG format ...", palette_index
+            self._export_svg(otfpath, palette_index, parent_window)
             print "Done."
 
     def _export_colr(self, otfpath):
@@ -227,6 +235,68 @@ class ColorFont(object):
         font["CPAL"] = cpal
         font["COLR"] = colr
         font.save(otfpath[:-4] + "_colr" + otfpath[-4:])
+        font.close()
+    
+    def _export_svg(self, otfpath, palette=0, parent_window=None):
+        font = TTFont(otfpath)
+        if font.has_key("SVG"):
+            print "    WARNING: Replacing existing SVG table in %s" % otfpath
+        
+        svg = table_S_V_G_("SVG")
+        svg.version = 0
+        
+        if parent_window is not None:
+            progress = ProgressWindow("Rendering SVG ...", tickCount=len(self.keys()), parentWindow=parent_window)
+        
+        _palette = self.palettes[palette]
+        _svg_palette = []
+        
+        reindex = {0xffff: 0xffff}
+        count = 0
+        
+        for i in sorted(_palette.keys(), key=lambda k: int(k)):
+            red   = int(_palette[i][1:3], 16)
+            green = int(_palette[i][3:5], 16)
+            blue  = int(_palette[i][5:7], 16)
+            if len(_palette[i]) >= 9:
+                alpha  = int(_palette[i][7:9], 16)
+            else:
+                alpha = 0xff
+            reindex[int(i)] = count
+            count += 1
+            _svg_palette.append((red, green, blue, alpha))
+        print "Palette:", len(_svg_palette), _svg_palette
+        
+        _pen = SVGpen(self.rfont)
+
+        for glyphname in ["A", "P"]: #self.keys():
+            if parent_window is not None:
+                progress.update("Rendering SVG for /%s ..." % glyphname)
+            _svg_doc = ""
+            for i in range(len(self[glyphname].layers)):
+                _color_index = reindex[self[glyphname].colors[i]]
+                print "    Layer %i, color %i" % (i, _color_index)
+                rglyph = self.rfont[glyphname]
+                if _color_index == 0xffff:
+                    r, g, b, a = (0, 0, 0, 1)
+                else:
+                    r, g, b, a = _svg_palette[_color_index]
+                _layer = u'<g fill="#%02x%02x%02x%02x">\n' % (r, g, b, a)
+                _pen.d = u""
+                rglyph.draw(_pen)
+                if _pen.d:
+                    _svg_doc += _layer + u'<path d="%s"/>' % _pen.d + '\n</g>'
+                
+            #svg[glyphname] = _svg_doc
+            print "SVG glyph", glyphname
+            print _svg_doc
+        
+        if parent_window is not None:
+            progress.close()
+        
+        # save
+        #font["SVG"] = svg
+        #font.save(otfpath[:-4] + "_svg" + otfpath[-4:])
         font.close()
     
     def _format_outlines_special(self, font, replace_outlines=False):
