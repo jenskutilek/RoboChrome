@@ -24,6 +24,8 @@ class ColorFont(object):
         self.palettes = [{}]
         self.color = "#000000FF"
         self.colorbg = "#FFFFFFFF"
+        self.bitmap_sizes_default = [20, 32, 40, 72, 96, 128, 256, 512, 1024]
+        self.bitmap_sizes = self.bitmap_sizes_default
         # FIXME hack to avoid saving after "Reset" has been pressed
         self.save_settings = True
 
@@ -133,6 +135,12 @@ class ColorFont(object):
             else:
                 self.colorbg = "#ffffff"
         
+            # bitmap sizes
+            if "%s.bitmap_sizes" % self.libkey in self.rfont.lib.keys():
+                self.bitmap_sizes = self.rfont.lib["%s.bitmap_sizes" % self.libkey]
+            else:
+                self.bitmap_sizes = self.bitmap_sizes_default
+        
             # load layer info from glyph libs
             for glyph in self.rfont:
                 if "%s.layers" % self.libkey in glyph.lib.keys():
@@ -149,7 +157,7 @@ class ColorFont(object):
         for g in self:
             self[g].rasterize(palette_index, sizes)
 
-    def export_to_otf(self, otfpath, write_colr=True, write_sbix=True, palette_index=0, sbix_sizes=[512], parent_window=None):
+    def export_to_otf(self, otfpath, write_colr=True, write_sbix=True, palette_index=0, bitmap_sizes=[512], parent_window=None):
         if write_sbix:
             # export sbix first because it adds glyphs
             # (alternates for windows so it doesn't display the special outlines)
@@ -158,7 +166,8 @@ class ColorFont(object):
                 replace_outlines = False
             else:
                 replace_outlines = True
-            self._export_sbix(otfpath, palette_index, sbix_sizes, "png", replace_outlines, parent_window)
+            self.bitmap_sizes = bitmap_sizes
+            self._export_sbix(otfpath, palette_index, "png", replace_outlines, parent_window)
             print "Done."
         if write_colr:
             print "Exporting COLR/CPAL format ..."
@@ -263,7 +272,7 @@ class ColorFont(object):
                 else:
                     glyf[glyphname] = glyph
     
-    def _export_sbix(self, otfpath, palette=0, sizes=[512], image_format="png", replace_outlines=False, parent_window=None):
+    def _export_sbix(self, otfpath, palette=0, image_format="png", replace_outlines=False, parent_window=None):
         if image_format == "png": # FIXME: too complicated
             image_format_tag="png "
         else:
@@ -281,12 +290,12 @@ class ColorFont(object):
         # build sbix table
         sbix = table__s_b_i_x("sbix")
         if parent_window is not None:
-            progress = ProgressWindow("Rendering bitmaps ...", tickCount=len(sizes)*len(self.keys()), parentWindow=parent_window)
-        for current_size in sorted(sizes):
+            progress = ProgressWindow("Rendering bitmaps ...", tickCount=len(self.bitmap_sizes)*len(self.keys()), parentWindow=parent_window)
+        for current_size in sorted(self.bitmap_sizes):
             current_set = BitmapSet(size=current_size)
             for glyphname in self.keys():
                 if parent_window is not None:
-                    progress.update("Rendering /%s@%ipx ..." % (glyphname, current_size))
+                    progress.update("Rendering /%s @ %i px ..." % (glyphname, current_size))
                 alt_glyphname = alt_glyphname_string % glyphname
                 if image_format == "png":
                     image_data = self[glyphname].get_png(palette, current_size)
@@ -303,9 +312,14 @@ class ColorFont(object):
         font.close()
 
     def save_to_rfont(self):
-        # save palette, foreground color, background color
-        for key, value in {"colorpalette": self.palettes,
-            "color": self.color, "colorbg": self.colorbg}.iteritems():
+        values_to_save = {
+            "colorpalette": self.palettes,
+            "color": self.color,
+            "colorbg": self.colorbg,
+            "bitmap_sizes": self.bitmap_sizes,
+        }
+        
+        for key, value in values_to_save.iteritems():
             self._save_key_to_lib(key, value)
         
         # save each glyph color layer data

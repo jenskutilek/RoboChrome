@@ -1,6 +1,6 @@
 import vanilla
 
-from os.path import basename
+from os.path import basename, exists
 
 from AppKit import NSColor
 from defconAppKit.windows.baseWindow import BaseWindowController
@@ -43,8 +43,7 @@ class ColorFontEditor(BaseWindowController):
         
         self.write_colr = True
         self.write_sbix = True
-        self._sbix_sizes_default = [20, 32, 40, 72, 96, 128, 256, 512, 1024]
-        self._sbix_sizes = self._sbix_sizes_default
+        self._sbix_sizes = self.cfont.bitmap_sizes
         self.write_cbdt = False
         self.write_svg = False
         self.prefer_placed_images = False
@@ -333,17 +332,24 @@ class ColorFontEditor(BaseWindowController):
                 self.w.glyph_list.setSelection([0])
 
     def _export_to_font(self, sender=None):
-        from robofab.interface.all.dialogs import GetFile
+        pathkey = "com.typemytype.robofont.compileSettings.path"
         _font = -1
-        _font = GetFile("Select a font file to export layer and color information to.")
-        #_font = r"/Users/jenskutilek/Documents/Color Fonts MS/Dingbats2SamplerOT.ttf"
+        if pathkey in self.font.lib:
+            _font = self.font.lib.get(pathkey)
+            if not exists(_font):
+                _font = -1
+        if _font == -1:
+            from robofab.interface.all.dialogs import GetFile
+            _font = GetFile("Select a font file to export layer and color information to.")
+        
         if _font > -1:
+            print "Exporting to", _font
             if _font[-4:].lower() in [".ttf", ".otf"]:
                 self.cfont.export_to_otf(_font,
                     write_colr=self.d.generateMSFormat.get(),
                     write_sbix=self.d.generateAppleFormat.get(),
                     palette_index=self.palette_index,
-                    sbix_sizes=self._sbix_sizes,
+                    bitmap_sizes=self._sbix_sizes,
                     parent_window=self.w,
                 )
             else:
@@ -438,7 +444,7 @@ class ColorFontEditor(BaseWindowController):
         self._callback_update_ui_glyph_list()
         self._callback_ui_glyph_list_selection()
         
-        self._sbix_sizes = self._sbix_sizes_default
+        self._sbix_sizes = self.cfont.bitmap_sizes_default
         self._auto_layer_regex = self._auto_layer_regex_default
         self.w.auto_layer_button.enable(True)
 
@@ -604,6 +610,7 @@ class ColorFontEditor(BaseWindowController):
                 sizes.append(int(entry))
         print sizes
         self._sbix_sizes = sizes
+        self.cfont.bitmap_sizes = sizes
     
     def _callback_color_changed_foreground(self, sender):
         if sender is not None:
