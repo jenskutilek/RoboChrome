@@ -302,7 +302,6 @@ class ColorFontEditor(BaseWindowController):
         
         # grey out controls that are not implemented yet
         self.d.generateGoogleFormat.enable(False)
-        self.d.generateSVGFormat.enable(False)
         self.d.preferPlacedImages.enable(False)
         
         # disable regex check box, because it is read only
@@ -348,6 +347,7 @@ class ColorFontEditor(BaseWindowController):
                 self.cfont.export_to_otf(_font,
                     write_colr=self.d.generateMSFormat.get(),
                     write_sbix=self.d.generateAppleFormat.get(),
+                    write_svg=self.d.generateSVGFormat.get(),
                     palette_index=self.palette_index,
                     bitmap_sizes=self._sbix_sizes,
                     parent_window=self.w,
