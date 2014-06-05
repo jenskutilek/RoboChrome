@@ -1,3 +1,4 @@
+from operator import itemgetter
 from types import ListType
 import numpy
 from fontTools.ttLib import TTFont
@@ -178,7 +179,7 @@ class ColorFont(object):
             self._export_colr(otfpath)
             print "Done."
         if write_svg:
-            print "Exporting SVG format ...", palette_index
+            print "Exporting SVG format with palette %i ..." % palette_index
             self._export_svg(otfpath, palette_index, parent_window)
             print "Done."
 
@@ -253,6 +254,7 @@ class ColorFont(object):
         
         _palette = self.palettes[palette]
         _svg_palette = []
+        _docList = []
         
         reindex = {0xffff: 0xffff}
         count = 0
@@ -285,9 +287,7 @@ class ColorFont(object):
                 progress.update("Rendering SVG for /%s ..." % glyphname)
             
             # build svg glyph
-            _svg_doc = u"""<?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg  PUBLIC '-//W3C//DTD SVG 1.1//EN'  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg enable-background="new 0 0 64 64" id="glyph%i" transform="scale(1 -1)" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n""" % (gid)
-            # transform="translate(0 -1000) scale(40.625)"
-            # enable-background="new 0 0 64 64"
+            _svg_doc = u"""<?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg  PUBLIC '-//W3C//DTD SVG 1.1//EN'  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg enable-background="new 0 0 64 64" id="glyph%i" transform="scale(1 -1)" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">""" % (gid)
             for i in range(len(self[glyphname].layers)):
                 _color_index = reindex[self[glyphname].colors[i]]
                 #print "    Layer %i, color %i" % (i, _color_index)
@@ -296,18 +296,16 @@ class ColorFont(object):
                     r, g, b, a = (0, 0, 0, 0xff)
                 else:
                     r, g, b, a = _svg_palette[_color_index]
-                #_layer = u'\t<g fill="#%02x%02x%02x">\n' % (r, g, b)
-                #_layer = u'\t<g>\n'
-                _layer = u''
+                _layer = u'<g fill="#%02x%02x%02x">' % (r, g, b)
                 _pen.d = u""
                 rglyph.draw(_pen)
                 if _pen.d:
-                    _svg_doc += _layer + u'\t\t<path d="%s" fill="#%02x%02x%02x" />\n' % (_pen.d, r, g, b)
-                #_svg_doc +='\t</g>\n'
+                    _svg_doc += _layer + u'<path d="%s"/>' % (_pen.d)
+                _svg_doc +='</g>'
             _svg_doc += "</svg>"
-            #print "SVG glyph", glyphname
-            #print _svg_doc
-            svg.docList.append((_svg_doc, gid, gid))
+            _docList.append((_svg_doc, gid, gid))
+        
+        svg.docList = sorted(_docList, key=itemgetter(1))
         
         if parent_window is not None:
             progress.close()
