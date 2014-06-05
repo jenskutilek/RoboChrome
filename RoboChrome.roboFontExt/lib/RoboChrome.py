@@ -375,7 +375,7 @@ class ColorFontEditor(BaseWindowController):
                     write_svg=True,
                     palette_index=self.palette_index,
                     bitmap_sizes=self._sbix_sizes,
-                    parent_window=None,
+                    parent_window=self.w,
                 )
             else:
                 print "ERROR: Can only export color information to TTFs and OTFs."

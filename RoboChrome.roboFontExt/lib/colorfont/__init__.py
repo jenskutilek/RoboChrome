@@ -241,10 +241,12 @@ class ColorFont(object):
         font = TTFont(otfpath)
         if font.has_key("SVG "):
             print "    WARNING: Replacing existing SVG table in %s" % otfpath
+        #font.getReverseGlyphMap(rebuild=1)
         
         svg = table_S_V_G_("SVG ")
         svg.version = 0
         svg.docList = []
+        svg.colorPalettes = None
         
         if parent_window is not None:
             progress = ProgressWindow("Rendering SVG ...", tickCount=len(self.keys()), parentWindow=parent_window)
@@ -266,31 +268,45 @@ class ColorFont(object):
             reindex[int(i)] = count
             count += 1
             _svg_palette.append((red, green, blue, alpha))
-        print "Palette:", len(_svg_palette), _svg_palette
+        #print "Palette:", len(_svg_palette), _svg_palette
         
         _pen = SVGpen(self.rfont)
 
-        for glyphname in ["A", "P"]: #self.keys():
+        for glyphname in self.keys(): #["A", "P"]: #self.keys():
+            
+            # look up glyph id
+            try:
+                gid = font.getGlyphID(glyphname)
+            except:
+                assert 0, "SVG table contains a glyph name not in font.getGlyphNames(): " + str(glyphname)
+            
+            # update progress bar
             if parent_window is not None:
                 progress.update("Rendering SVG for /%s ..." % glyphname)
-            _svg_doc = ""
+            
+            # build svg glyph
+            _svg_doc = u"""<?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg  PUBLIC '-//W3C//DTD SVG 1.1//EN'  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg enable-background="new 0 0 64 64" id="glyph%i" transform="scale(1 -1)" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n""" % (gid)
+            # transform="translate(0 -1000) scale(40.625)"
+            # enable-background="new 0 0 64 64"
             for i in range(len(self[glyphname].layers)):
                 _color_index = reindex[self[glyphname].colors[i]]
-                print "    Layer %i, color %i" % (i, _color_index)
-                rglyph = self.rfont[glyphname]
+                #print "    Layer %i, color %i" % (i, _color_index)
+                rglyph = self.rfont[self[glyphname].layers[i]]
                 if _color_index == 0xffff:
-                    r, g, b, a = (0, 0, 0, 1)
+                    r, g, b, a = (0, 0, 0, 0xff)
                 else:
                     r, g, b, a = _svg_palette[_color_index]
-                _layer = u'<g fill="#%02x%02x%02x%02x">' % (r, g, b, a)
+                #_layer = u'\t<g fill="#%02x%02x%02x">\n' % (r, g, b)
+                #_layer = u'\t<g>\n'
+                _layer = u''
                 _pen.d = u""
                 rglyph.draw(_pen)
                 if _pen.d:
-                    _svg_doc += _layer + u'<path d="%s"/>' % _pen.d + '</g>'
-                
-            #svg[glyphname] = _svg_doc
-            print "SVG glyph", glyphname
-            print _svg_doc
+                    _svg_doc += _layer + u'\t\t<path d="%s" fill="#%02x%02x%02x" />\n' % (_pen.d, r, g, b)
+                #_svg_doc +='\t</g>\n'
+            _svg_doc += "</svg>"
+            #print "SVG glyph", glyphname
+            #print _svg_doc
             svg.docList.append((_svg_doc, gid, gid))
         
         if parent_window is not None:
