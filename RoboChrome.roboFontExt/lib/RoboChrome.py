@@ -271,7 +271,7 @@ class ColorFontEditor(BaseWindowController):
             sizeStyle="small",
         )
         self.d.infoButton = vanilla.Button((-150, -30, -80, -10), "Debug",
-            callback = self._show_svg, # self._show_font_info,
+            callback = self._show_font_info,
         )
         self.d.resetButton = vanilla.Button((-70, -30, -10, -10), "Reset",
             callback = self._reset_color_data,
