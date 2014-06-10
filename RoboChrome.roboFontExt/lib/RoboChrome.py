@@ -813,6 +813,9 @@ class ColorFontEditor(BaseWindowController):
             if len(self.cfont.keys()) == 0:
                 self.show_only_glyphs_with_layers = False
                 self.w.show_only_glyphs_with_layers.set(False)
+                self.w.show_only_glyphs_with_layers.enable(False)
+            else:
+                self.w.show_only_glyphs_with_layers.enable(True)
             cfglyphs = self.cfont.keys()
             for n in self.font.glyphOrder:
                 if n in cfglyphs:
@@ -926,6 +929,7 @@ class ColorFontEditor(BaseWindowController):
             self.cfont.save_all_glyphs_to_rfont()
             self._ui_update_palette_chooser()
             self._ui_update_palette(self.palette_index)
+            self._ui_update_layer_list()
             self._callback_update_ui_glyph_list()
             if len(self.cfont) > 0:
                 self.w.glyph_list.setSelection([0])
