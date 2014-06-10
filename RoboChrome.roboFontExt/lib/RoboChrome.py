@@ -311,7 +311,7 @@ class ColorFontEditor(BaseWindowController):
         # disable regex check box, because it is read only
         self.d.auto_layer_regex_ok.enable(False)
         
-        if len(self.cfont.keys()) > 0:
+        if len(self.cfont) > 0:
             self.w.auto_layer_button.enable(False)
         
         self.w.open()
