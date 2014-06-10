@@ -474,7 +474,9 @@ class ColorFontEditor(BaseWindowController):
         self._callback_ui_glyph_list_selection()
         
         self._sbix_sizes = self.cfont.bitmap_sizes_default
+        self.d.generate_sbix_sizes.set(self._ui_get_sbix_sizes())
         self._auto_layer_regex = self._auto_layer_regex_default
+        self.d.auto_layer_regex_box.set(self._auto_layer_regex)
         self.w.auto_layer_button.enable(True)
 
     def addColorToPalette(self, sender=None):
