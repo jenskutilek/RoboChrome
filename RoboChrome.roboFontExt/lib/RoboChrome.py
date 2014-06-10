@@ -107,7 +107,11 @@ class ColorFontEditor(BaseWindowController):
         width = 500
         col2 = int(round(width/2))
         y = 10
-        self.w = vanilla.Window((width, 496), "%s - RoboChrome" % basename(self.font.fileName))
+        if self.font:
+            title = basename(self.font.fileName)
+        else:
+            title = "None"
+        self.w = vanilla.Window((width, 496), "%s - RoboChrome" % title)
         self.w.preview = Canvas((10, y, 320, 200), canvasSize=(318, 200),
                                 hasHorizontalScroller=False,
                                 hasVerticalScroller=False,
