@@ -809,6 +809,10 @@ class ColorFontEditor(BaseWindowController):
         #print "DEBUG: _callback_update_ui_glyph_list"
         glyphlist = []
         if self.font is not None:
+            # if no color glyphs in font, show all glyphs in list
+            if len(self.cfont.keys()) == 0:
+                self.show_only_glyphs_with_layers = False
+                self.w.show_only_glyphs_with_layers.set(False)
             cfglyphs = self.cfont.keys()
             for n in self.font.glyphOrder:
                 if n in cfglyphs:
