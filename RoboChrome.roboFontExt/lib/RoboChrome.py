@@ -933,7 +933,7 @@ class ColorFontEditor(BaseWindowController):
             self._callback_update_ui_glyph_list()
             if len(self.cfont) > 0:
                 self.w.glyph_list.setSelection([0])
-            self.w.auto_layer_button.enable(False)
+                self.w.auto_layer_button.enable(False)
         else:
             print "ERROR: Invalid auto layer regex"
     
