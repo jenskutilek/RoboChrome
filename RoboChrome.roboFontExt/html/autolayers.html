@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>RoboChrome Help: Assigning layers automatically</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="stylesheet" href="screen.css" type="text/css" media="screen" charset="utf-8">
+	</head>
+	<body>
+		<h1>RoboChrome</h1>
+		
+		<h2>Assigning layers automatically</h2>
+		
+		<p>You can quickly collect all the color layers for each base glyph by using the <strong>Auto Layers</strong> function.</p>
+		<p>For this to work, you must use glyph name suffixes systematically to identify the different color layers.</p>
+		<p>Layer glyphs are identified by a <a href="https://docs.python.org/2/howto/regex.html">Python-style regular expression</a> (regex) which can be changed in the <strong>Settings</strong> drawer.</p>
+		<p>For example, if you have a glyph called <tt>circle</tt>, the default regex <tt>\.alt[0-9]{3}$</tt> will match all glyphs called <tt>circle.alt000</tt>, <tt>circle.alt001</tt>, <tt>circle.alt002</tt>, etc.</p>
+		<p>If you want the base glyph to be included in the layer glyph sequence, check the option «Auto layers include base glyph» in the Settings drawer. When active, the base glyph will be included as the last (topmost) layer in the color glyph.</p>
+		<p>When using the Auto Layers function, the glyph palette will be filled with as many random colors as necessary.</p>
+		
+		<h2>Auto layer suffix regex</h2>
+		
+		<p>The <strong>Auto layer suffix regex</strong> in the Settings drawer determines which glyph name suffix will identify a matching layer glyph for a given base glyph.</p>
+		<p>The checkbox to the right of the <strong>Auto layer suffix regex</strong> textbox indicates if the current regex is valid, and will update its status as you type. Use the <strong>Test</strong> button to select all glyphs in the font window that match the current regex.</p>
+		<p>The default regex explained:</p>
+		<p><tt>\.alt[0-9]{3}$</tt></p>
+		<table>
+			<tr>
+				<th><tt>\.</tt></th>
+				<th><tt>alt</tt></th>
+				<th><tt>[0-9]</tt></th>
+				<th><tt>{3}</tt></th>
+				<th><tt>$</tt></th>
+			</tr>
+			<tr>
+				<td>A period (period is a special character in a regex so it has to be escaped with a backslash)</td>
+				<td>The letters «alt»</td>
+				<td>Any number between 0 and 9</td>
+				<td>The previous expression must be present 3 times</td>
+				<td>Matches the end of the glyph name</td>
+			</tr>
+		</table>
+		<p>E. g. if you use the glyph name suffixes <tt>.layer01</tt>, <tt>.layer02</tt>, etc., your regex must be «<tt>\.layer[0-9]{2}$</tt>».</p>
+		<p>Also check out the Python <a href="https://docs.python.org/2/howto/regex.html">regular expression howto</a>.</p>
+	</body>
+</html>
