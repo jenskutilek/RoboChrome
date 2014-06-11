@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>RoboChrome Help: Color Font Support</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="stylesheet" href="screen.css" type="text/css" media="screen" charset="utf-8">
+	</head>
+	<body>
+		<h1>RoboChrome</h1>
+		<h2>Color Font Support in Systems and Applications</h2>
+		
+		<p>All formats can be tried out in the free <a href="http://www.fontlab.com/content/blogcategory/40/364/">FontLab Pad</a> application.</p>
+		
+		<h3>Adobe/Mozilla (SVG)</h3>
+		
+		<p>The SVG format is known to work in recent Firefox versions on all platforms. Other applications will display the normal black-and-white glyphs as a fallback.</p>
+		
+		<h3>Microsoft (COLR/CPAL)</h3>
+		
+		<p>Fonts with the COLR/CPAL tables work in Internet Explorer 11 on Windows 8.1. Other applications will display the normal black-and-white glyphs as a fallback.</p>
+		<p>The Adobe/Mozilla and Microsoft formats can live together in one font without interfering with each other.</p>
+		
+		<h3>Mac OS/iOS (sbix)</h3>
+		
+		<p>The sbix format is supported on Mac OS X 10.7+ and iOS. The color glyphs are only displayed when the fonts are installed in the system, not as web fonts. There are no fallback glyphs, applications which don’t know the format will display empty glyphs. Applications that use the system text rendering (e.&nbsp;g. Word 2011) will use the color glyphs, while applications with their own rendering engine (e.&nbsp;g. Adobe Creative Suite) display empty glyphs.</p>
+		
+		<h3>Google (CBDT/CBLC)</h3>
+		
+		<p>Support for the CBDT/CBLC tables is not implemented yet, and application support is unknown.</p>
+		
+		<p id="footer"><a href="index.html">Overview</a></p>
+	</body>
+</html>

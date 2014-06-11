@@ -4,13 +4,119 @@
 		<title>RoboChrome Help: Interface</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<link rel="stylesheet" href="screen.css" type="text/css" media="screen" charset="utf-8">
+		<style type="text/css">
+		.a1 .annotations span:nth-child(1) {
+			top: 90px;
+				left: 190px;
+		}
+		
+		.a1 .annotations span:nth-child(2) {
+			top: 342px;
+				left: 230px;
+		}
+		
+		.a1 .annotations span:nth-child(3) {
+			top: 400px;
+			left: 430px;
+		}
+		
+		.a1 .annotations span:nth-child(4) {
+			top: 54px;
+			left: 480px;
+		}
+		
+		.a1 .annotations span:nth-child(5) {
+			top: 212px;
+			left: 460px;
+		}
+		
+		.a1 .annotations span:nth-child(6) {
+			top: 250px;
+			left: 326px;
+		}
+		
+		/* 2nd image */
+		
+		.a2 .annotations span:nth-child(1) {
+			top: 580px;
+				left: 260px;
+		}
+		
+		.a2 .annotations span:nth-child(2) {
+			top: 656px;
+				left: 430px;
+		}
+		
+		.a2 .annotations span:nth-child(3) {
+			top: 680px;
+			left: 200px;
+		}
+		
+		.a2 .annotations span:nth-child(4) {
+			top: 726px;
+			left: 110px;
+		}
+		</style>
 	</head>
 	<body>
 		<h1>RoboChrome</h1>
 		<h2>The Interface</h2>
-		<p><img src="ui-annotations.png" width="800" height="622" alt=""></p>
-		<p>The list on the left-hand side displays all glyphs in the current font. Use the check box below to show only glyphs which have layers.</p>
-		<p>Select a glyph in the list to display its layers in the list on the right-hand side.</p>
-		<p>Double-click any entry in one of the lists to open its glyph in the current glyph window.</p>
+		<div class="item a1"><img src="ui-basic.png" width="614" height="632" alt="">
+			<div class="annotations">
+				<span>➊</span>
+				<span>➋</span>
+				<span>➌</span>
+				<span>➍</span>
+				<span>➎</span>
+				<span>➏</span>
+			</div>
+		</div>
+		<ol>
+			<li><em>Preview</em> of the glyph selected in the glyph list.</li>
+			<li><em>Glyph list</em> (<span class="dingbats">✓</span> has layers) of all glyphs in the font. Double click to show a glyph in the current Glyph Window.</li>
+			<li><em>List of layers</em> in the selected glyph from the glyph list. Delete selected layer by hitting the backspace key. Add a layer by pressing the <span class="dingbats">➕</span> button. The layer glyph will be the glyph currently selected in the Font Window, and the currently selected palette color will be assigned to it.</li>
+			<li><em>Switch current palette.</em></li>
+			<li><em>Colors</em> in the current palette. Select a color to preview it in the color box below. Click on the color box to change the color. Add a color by pressing the <span class="dingbats">➕</span> button, delete selected color by pressing the backspace key.</li>
+			<li><em>Foreground/Background color.</em> These are used in the Preview area only and are not exported to the font.</li>
+		</ol>
+		
+		<h3>Buttons</h3>
+		<ul>
+			<li><em>Select glyphs with layers</em> – In the current Glyph Window, select all glyphs that have layers.</li>
+			<li><em>Mix palette</em> – Fill current palette with random colors.</li>
+			<li><em>Export PNG</em> – Save a PNG file of the current glyph.</li>
+			<li><em>Settings...</em> – Display a drawer with more options.</li>
+			<li><em>Auto layers</em> – <a href="autolayers.html">Automatically assign layers for all glyphs</a>.</li>
+			<li><em>Import font</em> – Import color data from a font. Only the Microsoft color tables (COLR/CPAL) are supported.</li>
+			<li><em>Export font</em> – Export color data to an existing font. The target font must be generated beforehand via RoboFont. The <em>Export font</em> button always exports to the last font that was generated from the current UFO. The font file is not being overwritten, but copied with a suffix indicating the color data format. Check the <em>Settings</em> drawer for export options.</li>
+		</ul>
+		
+		<h2>Settings</h2>
+		
+		<p>Pressing the <strong>Settings ...</strong> button will open a drawer where you can set options in more detail.</p>
+		<div class="item a2"><img src="ui-settings.png" width="614" height="792" alt="">
+			<div style="position: absolute; top: 0; left: 0; width: 614px; height: 480px; background: #fff; opacity: 0.7;" ></div>
+			<div class="annotations">
+				<span>➊</span>
+				<span>➋</span>
+				<span>➌</span>
+				<span>➍</span>
+			</div>
+		</div>
+		<ol style="margin-top: 0em;">
+			<li><em>Generate formats</em> lets you choose which color formats should be exported. <span class="dingbats">➔</span> <a href="support.html">System support</a></li>
+			<li><em>Auto layer suffix regex</em> contains the regular expression that is used for the Auto layers function. <span class="dingbats">➔</span> <a href="autolayers.html">Assigning layers automatically</a></li>
+			<li><em>Generate bitmap sizes</em> contains a comma-separated list of sizes to include for the bitmap-based color font formats (Mac OS/iOS/Google). Be aware that the bitmap rasterization is very slow.</li>
+			<li><em>Prefer placed images ...</em> – Use available bitmap images in the UFO instead of layer glyphs (not implemented yet).</li>
+		</ol>
+		<h3>Buttons</h3>
+		<ul>
+			<li><em>Test</em> – Tests the current <em>Auto layer suffix regex</em> by selecting all glyphs that match it in the current Font Window.</li>
+			<li><em>Debug</em> – Print debug information about the internal color data model to the Output Window.</li>
+			<li><em>Reset</em> – Delete all color data from the current UFO.</li>
+		</ul>
+		
+		<p id="footer"><a href="index.html">Overview</a></p>
 	</body>
+	<!-- ➊➋➌➍➎➏➐➑➒➓ -->
 </html>
