@@ -243,6 +243,10 @@ class ColorFontEditor(BaseWindowController):
         y += 32
         self.d.generate_sizes_label = vanilla.TextBox((10, y, 160, 20), "Generate bitmap sizes:", sizeStyle="small")
         self.d.auto_layer_suffix_label = vanilla.TextBox((235, y, 160, 20), "Auto layer suffix regex:", sizeStyle="small")
+        self.d.regex_test_button = vanilla.Button((-70, y-3, -30, 20), "Test",
+            callback = self._callback_test_regex,
+            sizeStyle="small",
+        )
         y += 25
         self.d.generate_sbix_sizes = vanilla.EditText((10, y, 200, 36),
             callback=self._callback_set_sbix_sizes,
@@ -952,10 +956,23 @@ class ColorFontEditor(BaseWindowController):
             self.d.auto_layer_regex_ok.set(True)
             self.w.auto_layer_button.enable(True)
             self._auto_layer_regex = test_re
+            self.d.regex_test_button.enable(True)
         except:
             self.d.auto_layer_regex_ok.set(False)
             self.w.auto_layer_button.enable(False)
             self._auto_layer_regex = None
+            self.d.regex_test_button.enable(False)
+    
+    def _callback_test_regex(self, sender=None):
+        # select glyphs based on current regex
+        from re import search, compile
+        regex = compile(self._auto_layer_regex)
+        _glyph_list = []
+        for glyphname in self.font.glyphOrder:
+            if regex.search(glyphname):
+                _glyph_list.append(glyphname)
+        print "_callback_test_regex matched %i glyphs." % len(_glyph_list)
+        self.font.selection = _glyph_list
 
 
 OpenWindow(ColorFontEditor)
