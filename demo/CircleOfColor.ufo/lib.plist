@@ -38,6 +38,16 @@
 		<real>0.2</real>
 		<real>0.7</real>
 	</array>
+	<key>com.typemytype.robofont.compileSettings.autohint</key>
+	<true/>
+	<key>com.typemytype.robofont.compileSettings.checkOutlines</key>
+	<true/>
+	<key>com.typemytype.robofont.compileSettings.decompose</key>
+	<true/>
+	<key>com.typemytype.robofont.compileSettings.generateFormat</key>
+	<integer>0</integer>
+	<key>com.typemytype.robofont.compileSettings.releaseMode</key>
+	<false/>
 	<key>com.typemytype.robofont.foreground.layerStrokeColor</key>
 	<array>
 		<real>0.5</real>
@@ -45,61 +55,29 @@
 		<real>0.5</real>
 		<real>0.7</real>
 	</array>
+	<key>com.typemytype.robofont.italicSlantOffset</key>
+	<integer>0</integer>
 	<key>com.typemytype.robofont.layerOrder</key>
 	<array>
 		<string>background</string>
 	</array>
 	<key>com.typemytype.robofont.segmentType</key>
 	<string>curve</string>
+	<key>com.typemytype.robofont.shouldAddPointsInSplineConversion</key>
+	<false/>
 	<key>com.typemytype.robofont.sort</key>
 	<array>
 		<dict>
-			<key>allowPseudoUnicode</key>
-			<true/>
 			<key>ascending</key>
-			<true/>
+			<array>
+				<string>circle</string>
+				<string>circle.layer00</string>
+				<string>circle.layer01</string>
+				<string>circle.layer02</string>
+				<string>circle.layer03</string>
+			</array>
 			<key>type</key>
-			<string>alphabetical</string>
-		</dict>
-		<dict>
-			<key>allowPseudoUnicode</key>
-			<true/>
-			<key>ascending</key>
-			<true/>
-			<key>type</key>
-			<string>category</string>
-		</dict>
-		<dict>
-			<key>allowPseudoUnicode</key>
-			<true/>
-			<key>ascending</key>
-			<true/>
-			<key>type</key>
-			<string>unicode</string>
-		</dict>
-		<dict>
-			<key>allowPseudoUnicode</key>
-			<true/>
-			<key>ascending</key>
-			<true/>
-			<key>type</key>
-			<string>script</string>
-		</dict>
-		<dict>
-			<key>allowPseudoUnicode</key>
-			<true/>
-			<key>ascending</key>
-			<true/>
-			<key>type</key>
-			<string>suffix</string>
-		</dict>
-		<dict>
-			<key>allowPseudoUnicode</key>
-			<true/>
-			<key>ascending</key>
-			<true/>
-			<key>type</key>
-			<string>decompositionBase</string>
+			<string>glyphList</string>
 		</dict>
 	</array>
 	<key>public.glyphOrder</key>
