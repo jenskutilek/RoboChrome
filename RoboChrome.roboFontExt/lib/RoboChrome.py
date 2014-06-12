@@ -41,12 +41,22 @@ class ColorFontEditor(BaseWindowController):
         self.color = "#000000"
         self.colorbg = "#ffffff"
         
+        # Generate COLR and SVG by default
         self.write_colr = True
-        self.write_sbix = True
+        self.write_svg = True
+        
+        # Don't generate sbix by default:
+        # It depends on "flat", it is slow, and it produces large font files
+        self.write_sbix = False
+        self.d.generate_sbix_sizes.enable(False)
+        
         self._sbix_sizes = self.cfont.bitmap_sizes
+        
+        # CBDT is not implemented yet
         self.write_cbdt = False
-        self.write_svg = False
+        
         self.prefer_placed_images = False
+        
         self._auto_layer_regex_default = r"\.alt[0-9]{3}$"
         self._auto_layer_regex = self._auto_layer_regex_default
         self._auto_layer_regex_ok = True
