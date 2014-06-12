@@ -225,7 +225,7 @@ class ColorFontEditor(BaseWindowController):
             sizeStyle="small"
         )
         self.d.generateAppleFormat = vanilla.CheckBox((235, y, 200, -10), "sbix (Mac OS/iOS)",
-            callback=None,
+            callback=self._callback_set_write_sbix,
             value=self.write_sbix,
             sizeStyle="small"
         )
