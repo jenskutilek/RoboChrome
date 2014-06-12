@@ -27,7 +27,7 @@ em {
 	font-weight: bold;
 }
 
-h1, h2, h3, p, ul, ol, table {
+h1, h2, h3, p, ul, ol, table, video {
 	margin-left: 56px;
 	margin-right: 56px;
 }
@@ -85,4 +85,8 @@ td {
 
 span.dingbats {
 	font-family: "Erler Dingbats";
+}
+
+.shadow {
+	margin-bottom: -46px;
 }

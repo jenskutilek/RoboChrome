@@ -22,7 +22,44 @@
 		<h3>Add a color palette</h3>
 		
 		<p>If you already have figured out which colors you need, you can add them all to the palette now. It will save you some editing later.</p>
+		<p>Start RoboChrome (we guess you know how, because otherwise how would you have found this tutorial?) and you will see something like this:</p>
+		<div><img src="tutorial-02.png" width="614" height="632" alt="" class="shadow"></div>
+		<p>If you are playing along with our demo font, remove all existing color data from it by pressing the  <em>Settings...</em> and <em>Reset</em> buttons. Hit the <em>Settings...</em> button again to make those confusing details disappear for now.</p>
+		<p>The color index 65535 is reserved for the foreground color and is always present in the color list.</p>
+		<p>Click the <span class="dingbats">➕</span> button below the color list, next to the black color chooser. This will add a color with the index number 0 and the color value <tt>#ffde00</tt> to the list. You guessed it, it’s the FontShop yellow.</p>
+		<p><img src="tutorial-03.png" width="163" height="242" alt=""></p>
+		<p>Click once on the new color entry you just added to the list. The color chooser below the list will preview the selected color. Click on the color chooser to change the color visually, or enter the hexadecimal color value directly in the color list by clicking on it once again.</p>
+		<p>You can change a color’s opacity in the color chooser, or by adding a fourth value to the hexadecimal color representation, e.&nbsp;g. <tt>#ffde0080</tt> for 50% opacity.</p>
+		<p>Add and edit all the colors you need for your glyph.</p>
+		<p><img src="tutorial-04.png" width="500" height="245" alt=""></p>
+		<p>If your color glyph will have white parts, you can check if something is really white or merely transparent by changing the preview area background color.</p>
+		<p>Change the background by clicking on the right color chooser below the preview area. The left color chooser changes the preview foreground color, which you can use in your glyph by assigning color index 65535 to a layer.</p>
+		<p>If you have added too many colors, you can delete a color by selecting it in the color list and pressing the backspace key. All colors in the list will be added to the font, RoboChrome doesn’t check if they are really used anywhere. So getting rid of unused colors will keep your file size down (a tiny bit).</p>
 		
+		<h3>Assigning color layers to a base glyph</h3>
+		
+		<p>Now comes the part you have been waiting for.</p>
+		<p>Layers are added to the selected glyph in the base glyph list by pressing the <span class="dingbats">➕</span> button below the (now still empty) layer list.</p>
+		<p>You can edit the name and color index of a layer glyph in the list manually, but it’s easier to select the layer glyph and color before adding it to the current base glyph.</p>
+		<p>To do so, select the layer glyph in the current Font Window. Come back to RoboChrome and select the color in the color list. Then press the <span class="dingbats">➕</span> button to add the layer to the base glyph.</p>
+		<p>This is a crucial point, so have a look at the video:</p>
+		<video controls width="716" height="532">
+			<source src="tutorial-add-layer.mov" type="video/mp4">
+		</video>
+		<p>The base glyph disappears from the preview, which shows the first color layer glyph now.</p>
+		<p>Add the other layer glyphs by selecting them in the Font Window, selecting the desired color, and pressing the <span class="dingbats">➕</span> button.</p>
+		<p>Your RoboChrome window should now look something like this:</p>
+		<div class="shadow"><img src="tutorial-05.png" width="614" height="632" alt=""></div>
+		<p>Voilá, you have built your first color glyph!</p>
+		
+		<h3>Generating your font</h3>
+		<p>Open the Settings drawer by clicking on the <em>Settings...</em> button.</p>
+		<div><img src="tutorial-06.png" width="614" height="276" alt=""></div>
+		<p>To test your first font, since you’re on a Mac, it’s easiest to generate the sbix color format. Uncheck the other formats. Reduce the bitmap sizes to one size, for example 64 pixels, because they take a long time to rasterize, and I guess you want to finish this tutorial quickly now.</p>
+		<p>Generate your font via RoboFont as usual. For the sbix format you need to generate a TTF, it won’t work with OTFs.</p>
+		<p>If you click the <em>Export to font</em> button now, RoboChrome will know where to look for the TTF you just generated, and will save a copy with a <tt>_sbix</tt> suffix.</p>
+		<p>Open this font in Font Book or QuickLook and you should see your glyph in vibrant RGB!</p>
+		<div class="shadow"><img src="tutorial-07.png" width="514" height="295" alt=""></div>
 		
 		<p id="footer"><a href="index.html">Overview</a></p>
 	</body>
