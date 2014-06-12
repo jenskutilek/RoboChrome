@@ -48,8 +48,6 @@ class ColorFontEditor(BaseWindowController):
         # Don't generate sbix by default:
         # It depends on "flat", it is slow, and it produces large font files
         self.write_sbix = False
-        self.d.generate_sbix_sizes.enable(False)
-        
         self._sbix_sizes = self.cfont.bitmap_sizes
         
         # CBDT is not implemented yet
@@ -327,6 +325,10 @@ class ColorFontEditor(BaseWindowController):
         
         if len(self.cfont) > 0:
             self.w.auto_layer_button.enable(False)
+        
+        # If sbix or cbdt is inactive, disable bitmap sizes box
+        if not (self.write_sbix or self.write_cbdt):
+            self.d.generate_sbix_sizes.enable(False)
         
         self.w.open()
 
