@@ -375,31 +375,6 @@ class ColorFontEditor(BaseWindowController):
             else:
                 print "ERROR: Can only export color information to TTFs and OTFs."
     
-    def _show_svg(self, sender=None):
-        pathkey = "com.typemytype.robofont.compileSettings.path"
-        _font = -1
-        if pathkey in self.font.lib:
-            _font = self.font.lib.get(pathkey)
-            if not exists(_font):
-                _font = -1
-        if _font == -1:
-            from robofab.interface.all.dialogs import GetFile
-            _font = GetFile("Select a font file to export layer and color information to.")
-        
-        if _font > -1:
-            print "Exporting to", _font
-            if _font[-4:].lower() in [".ttf", ".otf"]:
-                self.cfont.export_to_otf(_font,
-                    write_colr=False,
-                    write_sbix=False,
-                    write_svg=True,
-                    palette_index=self.palette_index,
-                    bitmap_sizes=self._sbix_sizes,
-                    parent_window=self.w,
-                )
-            else:
-                print "ERROR: Can only export color information to TTFs and OTFs."
-
     def _save_png(self, sender=None):
         # save current glyph as PNG
         from robofab.interface.all.dialogs import PutFile
