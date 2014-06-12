@@ -17,18 +17,18 @@
 			font.</p>
 		<p>RoboChrome’s model is based on the <em>Microsoft
 			proposal,</em> which allows a black-and-white glyph to be replaced by a
-			sequence of layered color glyphs. Each layer corresponds to
+			stack of colored layer glyphs. Each layer corresponds to
 			one color. Because the format is vector-based,
 			font file sizes stay small.</p>
 		<p>The layered glyphs are rasterized to PNG images when you choose to export
 			a font in the <em>Apple color font format.</em> These fonts are slow
 			to generate and will take up considerably more file size.</p>
 		<p>The <em>Adobe/Mozilla proposal</em> allows SVG documents to be
-			stored as glyphs in a font. In RoboChrome, the SVG document is always
+			stored in a font, and displayed instead of the regular glyphs. In RoboChrome, the SVG document is always
 			derived from the sequence of glyph layers, though native SVGs would allow much
 			more flexibility, e.&nbsp;g. gradients, animation, and bitmap images.</p>
-		<p>The bitmap-based <em>Google proposal</em> is not supported in
-			RoboChrome at the moment.</p>
+		<!--<p>The bitmap-based <em>Google proposal</em> is not supported in
+			RoboChrome at the moment.</p>-->
 		
 		<h2>Help Topics</h2>
 		<ul>
@@ -41,7 +41,8 @@
 		</ul>
 		
 		<h2 id="issues">Known Issues &amp; Feedback</h2>
-		<p>Please check the <a href="https://github.com/fontfont/RoboChrome/issues">issue tracker on GitHub</a>.</p>
+		<p>If something goes wrong, be sure to check RoboFont’s Output Window for any clues.</p>
+		<p>Check for known issues and feel free to comment and submit reports to the <a href="https://github.com/fontfont/RoboChrome/issues">issue tracker on GitHub</a>.</p>
 		<hr>
 		<p>RoboChrome is © 2013—2014 by FontShop International.</p>
 	</body>

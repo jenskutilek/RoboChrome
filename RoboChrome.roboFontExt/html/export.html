@@ -9,6 +9,16 @@
 		<h1>RoboChrome</h1>
 		<h2>Generating a color font</h2>
 		
+		<p>Generate your font via RoboFont as usual.</p>
+		<p>For the sbix format you need to generate a TTF, it won’t work with OTFs. For the other color formats, the outline format doesn’t matter.</p>
+		<p>If you click the <em>Export to font</em> button, RoboChrome will know where to look for the font you just generated. RoboChrome adds the color formats you selected, and saves a separate font for each font with a format suffix next to your normal font.</p>
+		<p>The Adobe/Mozilla and Microsoft formats can live together in one font without interfering with each other. RoboChrome doesn’t support this yet, but you can splice together the different color tables in one font using <tt>ttx</tt> or similar tools.</p>
+		
+		<h3>Bitmap format options</h3>
+		
+		<p>Hit the <em>Settings...</em> button to open a drawer with more detailed options. For the bitmap formats, you can supply a comma-separated list of sizes to rasterize.</p>
+		<p>Bitmaps add considerably to the file size of the final font, and are quite slow to rasterize.</p>
+		
 		<p id="footer"><a href="index.html">Overview</a></p>
 	</body>
 </html>
