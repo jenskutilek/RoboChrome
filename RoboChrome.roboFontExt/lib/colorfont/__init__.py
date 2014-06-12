@@ -28,26 +28,31 @@ from defconAppKit.windows.progressWindow import ProgressWindow
 class ColorFont(object):
     def __init__(self, rfont=None):
         self.libkey = "com.fontfont.colorfont"
+        self._auto_layer_regex_default = "\.alt[0-9]{3}$"
+        self._bitmap_sizes_default = [20, 32, 40, 72, 96, 128, 256, 512, 1024]
+        
         self.rfont = rfont
         self._glyphs = {}
+        
+        self.auto_layer_include_baseglyph = False
+        self.auto_layer_regex = self._auto_layer_regex_default
+        self.bitmap_sizes = self._bitmap_sizes_default
         self.colorpalette = [{}]
         self.color = "#000000FF"
         self.colorbg = "#FFFFFFFF"
-        self._bitmap_sizes_default = [20, 32, 40, 72, 96, 128, 256, 512, 1024]
-        self.bitmap_sizes = self._bitmap_sizes_default
-        self._auto_layer_regex_default = "\.alt[0-9]{3}$"
-        self.auto_layer_regex = self._auto_layer_regex_default
+        
         # FIXME hack to avoid saving after "Reset" has been pressed
         self.save_settings = True
         
         # These are loaded and saved from/to UFO lib
         self.settings = {
-            # property, default
+            # attribute, default value
+            "auto_layer_include_baseglyph": False,
+            "auto_layer_regex": self._auto_layer_regex_default,
+            "bitmap_sizes": self._bitmap_sizes_default,
             "color": "#000000",
             "colorbg": "#ffffff",
             "colorpalette": [{}],
-            "bitmap_sizes": self._bitmap_sizes_default,
-            "auto_layer_regex": self._auto_layer_regex_default,
         }
 
     def __getitem__(self, key):
@@ -106,6 +111,7 @@ class ColorFont(object):
         result = "<ColorFont>\n"
         result += "    Save settings: %s\n" % self.save_settings
         result += "    Auto layer regex: %s\n" % self.auto_layer_regex
+        result += "    Auto layer includes base glyph: %s\n" % self.auto_layer_include_baseglyph
         result += "    Bitmap sizes: %s\n" % self.bitmap_sizes
         result += "    Palettes:\n"
         for palette in self.colorpalette:
@@ -444,7 +450,7 @@ class ColorFont(object):
     def add_glyph(self, name):
         self._glyphs[name] = ColorGlyph(self, name)
 
-    def auto_layers(self, include_baseglyph=True):
+    def auto_layers(self):
         # Automatically build a color font based on glyph name suffixes
         from re import search, compile
         regex = compile(self.auto_layer_regex)
@@ -468,7 +474,7 @@ class ColorFont(object):
                         self.add_glyph(baseglyph)
                     self[baseglyph].add_layer(layername, 0xffff)
                     has_layers = True
-            if has_layers and include_baseglyph:
+            if has_layers and self.auto_layer_include_baseglyph:
                 self[baseglyph].add_layer(baseglyph, 0xffff)
 
     def auto_palette(self):

@@ -272,7 +272,7 @@ class ColorFontEditor(BaseWindowController):
         )
         y += 26
         self.d._add_base_layer = vanilla.CheckBox((235, y, -10, 20), "Auto layers include base glyph",
-            callback=None,
+            callback=self._callback_auto_layer_include_baseglyph,
             value=True,
             sizeStyle="small",
         )
@@ -296,6 +296,7 @@ class ColorFontEditor(BaseWindowController):
         
         self.d.generate_sbix_sizes.set(self._ui_get_sbix_sizes())
         self.d.auto_layer_regex_box.set(self.cfont.auto_layer_regex)
+        self.d._add_base_layer.set(self.cfont.auto_layer_include_baseglyph)
         
         self._ui_update_palette_chooser()
         self._ui_update_palette(self.palette_index)
@@ -916,7 +917,7 @@ class ColorFontEditor(BaseWindowController):
     def _callback_auto_layers(self, sender=None):
         print "Auto layers: %s" % self.cfont.auto_layer_regex
         if self.cfont.auto_layer_regex is not None:
-            self.cfont.auto_layers(self.d._add_base_layer.get())
+            self.cfont.auto_layers()
             self.cfont.auto_palette()
             self.cfont.save_to_rfont()
             self.cfont.save_all_glyphs_to_rfont()
@@ -962,6 +963,9 @@ class ColorFontEditor(BaseWindowController):
                 _glyph_list.append(glyphname)
         print "_callback_test_regex matched %i glyphs." % len(_glyph_list)
         self.font.selection = _glyph_list
-
+    
+    def _callback_auto_layer_include_baseglyph(self, sender=None):
+        self.cfont.auto_layer_include_baseglyph = sender.get()
+        #self.cfont.save_to_rfont()
 
 OpenWindow(ColorFontEditor)
