@@ -35,6 +35,8 @@ class ColorFont(object):
         self.colorbg = "#FFFFFFFF"
         self.bitmap_sizes_default = [20, 32, 40, 72, 96, 128, 256, 512, 1024]
         self.bitmap_sizes = self.bitmap_sizes_default
+        self.auto_regex_default = "\.alt[0-9]{3}$"
+        self.auto_regex = self.auto_regex_default
         # FIXME hack to avoid saving after "Reset" has been pressed
         self.save_settings = True
 
@@ -149,6 +151,12 @@ class ColorFont(object):
                 self.bitmap_sizes = self.rfont.lib["%s.bitmap_sizes" % self.libkey]
             else:
                 self.bitmap_sizes = self.bitmap_sizes_default
+        
+            # auto layer regex
+            if "%s.auto_regex" % self.libkey in self.rfont.lib.keys():
+                self.auto_regex = self.rfont.lib["%s.auto_regex" % self.libkey]
+            else:
+                self.auto_regex = self.auto_regex_default
         
             # load layer info from glyph libs
             for glyph in self.rfont:
@@ -411,6 +419,7 @@ class ColorFont(object):
             "color": self.color,
             "colorbg": self.colorbg,
             "bitmap_sizes": self.bitmap_sizes,
+            "auto_regex": self.auto_regex,
         }
         
         for key, value in values_to_save.iteritems():
