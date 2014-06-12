@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="circle" format="1">
+  <advance width="677"/>
+  <unicode hex="25CB"/>
+  <outline>
+    <contour>
+      <point x="307" y="30"/>
+      <point x="283" y="41"/>
+      <point x="283" y="66" type="curve" smooth="yes"/>
+      <point x="283" y="91"/>
+      <point x="306" y="130"/>
+      <point x="374" y="188" type="curve" smooth="yes"/>
+      <point x="424" y="230"/>
+      <point x="474" y="261"/>
+      <point x="509" y="261" type="curve" smooth="yes"/>
+      <point x="540" y="261"/>
+      <point x="552" y="237"/>
+      <point x="552" y="207" type="curve" smooth="yes"/>
+      <point x="552" y="129"/>
+      <point x="446" y="30"/>
+      <point x="329" y="30" type="curve" smooth="yes"/>
+    </contour>
+    <contour>
+      <point x="242" y="290" type="curve" smooth="yes"/>
+      <point x="204" y="290"/>
+      <point x="174" y="320"/>
+      <point x="174" y="358" type="curve" smooth="yes"/>
+      <point x="174" y="395"/>
+      <point x="204" y="426"/>
+      <point x="242" y="426" type="curve" smooth="yes"/>
+      <point x="279" y="426"/>
+      <point x="310" y="395"/>
+      <point x="310" y="358" type="curve" smooth="yes"/>
+      <point x="310" y="320"/>
+      <point x="279" y="290"/>
+    </contour>
+    <contour>
+      <point x="338" y="-9" type="curve" smooth="yes"/>
+      <point x="481" y="-9"/>
+      <point x="597" y="108"/>
+      <point x="597" y="250" type="curve" smooth="yes"/>
+      <point x="597" y="392"/>
+      <point x="481" y="508"/>
+      <point x="338" y="508" type="curve" smooth="yes"/>
+      <point x="196" y="508"/>
+      <point x="80" y="392"/>
+      <point x="80" y="250" type="curve" smooth="yes"/>
+      <point x="80" y="108"/>
+      <point x="196" y="-9"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.fontfont.colorfont.layers</key>
+      <array>
+        <array>
+          <string>circle.layer00</string>
+          <string>circle.layer01</string>
+          <string>circle.layer02</string>
+          <string>circle.layer03</string>
+        </array>
+        <array>
+          <integer>0</integer>
+          <integer>1</integer>
+          <integer>2</integer>
+          <integer>3</integer>
+        </array>
+      </array>
+      <key>com.typemytype.robofont.layerData</key>
+      <dict>
+      </dict>
+    </dict>
+  </lib>
+</glyph>
