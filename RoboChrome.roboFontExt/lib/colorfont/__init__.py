@@ -30,7 +30,7 @@ class ColorFont(object):
         self.libkey = "com.fontfont.colorfont"
         self.rfont = rfont
         self._glyphs = {}
-        self.palettes = [{}]
+        self.colorpalette = [{}]
         self.color = "#000000FF"
         self.colorbg = "#FFFFFFFF"
         self._bitmap_sizes_default = [20, 32, 40, 72, 96, 128, 256, 512, 1024]
@@ -39,6 +39,16 @@ class ColorFont(object):
         self.auto_layer_regex = self._auto_layer_regex_default
         # FIXME hack to avoid saving after "Reset" has been pressed
         self.save_settings = True
+        
+        # These are loaded and saved from/to UFO lib
+        self.settings = {
+            # property, default
+            "color": "#000000",
+            "colorbg": "#ffffff",
+            "colorpalette": [{}],
+            "bitmap_sizes": self._bitmap_sizes_default,
+            "auto_layer_regex": self._auto_layer_regex_default,
+        }
 
     def __getitem__(self, key):
         return self._glyphs[key]
@@ -77,7 +87,7 @@ class ColorFont(object):
                     color = palette[i]
                     _palette[str(i)] = "#%02x%02x%02x%02x" % (color.red,
                         color.green, color.blue, color.alpha)
-                self.palettes.append(_palette)
+                self.colorpalette.append(_palette)
             colr = table_C_O_L_R_("COLR")
             colr.decompile(font["COLR"].data, font)
             print "Reading layer data ..."
@@ -98,7 +108,7 @@ class ColorFont(object):
         result += "    Auto layer regex: %s\n" % self.auto_layer_regex
         result += "    Bitmap sizes: %s\n" % self.bitmap_sizes
         result += "    Palettes:\n"
-        for palette in self.palettes:
+        for palette in self.colorpalette:
             result += "        %s\n" % palette
         result += "    Glyphs: %s\n" % self.keys()
         for glyph in self.itervalues():
@@ -115,7 +125,7 @@ class ColorFont(object):
     def _get_fcolor(self, palette_index, color_index):
         # get a color by index, in "flat" format
         if color_index < 0xffff:
-            _hexrgba = self.palettes[palette_index][str(color_index)]
+            _hexrgba = self.colorpalette[palette_index][str(color_index)]
         else:
             _hexrgba = self.color
         r = int(_hexrgba[1:3], 16)
@@ -134,37 +144,11 @@ class ColorFont(object):
         if self.rfont is None:
             print "ERROR: rfont is None in ColorFont.read_from_rfont."
         else:
-            # read palette
-            if "%s.colorpalette" % self.libkey in self.rfont.lib.keys():
-                self.palettes = self.rfont.lib["%s.colorpalette" % self.libkey]
-                #print self.palettes
-            else:
-                #print "No palette found in UFO, adding empty palette."
-                self.palettes = [{}]
-        
-            # foreground color
-            if "%s.color" % self.libkey in self.rfont.lib.keys():
-                self.color = self.rfont.lib["%s.color" % self.libkey]
-            else:
-                self.color = "#000000"
-        
-            # background color
-            if "%s.colorbg" % self.libkey in self.rfont.lib.keys():
-                self.colorbg = self.rfont.lib["%s.colorbg" % self.libkey]
-            else:
-                self.colorbg = "#ffffff"
-        
-            # bitmap sizes
-            if "%s.bitmap_sizes" % self.libkey in self.rfont.lib.keys():
-                self.bitmap_sizes = self.rfont.lib["%s.bitmap_sizes" % self.libkey]
-            else:
-                self.bitmap_sizes = self._bitmap_sizes_default
-        
-            # auto layer regex
-            if "%s.auto_layer_regex" % self.libkey in self.rfont.lib.keys():
-                self.auto_layer_regex = self.rfont.lib["%s.auto_layer_regex" % self.libkey]
-            else:
-                self.auto_layer_regex = self._auto_layer_regex_default
+            for propkey, default in self.settings.iteritems():
+                if "%s.%s" % (self.libkey, propkey) in self.rfont.lib.keys():
+                    setattr(self, propkey, self.rfont.lib["%s.%s" % (self.libkey, propkey)])
+                else:
+                    setattr(self, propkey, default)
         
             # load layer info from glyph libs
             for glyph in self.rfont:
@@ -214,11 +198,11 @@ class ColorFont(object):
         print "    Writing palette data ..."
         cpal = table_C_P_A_L_("CPAL")
         cpal.version = 0
-        cpal.numPaletteEntries = len(self.palettes[0])
+        cpal.numPaletteEntries = len(self.colorpalette[0])
         cpal.palettes = []
         
-        for j in range(len(self.palettes)):
-            palette = self.palettes[j]
+        for j in range(len(self.colorpalette)):
+            palette = self.colorpalette[j]
             _palette = []
             # keep a map of old to new indices (palette indices are
             # not saved in font)
@@ -275,7 +259,7 @@ class ColorFont(object):
         if parent_window is not None:
             progress = ProgressWindow("Rendering SVG ...", tickCount=len(self.keys()), parentWindow=parent_window)
         
-        _palette = self.palettes[palette]
+        _palette = self.colorpalette[palette]
         _svg_palette = []
         _docList = []
         
@@ -421,16 +405,8 @@ class ColorFont(object):
         font.close()
 
     def save_to_rfont(self):
-        values_to_save = {
-            "colorpalette": self.palettes,
-            "color": self.color,
-            "colorbg": self.colorbg,
-            "bitmap_sizes": self.bitmap_sizes,
-            "auto_layer_regex": self.auto_layer_regex,
-        }
-        
-        for key, value in values_to_save.iteritems():
-            self._save_key_to_lib(key, value)
+        for propkey in self.settings.iterkeys():
+            self._save_key_to_lib(propkey, getattr(self, propkey))
         
         # save each glyph color layer data
         #for cglyph in self.itervalues():
@@ -500,8 +476,8 @@ class ColorFont(object):
         # and assign it to all color glyphs
         # FIXME: Doesn't work for non-continuous color indices
         from random import randint
-        self.palettes = [{}]
-        palette = self.palettes[0]
+        self.colorpalette = [{}]
+        palette = self.colorpalette[0]
         max_layers = 0
         for g in self.itervalues():
             if len(g.layers) > max_layers:
