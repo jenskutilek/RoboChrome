@@ -48,15 +48,14 @@ class ColorFontEditor(BaseWindowController):
         # Don't generate sbix by default:
         # It depends on "flat", it is slow, and it produces large font files
         self.write_sbix = False
-        self._sbix_sizes = self.cfont.bitmap_sizes
         
         # CBDT is not implemented yet
         self.write_cbdt = False
         
         self.prefer_placed_images = False
         
-        self._auto_layer_regex_default = r"\.alt[0-9]{3}$"
-        self._auto_layer_regex = self._auto_layer_regex_default
+        #self._auto_layer_regex_default = r"\.alt[0-9]{3}$"
+        #self._auto_layer_regex = self._auto_layer_regex_default
         self._auto_layer_regex_ok = True
         
         self.oldDisplaySettings = getGlyphViewDisplaySettings()
@@ -263,7 +262,7 @@ class ColorFontEditor(BaseWindowController):
         )
         self.d.auto_layer_regex_box = vanilla.EditText((235, y, 178, 20),
             callback=self._callback_check_regex,
-            text=self._auto_layer_regex,
+            text=self.cfont.auto_layer_regex,
             sizeStyle="small"
         )
         self.d.auto_layer_regex_ok = vanilla.CheckBox((-22, y, 20, 20), "",
@@ -294,6 +293,9 @@ class ColorFontEditor(BaseWindowController):
         self.setUpBaseWindowBehavior()
         
         self.cfont.read_from_rfont()
+        
+        self.d.generate_sbix_sizes.set(self._ui_get_sbix_sizes())
+        self.d.auto_layer_regex_box.set(self.cfont.auto_layer_regex)
         
         self._ui_update_palette_chooser()
         self._ui_update_palette(self.palette_index)
@@ -369,7 +371,6 @@ class ColorFontEditor(BaseWindowController):
                     write_sbix=self.d.generateAppleFormat.get(),
                     write_svg=self.d.generateSVGFormat.get(),
                     palette_index=self.palette_index,
-                    bitmap_sizes=self._sbix_sizes,
                     parent_window=self.w,
                 )
             else:
@@ -433,7 +434,7 @@ class ColorFontEditor(BaseWindowController):
         #    print "  Glyph is None."
 
     def _ui_get_sbix_sizes(self):
-        return str(self._sbix_sizes).strip("[]")
+        return str(self.cfont.bitmap_sizes).strip("[]")
 
     def _reset_color_data(self, sender=None):
         #completely remove color info from UFO
@@ -464,10 +465,10 @@ class ColorFontEditor(BaseWindowController):
         self._callback_update_ui_glyph_list()
         self._callback_ui_glyph_list_selection()
         
-        self._sbix_sizes = self.cfont.bitmap_sizes_default
+        self.cfont.reset_bitmap_sizes()
         self.d.generate_sbix_sizes.set(self._ui_get_sbix_sizes())
-        self._auto_layer_regex = self._auto_layer_regex_default
-        self.d.auto_layer_regex_box.set(self._auto_layer_regex)
+        self.cfont.reset_auto_layer_regex()
+        self.d.auto_layer_regex_box.set(self.cfont.auto_layer_regex)
         self.w.auto_layer_button.enable(True)
 
     def addColorToPalette(self, sender=None):
@@ -631,7 +632,6 @@ class ColorFontEditor(BaseWindowController):
             if entry != "":
                 sizes.append(int(entry))
         print sizes
-        self._sbix_sizes = sizes
         self.cfont.bitmap_sizes = sizes
     
     def _callback_color_changed_foreground(self, sender):
@@ -775,6 +775,8 @@ class ColorFontEditor(BaseWindowController):
         self._ui_layer_list_save_to_cfont()
         if self.cfont.save_settings and self.currentPaletteChanged:
             self._paletteWriteToColorFont()
+        if self.cfont.save_settings:
+            self.cfont.save_to_rfont()
         super(ColorFontEditor, self).windowCloseCallback(sender)
     
     def _callback_ui_glyph_list_selection(self, sender=None):
@@ -912,9 +914,9 @@ class ColorFontEditor(BaseWindowController):
             restore()
 
     def _callback_auto_layers(self, sender=None):
-        print "Auto layers: %s" % self._auto_layer_regex
-        if self._auto_layer_regex is not None:
-            self.cfont.auto_layers(self._auto_layer_regex, self.d._add_base_layer.get())
+        print "Auto layers: %s" % self.cfont.auto_layer_regex
+        if self.cfont.auto_layer_regex is not None:
+            self.cfont.auto_layers(self.d._add_base_layer.get())
             self.cfont.auto_palette()
             self.cfont.save_to_rfont()
             self.cfont.save_all_glyphs_to_rfont()
@@ -942,18 +944,18 @@ class ColorFontEditor(BaseWindowController):
             compile(test_re)
             self.d.auto_layer_regex_ok.set(True)
             self.w.auto_layer_button.enable(True)
-            self._auto_layer_regex = test_re
+            self.cfont.auto_layer_regex = test_re
             self.d.regex_test_button.enable(True)
         except:
             self.d.auto_layer_regex_ok.set(False)
             self.w.auto_layer_button.enable(False)
-            self._auto_layer_regex = None
+            self.cfont.auto_layer_regex = None
             self.d.regex_test_button.enable(False)
     
     def _callback_test_regex(self, sender=None):
         # select glyphs based on current regex
         from re import search, compile
-        regex = compile(self._auto_layer_regex)
+        regex = compile(self.cfont.auto_layer_regex)
         _glyph_list = []
         for glyphname in self.font.glyphOrder:
             if regex.search(glyphname):

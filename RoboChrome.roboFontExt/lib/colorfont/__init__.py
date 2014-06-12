@@ -33,10 +33,10 @@ class ColorFont(object):
         self.palettes = [{}]
         self.color = "#000000FF"
         self.colorbg = "#FFFFFFFF"
-        self.bitmap_sizes_default = [20, 32, 40, 72, 96, 128, 256, 512, 1024]
-        self.bitmap_sizes = self.bitmap_sizes_default
-        self.auto_regex_default = "\.alt[0-9]{3}$"
-        self.auto_regex = self.auto_regex_default
+        self._bitmap_sizes_default = [20, 32, 40, 72, 96, 128, 256, 512, 1024]
+        self.bitmap_sizes = self._bitmap_sizes_default
+        self._auto_layer_regex_default = "\.alt[0-9]{3}$"
+        self.auto_layer_regex = self._auto_layer_regex_default
         # FIXME hack to avoid saving after "Reset" has been pressed
         self.save_settings = True
 
@@ -95,6 +95,8 @@ class ColorFont(object):
     def __repr__(self):
         result = "<ColorFont>\n"
         result += "    Save settings: %s\n" % self.save_settings
+        result += "    Auto layer regex: %s\n" % self.auto_layer_regex
+        result += "    Bitmap sizes: %s\n" % self.bitmap_sizes
         result += "    Palettes:\n"
         for palette in self.palettes:
             result += "        %s\n" % palette
@@ -103,6 +105,12 @@ class ColorFont(object):
             result += "        %s\n" % glyph
         result += "</ColorFont>\n"
         return result
+    
+    def reset_bitmap_sizes(self):
+        self.bitmap_sizes = self._bitmap_sizes_default
+    
+    def reset_auto_layer_regex(self):
+        self.auto_layer_regex = self._auto_layer_regex_default
     
     def _get_fcolor(self, palette_index, color_index):
         # get a color by index, in "flat" format
@@ -150,13 +158,13 @@ class ColorFont(object):
             if "%s.bitmap_sizes" % self.libkey in self.rfont.lib.keys():
                 self.bitmap_sizes = self.rfont.lib["%s.bitmap_sizes" % self.libkey]
             else:
-                self.bitmap_sizes = self.bitmap_sizes_default
+                self.bitmap_sizes = self._bitmap_sizes_default
         
             # auto layer regex
-            if "%s.auto_regex" % self.libkey in self.rfont.lib.keys():
-                self.auto_regex = self.rfont.lib["%s.auto_regex" % self.libkey]
+            if "%s.auto_layer_regex" % self.libkey in self.rfont.lib.keys():
+                self.auto_layer_regex = self.rfont.lib["%s.auto_layer_regex" % self.libkey]
             else:
-                self.auto_regex = self.auto_regex_default
+                self.auto_layer_regex = self._auto_layer_regex_default
         
             # load layer info from glyph libs
             for glyph in self.rfont:
@@ -178,7 +186,7 @@ class ColorFont(object):
         for g in self:
             self[g].rasterize(palette_index, sizes)
 
-    def export_to_otf(self, otfpath, write_colr=True, write_sbix=True, write_svg=True, palette_index=0, bitmap_sizes=[512], parent_window=None):
+    def export_to_otf(self, otfpath, write_colr=True, write_sbix=True, write_svg=True, palette_index=0, parent_window=None):
         if write_sbix:
             # export sbix first because it adds glyphs
             # (alternates for windows so it doesn't display the special outlines)
@@ -187,7 +195,6 @@ class ColorFont(object):
                 replace_outlines = False
             else:
                 replace_outlines = True
-            self.bitmap_sizes = bitmap_sizes
             self._export_sbix(otfpath, palette_index, "png", replace_outlines, parent_window)
             print "Done."
         if write_colr:
@@ -419,7 +426,7 @@ class ColorFont(object):
             "color": self.color,
             "colorbg": self.colorbg,
             "bitmap_sizes": self.bitmap_sizes,
-            "auto_regex": self.auto_regex,
+            "auto_layer_regex": self.auto_layer_regex,
         }
         
         for key, value in values_to_save.iteritems():
@@ -461,10 +468,10 @@ class ColorFont(object):
     def add_glyph(self, name):
         self._glyphs[name] = ColorGlyph(self, name)
 
-    def auto_layers(self, auto_layer_regex=None, include_baseglyph=True):
+    def auto_layers(self, include_baseglyph=True):
         # Automatically build a color font based on glyph name suffixes
         from re import search, compile
-        regex = compile(auto_layer_regex)
+        regex = compile(self.auto_layer_regex)
         _layer_base_glyphs = []
         
         # find possible base glyphs: all that don't match the regex
@@ -474,7 +481,7 @@ class ColorFont(object):
         #print "Found layer base glyphs:", _layer_base_glyphs
         
         for baseglyph in _layer_base_glyphs:
-            layer_regex = "^%s%s" % (baseglyph.replace(".", "\."), auto_layer_regex)
+            layer_regex = "^%s%s" % (baseglyph.replace(".", "\."), self.auto_layer_regex)
             regex = compile(layer_regex)
             #print "Looking for layer glyphs with regex", layer_regex
             has_layers = False
