@@ -12,8 +12,12 @@ from tables.sbixBitmap import Bitmap
 from tables.S_V_G_ import table_S_V_G_
 
 # for png generation
-from flat import document, shape, rgba
-from flatPen import FlatPen
+try:
+    from flat import document, shape, rgba
+    from flatPen import FlatPen
+    have_flat = True
+except:
+    have_flat = False
 
 # for svg generation
 from svgPen import SVGpen
@@ -159,6 +163,10 @@ class ColorFont(object):
 
     def rasterize(self, palette_index, sizes):
         # rasterize all glyphs in a list of sizes.
+        if not have_flat:
+            print "The 'flat' Python module is missing."
+            print "Please see <https://github.com/fontfont/RoboChrome/blob/master/README.md>"
+            return
         for g in self:
             self[g].rasterize(palette_index, sizes)
 
