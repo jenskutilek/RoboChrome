@@ -9,6 +9,21 @@
 		<h1>RoboChrome</h1>
 		<h2>Tutorial: How to add color to a font</h2>
 		
+		<h3>Preparing your font</h3>
+		
+		<p><img src="tutorial-01.png" width="460" height="92" alt=""></p>
+		<p>Add separate glyphs, one for each color, for each base glyph that will be replaced by a color glyph.</p>
+		<p>Regarding glyph names, it’s most convenient to keep the base name the same for all layer glyphs, and add a suffix counting up from the bottom to the top layer.</p>
+		<p>You can find an example UFO on our <a href="https://github.com/fontfont/RoboChrome/tree/master/demo">GitHub account</a>.</p>
+		<p>In this example, the base glyph is called <tt>circle</tt>, and the layer glyphs are called <tt>circle.layer00</tt> for the bottom layer, etc. until <tt>circle.layer03</tt> for the top layer.</p>
+		<p>The base glyph will act as a fallback glyph in the SVG and COLR/CPAL formats. It can be a pure black-and-white representation of the color glyph, or something completely different, like a line art version.</p>
+		<p>For example, in a font containing national flags, the fallback glyph may not display a black-and-white flag, but the 3-letter country code instead.</p>
+		
+		<h3>Add a color palette</h3>
+		
+		<p>If you already have figured out which colors you need, you can add them all to the palette now. It will save you some editing later.</p>
+		
+		
 		<p id="footer"><a href="index.html">Overview</a></p>
 	</body>
 </html>
