@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="box.layer00" format="1">
+  <advance width="500"/>
+  <outline>
+    <contour>
+      <point x="40" y="-20" type="line"/>
+      <point x="460" y="-20" type="line"/>
+      <point x="460" y="520" type="line"/>
+      <point x="40" y="520" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.typemytype.robofont.layerData</key>
+      <dict>
+        <key>background</key>
+        <dict>
+          <key>anchors</key>
+          <array>
+          </array>
+          <key>components</key>
+          <array>
+          </array>
+          <key>contours</key>
+          <array>
+          </array>
+          <key>lib</key>
+          <dict>
+          </dict>
+          <key>name</key>
+          <string>box.layer00</string>
+          <key>unicodes</key>
+          <array>
+          </array>
+          <key>width</key>
+          <integer>500</integer>
+        </dict>
+      </dict>
+    </dict>
+  </lib>
+</glyph>

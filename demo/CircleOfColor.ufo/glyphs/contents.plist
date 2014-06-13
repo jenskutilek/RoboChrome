@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>box</key>
+	<string>box.glif</string>
+	<key>box.layer00</key>
+	<string>box.layer00.glif</string>
+	<key>box.layer01</key>
+	<string>box.layer01.glif</string>
 	<key>circle</key>
 	<string>circle.glif</string>
 	<key>circle.layer00</key>

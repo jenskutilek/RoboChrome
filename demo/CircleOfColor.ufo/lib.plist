@@ -84,6 +84,9 @@
 				<string>circle.layer01</string>
 				<string>circle.layer02</string>
 				<string>circle.layer03</string>
+				<string>box</string>
+				<string>box.layer01</string>
+				<string>box.layer00</string>
 			</array>
 			<key>type</key>
 			<string>glyphList</string>
@@ -96,6 +99,9 @@
 		<string>circle.layer01</string>
 		<string>circle.layer02</string>
 		<string>circle.layer03</string>
+		<string>box</string>
+		<string>box.layer01</string>
+		<string>box.layer00</string>
 	</array>
 </dict>
 </plist>
