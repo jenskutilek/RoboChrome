@@ -41,19 +41,6 @@ class ColorFontEditor(BaseWindowController):
         self.color = "#000000"
         self.colorbg = "#ffffff"
         
-        # Generate COLR and SVG by default
-        self.write_colr = True
-        self.write_svg = True
-        
-        # Don't generate sbix by default:
-        # It depends on "flat", it is slow, and it produces large font files
-        self.write_sbix = False
-        
-        # CBDT is not implemented yet
-        self.write_cbdt = False
-        
-        #self._auto_layer_regex_default = r"\.alt[0-9]{3}$"
-        #self._auto_layer_regex = self._auto_layer_regex_default
         self._auto_layer_regex_ok = True
         
         self.oldDisplaySettings = getGlyphViewDisplaySettings()
@@ -225,24 +212,24 @@ class ColorFontEditor(BaseWindowController):
         self.d.generate_formats_label = vanilla.TextBox((10, y+2, 160, 20), "Generate formats:", sizeStyle="small")
         y += 20
         self.d.generateMSFormat = vanilla.CheckBox((10, y, 200, -10), "COLR/CPAL (Windows)",
-            callback=None,
-            value=self.write_colr,
+            callback=self._callback_select_formats,
+            value=self.cfont.write_colr,
             sizeStyle="small"
         )
         self.d.generateAppleFormat = vanilla.CheckBox((235, y, 200, -10), "sbix (Mac OS/iOS)",
-            callback=self._callback_set_write_sbix,
-            value=self.write_sbix,
+            callback=self._callback_select_formats,
+            value=self.cfont.write_sbix,
             sizeStyle="small"
         )
         y += 20
         self.d.generateSVGFormat = vanilla.CheckBox((10, y, 200, -10), "SVG (Mozilla/Adobe)",
-            callback=None,
-            value=self.write_svg,
+            callback=self._callback_select_formats,
+            value=self.cfont.write_svg,
             sizeStyle="small",
         )
         self.d.generateGoogleFormat = vanilla.CheckBox((235, y, 200, -10), "CBDT/CBLC (Google)",
-            callback=None,
-            value=self.write_cbdt,
+            callback=self._callback_select_formats,
+            value=self.cfont.write_cbdt,
             sizeStyle="small",
         )
         y += 32
@@ -294,6 +281,7 @@ class ColorFontEditor(BaseWindowController):
         self.cfont.read_from_rfont()
         
         # update ui
+        self._callback_update_ui_formats()
         self.d.generate_sbix_sizes.set(self._ui_get_sbix_sizes())
         self.d.auto_layer_regex_box.set(self.cfont.auto_layer_regex)
         self.d._add_base_layer.set(self.cfont.auto_layer_include_baseglyph)
@@ -331,8 +319,7 @@ class ColorFontEditor(BaseWindowController):
             self.w.auto_layer_button.enable(False)
         
         # If sbix or cbdt is inactive, disable bitmap sizes box
-        if not (self.write_sbix or self.write_cbdt):
-            self.d.generate_sbix_sizes.enable(False)
+        self._check_bitmap_ui_active()
         
         self.w.open()
 
@@ -369,9 +356,6 @@ class ColorFontEditor(BaseWindowController):
             print "Exporting to", _font
             if _font[-4:].lower() in [".ttf", ".otf"]:
                 self.cfont.export_to_otf(_font,
-                    write_colr=self.d.generateMSFormat.get(),
-                    write_sbix=self.d.generateAppleFormat.get(),
-                    write_svg=self.d.generateSVGFormat.get(),
                     palette_index=self.palette_index,
                     parent_window=self.w,
                 )
@@ -472,6 +456,9 @@ class ColorFontEditor(BaseWindowController):
         self.cfont.reset_auto_layer_regex()
         self.d.auto_layer_regex_box.set(self.cfont.auto_layer_regex)
         self.w.auto_layer_button.enable(True)
+        self.cfont.reset_generate_formats()
+        #TODO
+        #self._callback_update_ui_formats()
 
     def addColorToPalette(self, sender=None):
         # find a new palette index
@@ -622,12 +609,7 @@ class ColorFontEditor(BaseWindowController):
     
     def _callback_toggle_settings(self, sender):
         self.d.toggle()
-    
-    def _callback_set_write_sbix(self, sender):
-        _active = sender.get()
-        self.d.generate_sbix_sizes.enable(_active)
-        self.d.preferPlacedImages.enable(_active)
-    
+        
     def _callback_set_sbix_sizes(self, sender):
         sizes_str = sender.get().split(",")
         sizes = []
@@ -828,6 +810,25 @@ class ColorFontEditor(BaseWindowController):
         self.w.glyph_list.set(glyphlist)
         if glyphlist != []:
             self.w.glyph_list.setSelection([0])
+    
+    def _callback_update_ui_formats(self, sender=None):
+        self.d.generateMSFormat.set(self.cfont.write_colr)
+        self.d.generateAppleFormat.set(self.cfont.write_sbix)
+        self.d.generateSVGFormat.set(self.cfont.write_svg)
+        self.d.generateGoogleFormat.set(self.cfont.write_cbdt)
+        self._check_bitmap_ui_active()
+        
+    def _callback_select_formats(self, sender=None):
+        self.cfont.write_colr = self.d.generateMSFormat.get()
+        self.cfont.write_sbix = self.d.generateAppleFormat.get()
+        self.cfont.write_svg = self.d.generateSVGFormat.get()
+        self.cfont.write_cbdt = self.d.generateGoogleFormat.get()
+        self._check_bitmap_ui_active()
+    
+    def _check_bitmap_ui_active(self):
+        _ui_active = self.cfont.write_sbix or self.cfont.write_cbdt
+        self.d.generate_sbix_sizes.enable(_ui_active)
+        self.d.preferPlacedImages.enable(_ui_active)
     
     def setFill(self, rgba):
         red, green, blue, alpha = rgba

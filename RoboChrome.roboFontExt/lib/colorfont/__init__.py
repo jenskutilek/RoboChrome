@@ -28,8 +28,14 @@ from defconAppKit.windows.progressWindow import ProgressWindow
 class ColorFont(object):
     def __init__(self, rfont=None):
         self.libkey = "com.fontfont.colorfont"
+        
+        # default values
         self._auto_layer_regex_default = "\.alt[0-9]{3}$"
         self._bitmap_sizes_default = [20, 32, 40, 72, 96, 128, 256, 512, 1024]
+        self._write_cbdt_default = False
+        self._write_colr_default = True
+        self._write_sbix_default = False
+        self._write_svg_default = True
         
         self.rfont = rfont
         self._glyphs = {}
@@ -40,6 +46,7 @@ class ColorFont(object):
         self.color = "#000000FF"
         self.colorbg = "#FFFFFFFF"
         self.colorpalette = [{}]
+        self.reset_generate_formats()
         self.prefer_placed_images = False
         
         # FIXME hack to avoid saving after "Reset" has been pressed
@@ -55,6 +62,10 @@ class ColorFont(object):
             "colorbg": "#ffffff",
             "colorpalette": [{}],
             "prefer_placed_images": False,
+            "write_cbdt": self._write_cbdt_default,
+            "write_colr": self._write_colr_default,
+            "write_sbix": self._write_sbix_default,
+            "write_svg": self._write_svg_default,
         }
 
     def __getitem__(self, key):
@@ -124,11 +135,17 @@ class ColorFont(object):
         result += "</ColorFont>\n"
         return result
     
+    def reset_auto_layer_regex(self):
+        self.auto_layer_regex = self._auto_layer_regex_default
+    
     def reset_bitmap_sizes(self):
         self.bitmap_sizes = self._bitmap_sizes_default
     
-    def reset_auto_layer_regex(self):
-        self.auto_layer_regex = self._auto_layer_regex_default
+    def reset_generate_formats(self):
+        self.write_colr = self._write_colr_default
+        self.write_sbix = self._write_sbix_default
+        self.write_cbdt = self._write_cbdt_default
+        self.write_svg = self._write_svg_default
     
     def _get_fcolor(self, palette_index, color_index):
         # get a color by index, in "flat" format
@@ -178,22 +195,22 @@ class ColorFont(object):
         for g in self:
             self[g].rasterize(palette_index, sizes)
 
-    def export_to_otf(self, otfpath, write_colr=True, write_sbix=True, write_svg=True, palette_index=0, parent_window=None):
-        if write_sbix:
+    def export_to_otf(self, otfpath, palette_index=0, parent_window=None):
+        if self.write_sbix:
             # export sbix first because it adds glyphs
             # (alternates for windows so it doesn't display the special outlines)
             print "Exporting sbix format ..."
-            if write_colr:
+            if self.write_colr:
                 replace_outlines = False
             else:
                 replace_outlines = True
             self._export_sbix(otfpath, palette_index, "png", replace_outlines, parent_window)
             print "Done."
-        if write_colr:
+        if self.write_colr:
             print "Exporting COLR/CPAL format ..."
             self._export_colr(otfpath)
             print "Done."
-        if write_svg:
+        if self.write_svg:
             print "Exporting SVG format with palette %i ..." % palette_index
             self._export_svg(otfpath, palette_index, parent_window)
             print "Done."

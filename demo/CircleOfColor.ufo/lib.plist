@@ -29,6 +29,14 @@
 		</dict>
 	</array>
 	<key>com.fontfont.colorfont.prefer_placed_images</key>
+	<integer>0</integer>
+	<key>com.fontfont.colorfont.write_cbdt</key>
+	<integer>0</integer>
+	<key>com.fontfont.colorfont.write_colr</key>
+	<integer>1</integer>
+	<key>com.fontfont.colorfont.write_sbix</key>
+	<integer>0</integer>
+	<key>com.fontfont.colorfont.write_svg</key>
 	<integer>1</integer>
 	<key>com.typemytype.robofont.background.layerStrokeColor</key>
 	<array>
