@@ -182,6 +182,10 @@ class ColorFontEditor(BaseWindowController):
             imagePath="iconColorFontPlus.pdf",
             callback=self._callback_layer_add,
         )
+        self.w.add_svg_button = vanilla.Button((col2+43, y-10, 60, 24), "Add SVG",
+            callback=self._callback_layer_add_svg,
+            sizeStyle="small"
+        )
         y += 28
         self.w.selectButton = vanilla.Button((10, y, col2-10, 20), "Select glyphs with layers",
             callback = self._callback_select_glyphs_in_font_window,
@@ -553,7 +557,7 @@ class ColorFontEditor(BaseWindowController):
             sel = self.w.glyph_list.getSelection()
             self._callback_update_ui_glyph_list()
             self.w.glyph_list.setSelection(sel)
-                
+    
     def _callback_layer_edit(self, sender=None):
         # editing a layer (= change color index or glyph name or z-index)
         ##print "DEBUG: _callback_layer_edit"
@@ -577,6 +581,16 @@ class ColorFontEditor(BaseWindowController):
             else:
                 self.w.colorpalette.setSelection([self._selected_color_index])
         self.w.preview.update()
+    
+    def _callback_layer_add_svg(self, sender):
+        # Add an SVG from external file
+        _file = -1
+        _file = GetFile("Select an SVG file to import.")
+        if _file > -1:
+            self.cfont.add_svg(self.glyph, _file)
+            sel = self.w.glyph_list.getSelection()
+            self._callback_update_ui_glyph_list()
+            self.w.glyph_list.setSelection(sel)
     
     def getNSColor(self, hexrgba):
         # return NSColor for r, g, b, a tuple

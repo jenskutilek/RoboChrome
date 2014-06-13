@@ -467,7 +467,12 @@ class ColorFont(object):
             self.rfont.update()
 
     def add_glyph(self, name):
-        self._glyphs[name] = ColorGlyph(self, name)
+        self[name] = ColorGlyph(self, name)
+    
+    def add_svg(self, name, filename):
+        if not name in self:
+            self.add_glyph(name)
+        self[name].add_svg(filename)
 
     def auto_layers(self):
         # Automatically build a color font based on glyph name suffixes
@@ -520,6 +525,7 @@ class ColorGlyph(object):
         self.layers = []
         self.colors = []
         self.bitmaps = {}
+        self.svg = None
         if basename != "":
             self.read_from_rfont()
 
@@ -534,10 +540,17 @@ class ColorGlyph(object):
     def add_layer(self, layername, colorindex):
         self.layers.append(layername)
         self.colors.append(colorindex)
+    
+    def add_svg(self, filename):
+        f = open(filename, "rb")
+        self.svg = f.read()
+        f.close()
 
     def read_from_rfont(self):
+        from base64 import b64encode
         self.layers = []
         self.colors = []
+        self.svg = None
         if "%s.layers" % self.font.libkey in self.font.rfont[self.basename].lib.keys():
             entry = self.font.rfont[self.basename].lib["%s.layers" % self.font.libkey]
             if len(entry) == 2:
@@ -554,8 +567,13 @@ class ColorGlyph(object):
             else:
                 print "\nERROR: %s: Failed reading layer and color information from glyph lib. Glyph will have no layers." % self.basename
                 print "       Expected a list with 2 elements, but got %i elements." % len(entry)
+        
+        # read SVG from base 64 encoded string
+        if "%s.svg" % self.font.libkey in self.font.rfont[self.basename].lib.keys():
+            self.svg = b64decode(self.font.rfont[self.basename].lib["%s.svg" % self.font.libkey])
 
     def save_to_rfont(self):
+        from base64 import b64encode
         # outlines may have changed, clear the rasterized image
         self.bitmaps = {}
         if self.font is not None:
@@ -572,6 +590,20 @@ class ColorGlyph(object):
                     if self.layers != [] or self.colors != []:
                         if self.font.save_settings:
                             rfont[self.basename].lib["%s.layers" % self.font.libkey] = self.layers, self.colors
+                            rfont[self.basename].update()
+                
+                # save SVG as base 64 encoded string
+                if "%s.svg" % self.font.libkey in rfont[self.basename].lib.keys():
+                    if self.svg == None:
+                        del rfont[self.basename].lib["%s.svg" % self.font.libkey]
+                    else:
+                        if rfont[self.basename].lib["%s.svg" % self.font.libkey] != b64encode(self.svg):
+                            rfont[self.basename].lib["%s.svg" % self.font.libkey] = b64encode(self.svg)
+                    rfont[self.basename].update()
+                else:
+                    if self.svg is not None:
+                        if self.font.save_settings:
+                            rfont[self.basename].lib["%s.svg" % self.font.libkey] = b64encode(self.svg)
                             rfont[self.basename].update()
             else:
                 print "ERROR: Glyph %s does not exist in font %s (ColorGlyph.save_to_rfont)" % (self.basename, rfont)
