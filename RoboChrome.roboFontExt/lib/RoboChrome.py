@@ -40,6 +40,10 @@ class ColorFontEditor(BaseWindowController):
         
         self.color = "#000000"
         self.colorbg = "#ffffff"
+        self._selected_color_index = None
+        
+        # live update the canvas when glyphs are edited
+        self._debug_enable_live_editing = True
         
         self._auto_layer_regex_ok = True
         
@@ -568,13 +572,15 @@ class ColorFontEditor(BaseWindowController):
         layers = sender.get()
         if sel == []:
             self.w.colorpalette.setSelection([])
+            self._selected_color_index = None
         else:
             i = layers[sel[0]]["Color"]
-            colorIndex = self._get_list_index_for_layer_color_index(int(i))
-            if colorIndex is None:
+            self._selected_color_index = self._get_list_index_for_layer_color_index(int(i))
+            if self._selected_color_index is None:
                 self.w.colorpalette.setSelection([])
             else:
-                self.w.colorpalette.setSelection([colorIndex])
+                self.w.colorpalette.setSelection([self._selected_color_index])
+        self.w.preview.update()
     
     def getNSColor(self, hexrgba):
         # return NSColor for r, g, b, a tuple
@@ -591,14 +597,14 @@ class ColorFontEditor(BaseWindowController):
         else:
             return "#%02x%02x%02x%02x" % (r, g, b, a)
     
-    def getTupleColor(self, hexrgba):
+    def getTupleColor(self, hexrgba, opacity_factor=1):
         r = float(int(hexrgba[1:3], 16)) / 255
         g = float(int(hexrgba[3:5], 16)) / 255
         b = float(int(hexrgba[5:7], 16)) / 255
         if len(hexrgba) == 9:
-            a = float(int(hexrgba[7:9], 16)) / 255
+            a = float(int(hexrgba[7:9], 16)) / 255 * opacity_factor
         else:
-            a = 1
+            a = opacity_factor
         return (r, g, b, a)
     
     def _callback_set_show_only_glyphs_with_layers(self, sender):
@@ -853,14 +859,17 @@ class ColorFontEditor(BaseWindowController):
             g = RGlyph()
             for i in range(len(self.layer_glyphs)):
                 layerGlyph = self.layer_glyphs[i]["Layer Glyph"]
+                if self._selected_color_index is None:
+                    op_factor = 1.0
+                else:
+                    if self._selected_color_index == self.layer_glyphs[i]["Color"]:
+                        op_factor = 1.0
+                    else:
+                        op_factor = 0.2
                 if layerGlyph in self.font:
                     if i < len(self.layer_colors):
                         _color = self.layer_colors[i]
-                        self.setFill(self.getTupleColor(_color))
-                        #mPen = MojoDrawingToolsPen(g, self.font)
-                        #mPen.addComponent(layerGlyph, Offset(0, 0))
-                        #g.draw(mPen)
-                        #mPen.draw()
+                        self.setFill(self.getTupleColor(_color, op_factor))
                         drawGlyph(self.font[layerGlyph])
             restore()
 
@@ -917,6 +926,8 @@ class ColorFontEditor(BaseWindowController):
                         self.setFill(self.getTupleColor(_color))
                         drawGlyph(self.font[layerGlyph])
             restore()
+        if self._debug_enable_live_editing:
+            self.w.preview.update()
 
     def _callback_auto_layers(self, sender=None):
         print "Auto layers: %s" % self.cfont.auto_layer_regex
