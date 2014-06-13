@@ -46,8 +46,6 @@ class ColorFontEditor(BaseWindowController):
         self.oldDisplaySettings = getGlyphViewDisplaySettings()
         setGlyphViewDisplaySettings({"On Curve Points": False, "Off Curve Points": False})
         
-        self.save_settings = True
-        
         if self.font is not None:
             self.metrics = (
                 self.font.info.descender,
@@ -538,7 +536,7 @@ class ColorFontEditor(BaseWindowController):
     
     def _callback_layer_add(self, sender):
         if self.glyph is not None:
-            self.save_settings = True
+            self.cfont.save_settings = True
             if CurrentGlyph() is not None:
                 newlayer = CurrentGlyph().name
             else:
