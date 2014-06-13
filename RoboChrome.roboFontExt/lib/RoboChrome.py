@@ -840,6 +840,7 @@ class ColorFontEditor(BaseWindowController):
         return _dict
     
     def draw(self):
+        # draw the color glyph in the canvas
         if self.font is not None:
             save()
             self.setFill(self.getTupleColor(self.colorbg))
@@ -899,6 +900,7 @@ class ColorFontEditor(BaseWindowController):
         self.font.selection = self.cfont.keys()
 
     def _observer_draw_glyph_window(self, info):
+        # draw the color glyph in the glyph window
         ##print "DEBUG: _observer_draw_glyph_window"
         if self.glyphPreview in self.cfont.keys():
             ##print "DEBUG: draw glyph"
