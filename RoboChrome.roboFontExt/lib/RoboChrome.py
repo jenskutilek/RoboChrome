@@ -370,11 +370,7 @@ class ColorFontEditor(BaseWindowController):
         _file = -1
         _file = PutFile("Save current glyph as PNG", "%s.png" % self.glyph)
         if _file > -1:
-            png_str = self.cfont[self.glyph].get_png(self.palette_index, 1000)
-            png = open(_file, "wb")
-            png.write(png_str)
-            png.close()
-        
+            self.cfont.export_png(self.glyph, _file, self.palette_index, self.font.info.unitsPerEm)
     
     def _ui_update_layer_list(self):
         # set layer UI for current glyph
