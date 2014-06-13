@@ -37,9 +37,10 @@ class ColorFont(object):
         self.auto_layer_include_baseglyph = False
         self.auto_layer_regex = self._auto_layer_regex_default
         self.bitmap_sizes = self._bitmap_sizes_default
-        self.colorpalette = [{}]
         self.color = "#000000FF"
         self.colorbg = "#FFFFFFFF"
+        self.colorpalette = [{}]
+        self.prefer_placed_images = False
         
         # FIXME hack to avoid saving after "Reset" has been pressed
         self.save_settings = True
@@ -53,6 +54,7 @@ class ColorFont(object):
             "color": "#000000",
             "colorbg": "#ffffff",
             "colorpalette": [{}],
+            "prefer_placed_images": False,
         }
 
     def __getitem__(self, key):

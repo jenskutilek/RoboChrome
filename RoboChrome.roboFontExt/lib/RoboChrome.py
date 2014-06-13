@@ -52,8 +52,6 @@ class ColorFontEditor(BaseWindowController):
         # CBDT is not implemented yet
         self.write_cbdt = False
         
-        self.prefer_placed_images = False
-        
         #self._auto_layer_regex_default = r"\.alt[0-9]{3}$"
         #self._auto_layer_regex = self._auto_layer_regex_default
         self._auto_layer_regex_ok = True
@@ -273,12 +271,12 @@ class ColorFontEditor(BaseWindowController):
         y += 26
         self.d._add_base_layer = vanilla.CheckBox((235, y, -10, 20), "Auto layers include base glyph",
             callback=self._callback_auto_layer_include_baseglyph,
-            value=True,
+            value=False,
             sizeStyle="small",
         )
         self.d.preferPlacedImages = vanilla.CheckBox((10, y+16, 280, -10), "Prefer placed images over outlines",
-            callback=None,
-            value=self.prefer_placed_images,
+            callback=self._callback_prefer_placed_images,
+            value=False,
             sizeStyle="small",
         )
         self.d.infoButton = vanilla.Button((-150, -30, -80, -10), "Debug",
@@ -292,11 +290,14 @@ class ColorFontEditor(BaseWindowController):
         
         self.setUpBaseWindowBehavior()
         
+        # load color data from rfont
         self.cfont.read_from_rfont()
         
+        # update ui
         self.d.generate_sbix_sizes.set(self._ui_get_sbix_sizes())
         self.d.auto_layer_regex_box.set(self.cfont.auto_layer_regex)
         self.d._add_base_layer.set(self.cfont.auto_layer_include_baseglyph)
+        self.d.preferPlacedImages.set(self.cfont.prefer_placed_images)
         
         self._ui_update_palette_chooser()
         self._ui_update_palette(self.palette_index)
@@ -623,7 +624,9 @@ class ColorFontEditor(BaseWindowController):
         self.d.toggle()
     
     def _callback_set_write_sbix(self, sender):
-        self.d.generate_sbix_sizes.enable(sender.get())
+        _active = sender.get()
+        self.d.generate_sbix_sizes.enable(_active)
+        self.d.preferPlacedImages.enable(_active)
     
     def _callback_set_sbix_sizes(self, sender):
         sizes_str = sender.get().split(",")
@@ -964,6 +967,9 @@ class ColorFontEditor(BaseWindowController):
         print "_callback_test_regex matched %i glyphs." % len(_glyph_list)
         self.font.selection = _glyph_list
     
+    def _callback_prefer_placed_images(self, sender=None):
+        self.cfont.prefer_placed_images = sender.get()
+        
     def _callback_auto_layer_include_baseglyph(self, sender=None):
         self.cfont.auto_layer_include_baseglyph = sender.get()
         #self.cfont.save_to_rfont()
