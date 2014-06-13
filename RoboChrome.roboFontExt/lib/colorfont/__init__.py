@@ -593,7 +593,7 @@ class ColorGlyph(object):
                 ).png(optimized=True)
 
     def _get_drawing(self, palette_index=0):
-        box = self.get_box() # FIXME rasterizing fails if the box is too small, i.e. when the layers are bigger than the base glyph.
+        box = self.get_box()
         width = box[2] - box[0]
         height = box[3] - box[1]
         d = document(width+2, height+2, "pt")
@@ -654,8 +654,12 @@ class ColorGlyph(object):
         return self.bitmaps[size]
 
     def get_box(self):
-        # FIXME: bbox of base glyph is not always the biggest one
+        # Get the bounding box of the composite glyph.
+        # Check all layers because they can be bigger than the base glyph.
         box = self.font.rfont[self.basename].box
+        for layername in self.layers:
+            lbox = self.font.rfont[layername].box
+            box = (min(box[0], lbox[0]), min(box[1], lbox[1]), max(box[2], lbox[2]), max(box[3], lbox[3]))
         return box
 
 
