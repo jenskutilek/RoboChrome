@@ -182,10 +182,10 @@ class ColorFontEditor(BaseWindowController):
             imagePath="iconColorFontPlus.pdf",
             callback=self._callback_layer_add,
         )
-        self.w.add_svg_button = vanilla.Button((col2+43, y-10, 60, 24), "Add SVG",
-            callback=self._callback_layer_add_svg,
-            sizeStyle="small"
-        )
+        #self.w.add_svg_button = vanilla.Button((col2+43, y-10, 60, 24), "Add SVG",
+        #    callback=self._callback_layer_add_svg,
+        #    sizeStyle="small"
+        #)
         y += 28
         self.w.selectButton = vanilla.Button((10, y, col2-10, 20), "Select glyphs with layers",
             callback = self._callback_select_glyphs_in_font_window,
