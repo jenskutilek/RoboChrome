@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 13.0.2, SVG Export Plug-In . SVG Version: 6.00 Build 14948)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="1024px" height="768px" viewBox="-212 134 1024 768" enable-background="new -212 134 1024 768" xml:space="preserve">
+<g>
+	<radialGradient id="SVGID_1_" cx="398.5" cy="608.5" r="311.834" gradientUnits="userSpaceOnUse">
+		<stop  offset="0" style="stop-color:#A01D00"/>
+		<stop  offset="1" style="stop-color:#000000"/>
+	</radialGradient>
+	<path fill="url(#SVGID_1_)" d="M61,508.5c0-131,107-238,238-238c132,0,239,107,239,238c0,132-107,239-239,239
+		C168,747.5,61,640.5,61,508.5z"/>
+</g>
+<g>
+	<path fill="#FFF1F7" d="M135,400.5c0-37,30-68,68-68c37,0,68,31,68,68c0,38-31,68-68,68C165,468.5,135,438.5,135,400.5z"/>
+</g>
+<g>
+	<path d="M41,508.5c0-142,116-258,258-258c143,0,259,116,259,258s-116,259-259,259C157,767.5,41,650.5,41,508.5z M528,508.5
+		c0-126-103-228-229-228s-228,102-228,228s102,229,228,229S528,634.5,528,508.5z"/>
+</g>
+</svg>
