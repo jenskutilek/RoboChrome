@@ -22,13 +22,15 @@ except:
 # for svg generation
 from svgPen import SVGpen
 
+# for svg storage in glyph lib
+from robofab.plistlib import Data
+
 from defconAppKit.windows.progressWindow import ProgressWindow
 
 
 class ColorFont(object):
     def __init__(self, rfont=None):
         self.libkey = "com.fontfont.colorfont"
-        self.svg_store_compressed = False
         
         # default values
         self._auto_layer_regex_default = "\.alt[0-9]{3}$"
@@ -522,10 +524,6 @@ class ColorFont(object):
 class ColorGlyph(object):
     def __init__(self, parent, basename=""):
         self.font = parent
-        # for svg layers import and storage
-        if self.font.svg_store_compressed:
-            from base64 import b64encode, b64decode
-            from bz2 import compress, decompress
         self.basename = basename
         self.layers = []
         self.colors = []
@@ -574,19 +572,10 @@ class ColorGlyph(object):
                 print "\nERROR: %s: Failed reading layer and color information from glyph lib. Glyph will have no layers." % self.basename
                 print "       Expected a list with 2 elements, but got %i elements." % len(entry)
         
-        # read SVG from base 64 encoded and compressed string
-        
-        _svg_string = self.font.rfont[self.basename].lib.get("%s.svg" % self.font.libkey, None)
-        
-        if _svg_string is not None:
-            if _svg_string[0:9] == "<![CDATA[" and _svg_string[-3:] == "]]>":
-                # text format
-                self.svg = _svg_string
-            else:
-                try:
-                    self.svg = b64decode(decompress(_svg_string))
-                except:
-                    print "ERROR: Could not read SVG data from glyph lib, neither in CDATA nor bz2-base64 format."
+        # read SVG from base64-encoded data
+        _svg_data = self.font.rfont[self.basename].lib.get("%s.svg" % self.font.libkey, None)
+        if _svg_data is not None:
+            self.svg = _svg_data.data
     
     def save_to_rfont(self):
         # outlines may have changed, clear the rasterized image
@@ -607,27 +596,33 @@ class ColorGlyph(object):
                             rfont[self.basename].lib["%s.layers" % self.font.libkey] = self.layers, self.colors
                             rfont[self.basename].update()
                 
-                # save SVG as base 64 encoded string
-                if self.font.svg_store_compressed:
-                    _svg_string = b64encode(compress(self.svg))
+                # save SVG as base64-encoded data
+                if self.svg is not None:
+                    _svg_data = Data(self.svg)
                 else:
-                    _svg_string = "<![CDATA[%s]]>" % self.svg
-                
-                if "%s.svg" % self.font.libkey in rfont[self.basename].lib.keys():
-                    if self.svg == None:
-                        del rfont[self.basename].lib["%s.svg" % self.font.libkey]
-                    else:
-                        if rfont[self.basename].lib["%s.svg" % self.font.libkey] != _svg_string:
-                            rfont[self.basename].lib["%s.svg" % self.font.libkey] = _svg_string
-                    rfont[self.basename].update()
-                else:
-                    if self.svg is not None:
-                        if self.font.save_settings:
-                            rfont[self.basename].lib["%s.svg" % self.font.libkey] = _svg_string
-                            rfont[self.basename].update()
+                    _svg_data = None
+                self._save_key_to_lib("svg", _svg_data, None)
             else:
                 print "ERROR: Glyph %s does not exist in font %s (ColorGlyph.save_to_rfont)" % (self.basename, rfont)
-
+    
+    def _save_key_to_lib(self, name, value, empty_value):
+        # save name-value-pair to glyph lib
+        _glyph = self.font.rfont[self.basename]
+        _glyph_lib = _glyph.lib
+        _lib_key = "%s.%s" % (self.font.libkey, name)
+        if _lib_key in _glyph_lib:
+            if value == empty_value:
+                del _glyph_lib[_lib_key]
+                _glyph.update()
+            else:
+                if _glyph_lib[_lib_key] != value:
+                    # update only if the name exists and the value doesn't match
+                    _glyph_lib[_lib_key] = value
+                    _glyph.update()
+        else:
+            _glyph_lib[_lib_key] = value
+            _glyph.update()
+    
     # sbix export stuff
 
     def rasterize(self, palette_index, sizes=[]):
