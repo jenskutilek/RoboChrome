@@ -50,7 +50,7 @@ class ColorFont(object):
         self._bitmap_sizes = self._bitmap_sizes_default
         self.color = "#000000FF"
         self.colorbg = "#FFFFFFFF"
-        self.colorpalette = [{}]
+        self.palettes = [{}]
         self.reset_generate_formats()
         self._prefer_placed_images = False
         
@@ -205,7 +205,7 @@ class ColorFont(object):
                     color = palette[i]
                     _palette[str(i)] = "#%02x%02x%02x%02x" % (color.red,
                         color.green, color.blue, color.alpha)
-                self.colorpalette.append(_palette)
+                self.palettes.append(_palette)
             colr = table_C_O_L_R_("COLR")
             colr.decompile(font["COLR"].data, font)
             print "Reading layer data ..."
@@ -227,7 +227,7 @@ class ColorFont(object):
         result += "    Auto layer includes base glyph: %s\n" % self.auto_layer_include_baseglyph
         result += "    Bitmap sizes: %s\n" % self.bitmap_sizes
         result += "    Palettes:\n"
-        for palette in self.colorpalette:
+        for palette in self.palettes:
             result += "        %s\n" % palette
         result += "    Glyphs: %s\n" % self.keys()
         for glyph in self.itervalues():
@@ -255,7 +255,7 @@ class ColorFont(object):
     def _get_fcolor(self, palette_index, color_index):
         # get a color by index, in "flat" format
         if color_index < 0xffff:
-            _hexrgba = self.colorpalette[palette_index][str(color_index)]
+            _hexrgba = self.palettes[palette_index][str(color_index)]
         else:
             _hexrgba = self.color
         r = int(_hexrgba[1:3], 16)
@@ -340,11 +340,11 @@ class ColorFont(object):
         print "    Writing palette data ..."
         cpal = table_C_P_A_L_("CPAL")
         cpal.version = 0
-        cpal.numPaletteEntries = len(self.colorpalette[0])
+        cpal.numPaletteEntries = len(self.palettes[0])
         cpal.palettes = []
         
-        for j in range(len(self.colorpalette)):
-            palette = self.colorpalette[j]
+        for j in range(len(self.palettes)):
+            palette = self.palettes[j]
             _palette = []
             # keep a map of old to new indices (palette indices are
             # not saved in font)
@@ -401,7 +401,7 @@ class ColorFont(object):
         if parent_window is not None:
             progress = ProgressWindow("Rendering SVG ...", tickCount=len(self.keys()), parentWindow=parent_window)
         
-        _palette = self.colorpalette[palette]
+        _palette = self.palettes[palette]
         _svg_palette = []
         _docList = []
         
@@ -634,8 +634,8 @@ class ColorFont(object):
         and assign it to all color glyphs."""
         # FIXME: Doesn't work for non-continuous color indices
         from random import randint
-        self.colorpalette = [{}]
-        palette = self.colorpalette[0]
+        self.palettes = [{}]
+        palette = self.palettes[0]
         max_layers = 0
         for g in self.itervalues():
             if len(g.layers) > max_layers:

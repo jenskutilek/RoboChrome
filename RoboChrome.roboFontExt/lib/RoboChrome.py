@@ -363,7 +363,7 @@ class ColorFontEditor(BaseWindowController):
     def _export_to_font(self, file_path=None):
         print "_export_to_font", file_path
         if file_path is not None:
-            if len(self.cfont.colorpalette[0]) > 0:
+            if len(self.cfont.palettes[0]) > 0:
                 print "Exporting to", file_path
                 self.cfont.export_to_otf(file_path,
                     palette_index=self.palette_index,
@@ -463,7 +463,7 @@ class ColorFontEditor(BaseWindowController):
 
     def addColorToPalette(self, sender=None):
         # find a new palette index
-        paletteIndices = sorted(self.cfont.colorpalette[0].keys(), key=lambda k: int(k))
+        paletteIndices = sorted(self.cfont.palettes[0].keys(), key=lambda k: int(k))
         if len(paletteIndices) > 0:
             newIndex = int(paletteIndices[-1])+1
         else:
@@ -473,7 +473,7 @@ class ColorFontEditor(BaseWindowController):
             # add new color to current palette
             self.w.colorpalette.append({"Index": str(newIndex), "Color": "#ffde00"})
             # add new color to all other palettes
-            for p in self.cfont.colorpalette:
+            for p in self.cfont.palettes:
                 p[newIndex] = "#ffde00"
             self.cfont.save_settings = True
             self.currentPaletteChanged = True
@@ -666,7 +666,7 @@ class ColorFontEditor(BaseWindowController):
     
     def _ui_update_palette_chooser(self):
         pl = []
-        for i in range(len(self.cfont.colorpalette)):
+        for i in range(len(self.cfont.palettes)):
             pl.append("Palette %s" % i)
         self.w.paletteswitch.setItems(pl)
     
@@ -686,12 +686,12 @@ class ColorFontEditor(BaseWindowController):
     
     def _paletteWriteToColorFont(self):
         #print "DEBUG _paletteWriteToColorFont"
-        # make a dict for active palette and write it to self.cfont.colorpalette
+        # make a dict for active palette and write it to self.cfont.palettes
         _dict = {}
         for _color in sorted(self.w.colorpalette.get(), key=lambda _key: _key["Index"]):
             if int(_color["Index"]) != 0xffff:
                 _dict[str(_color["Index"])] = _color["Color"]
-        self.cfont.colorpalette[self.palette_index] = _dict
+        self.cfont.palettes[self.palette_index] = _dict
         self.cfont.save_to_rfont()
     
     def _paletteSwitchCallback(self, sender):
@@ -706,23 +706,23 @@ class ColorFontEditor(BaseWindowController):
         if self.currentPaletteChanged:
             self._paletteWriteToColorFont()
         sp = self.w.paletteswitch.get()
-        if sp < len(self.cfont.colorpalette) and sp >= 0:
+        if sp < len(self.cfont.palettes) and sp >= 0:
             print "Duplicate palette %i ..." % sp
-            colorpalette = self.cfont.colorpalette[sp].copy()
+            colorpalette = self.cfont.palettes[sp].copy()
         else:
             colorpalette = {}
-        self.cfont.colorpalette.append(colorpalette)
+        self.cfont.palettes.append(colorpalette)
         self._ui_update_palette_chooser()
         # new palette should be active
-        self._ui_update_palette(len(self.cfont.colorpalette)-1)
+        self._ui_update_palette(len(self.cfont.palettes)-1)
     
     def _ui_update_palette(self, palette_index):
         # load a different palette from the color font and show it in UI
         # save the currently selected color index
         selectedColorIndex = self.w.colorpalette.getSelection()
         self.palette_index = palette_index
-        if self.palette_index < len(self.cfont.colorpalette):
-            colorpalette = self.cfont.colorpalette[self.palette_index]
+        if self.palette_index < len(self.cfont.palettes):
+            colorpalette = self.cfont.palettes[self.palette_index]
         else:
             colorpalette = {}
         newColorpalette = []
