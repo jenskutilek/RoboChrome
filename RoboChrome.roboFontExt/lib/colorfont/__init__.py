@@ -44,20 +44,20 @@ class ColorFont(object):
         self._write_sbix_default = False
         self._write_svg_default = True
         
-        self.rfont = rfont
+        self._rfont = rfont
         self._glyphs = {}
         
-        self.auto_layer_include_baseglyph = False
-        self.auto_layer_regex = self._auto_layer_regex_default
-        self.bitmap_sizes = self._bitmap_sizes_default
+        self._auto_layer_include_baseglyph = False
+        self._auto_layer_regex = self._auto_layer_regex_default
+        self._bitmap_sizes = self._bitmap_sizes_default
         self.color = "#000000FF"
         self.colorbg = "#FFFFFFFF"
         self.colorpalette = [{}]
         self.reset_generate_formats()
-        self.prefer_placed_images = False
+        self._prefer_placed_images = False
         
         # FIXME hack to avoid saving after "Reset" has been pressed
-        self.save_settings = True
+        self._save_settings = True
         
         # These are loaded and saved from/to UFO lib
         self.settings = {
@@ -74,7 +74,75 @@ class ColorFont(object):
             "write_sbix": self._write_sbix_default,
             "write_svg": self._write_svg_default,
         }
-
+    
+    
+    # properties
+    
+    def _get_rfont(self):
+        return self._rfont
+    
+    def _set_rfont(self, rfont):
+        self._rfont = rfont
+    
+    rfont = property(_get_rfont, _set_rfont)
+    
+    
+    def _get_auto_layer_include_baseglyph(self):
+        return self._auto_layer_include_baseglyph
+    
+    def _set_auto_layer_include_baseglyph(self, setting):
+        self._auto_layer_include_baseglyph = setting
+    
+    auto_layer_include_baseglyph = property(_get_auto_layer_include_baseglyph, _set_auto_layer_include_baseglyph)
+    
+    
+    def _get_auto_layer_regex(self):
+        return self._auto_layer_regex
+    
+    def _set_auto_layer_regex(self, regex):
+        self._auto_layer_regex = regex
+    
+    auto_layer_regex = property(_get_auto_layer_regex, _set_auto_layer_regex)
+    
+    
+    def _get_bitmap_sizes(self):
+        return self._bitmap_sizes
+    
+    def _set_bitmap_sizes(self, sizes):
+        self._bitmap_sizes = sizes
+    
+    bitmap_sizes = property(_get_bitmap_sizes, _set_bitmap_sizes)
+    
+    
+    def _get_palettes(self):
+        return self.colorpalette
+    
+    def _set_palettes(self, palettes):
+        self.colorpalette = palettes
+    
+    palettes = property(_get_palettes, _set_palettes)
+    
+    
+    def _get_prefer_placed_images(self):
+        return self._prefer_placed_images
+    
+    def _set_prefer_placed_images(self, setting):
+        self._prefer_placed_images = setting
+    
+    prefer_placed_images = property(_get_prefer_placed_images, _set_prefer_placed_images)
+    
+    
+    def _get_save_settings(self):
+        return self._save_settings
+    
+    def _set_save_settings(self, setting):
+        self._save_settings = setting
+    
+    save_settings = property(_get_save_settings, _set_save_settings)
+    
+    
+    # ColorFont should behave like a dict w/ regard to its glyphs
+    
     def __getitem__(self, glyph_name):
         """
         Return the ColorGlyph object with the name <glyph_name>.
@@ -120,7 +188,9 @@ class ColorFont(object):
         """
         for glyph_name in self._glyphs.keys():
             yield self[glyph_name]
-
+    
+    # normal methods
+    
     def import_from_otf(self, otfpath):
         """
         Import color data (CPAL/COLR) from a font file.
