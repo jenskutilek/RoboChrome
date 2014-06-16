@@ -79,6 +79,7 @@ class ColorFont(object):
     # properties
     
     def _get_rfont(self):
+        """RFont the ColorFont belongs to"""
         return self._rfont
     
     def _set_rfont(self, rfont):
@@ -88,6 +89,8 @@ class ColorFont(object):
     
     
     def _get_auto_layer_include_baseglyph(self):
+        """boolean to indicate whether the auto layer function should
+        include the base glyph as the last layer"""
         return self._auto_layer_include_baseglyph
     
     def _set_auto_layer_include_baseglyph(self, setting):
@@ -97,6 +100,8 @@ class ColorFont(object):
     
     
     def _get_auto_layer_regex(self):
+        """string of the regular expression used to identify
+        layer glyphs"""
         return self._auto_layer_regex
     
     def _set_auto_layer_regex(self, regex):
@@ -106,6 +111,7 @@ class ColorFont(object):
     
     
     def _get_bitmap_sizes(self):
+        """list of (int) bitmap sizes in pixels per em that should be generated"""
         return self._bitmap_sizes
     
     def _set_bitmap_sizes(self, sizes):
@@ -115,6 +121,7 @@ class ColorFont(object):
     
     
     def _get_palettes(self):
+        """list of color palette dicts"""
         return self.colorpalette
     
     def _set_palettes(self, palettes):
@@ -124,6 +131,9 @@ class ColorFont(object):
     
     
     def _get_prefer_placed_images(self):
+        """boolean to indicate whether placed images in UFO
+        should be preferred over generated bitmaps from vector
+        layers"""
         return self._prefer_placed_images
     
     def _set_prefer_placed_images(self, setting):
@@ -133,6 +143,9 @@ class ColorFont(object):
     
     
     def _get_save_settings(self):
+        """boolean to indicate whether settings should be saved
+        (set to False to avoid saving to RFont after color data
+        has been removed)"""
         return self._save_settings
     
     def _set_save_settings(self, setting):
