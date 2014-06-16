@@ -996,4 +996,5 @@ class ColorFontEditor(BaseWindowController):
         self.cfont.auto_layer_include_baseglyph = sender.get()
         #self.cfont.save_to_rfont()
 
-OpenWindow(ColorFontEditor)
+if __name__ == "__main__":
+    OpenWindow(ColorFontEditor)
