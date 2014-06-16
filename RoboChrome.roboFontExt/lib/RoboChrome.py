@@ -831,6 +831,7 @@ class ColorFontEditor(BaseWindowController):
         self.d.generateSVGFormat.set(self.cfont.write_svg)
         self.d.generateGoogleFormat.set(self.cfont.write_cbdt)
         self._check_bitmap_ui_active()
+        self._check_export_ui_active()
         
     def _callback_select_formats(self, sender=None):
         self.cfont.write_colr = self.d.generateMSFormat.get()
@@ -838,11 +839,16 @@ class ColorFontEditor(BaseWindowController):
         self.cfont.write_svg = self.d.generateSVGFormat.get()
         self.cfont.write_cbdt = self.d.generateGoogleFormat.get()
         self._check_bitmap_ui_active()
+        self._check_export_ui_active()
     
     def _check_bitmap_ui_active(self):
         _ui_active = self.cfont.write_sbix or self.cfont.write_cbdt
         self.d.generate_sbix_sizes.enable(_ui_active)
         self.d.preferPlacedImages.enable(_ui_active)
+    
+    def _check_export_ui_active(self):
+        _ui_active = self.cfont.write_sbix or self.cfont.write_cbdt or self.cfont.write_colr or self.cfont.write_svg
+        self.w.export_button.enable(_ui_active)
     
     def setFill(self, rgba):
         red, green, blue, alpha = rgba
