@@ -499,8 +499,9 @@ class ColorFont(object):
         """
         Save color data to RFont.
         """
-        for propkey in self.settings.iterkeys():
-            self._save_key_to_lib(propkey, getattr(self, propkey))
+        if self.rfont is not None:
+            for propkey in self.settings.iterkeys():
+                self._save_key_to_lib(propkey, getattr(self, propkey))
         
         # save each glyph color layer data
         #for cglyph in self.itervalues():
