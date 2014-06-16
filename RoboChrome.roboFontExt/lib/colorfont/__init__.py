@@ -30,10 +30,8 @@ from defconAppKit.windows.progressWindow import ProgressWindow
 
 class ColorFont(object):
     def __init__(self, rfont=None):
-        """
-        Initialize a ColorFont and read color data from a RFont.
-            rfont: The RFont object to load the color data from
-        """
+        """Initialize a ColorFont and read color data from a RFont.
+            rfont: The RFont object to load the color data from"""
         self.libkey = "com.fontfont.colorfont"
         
         # default values
@@ -157,58 +155,42 @@ class ColorFont(object):
     # ColorFont should behave like a dict w/ regard to its glyphs
     
     def __getitem__(self, glyph_name):
-        """
-        Return the ColorGlyph object with the name <glyph_name>.
-        """
+        """Return the ColorGlyph object with the name <glyph_name>."""
         return self._glyphs[glyph_name]
 
     def __setitem__(self, glyph_name, glyph_object):
-        """
-        Assign a glyph object to a glyph name of the ColorFont.
+        """Assign a glyph object to a glyph name of the ColorFont.
             glyph_name:   The glyph name
-            glyph_object: The ColorGlyph object
-        """
+            glyph_object: The ColorGlyph object"""
         self._glyphs[glyph_name] = glyph_object
 
     def __delitem__(self, glyph_name):
-        """
-        Delete the ColorGlyph object with the name <glyph_name>.
-        """
+        """Delete the ColorGlyph object with the name <glyph_name>."""
         del self._glyphs[glyph_name]
 
     def __contains__(self, glyph_name):
-        """
-        Return True if a ColorGlyph called <glyph_name> exists
-        in the ColorFont, otherwise return False.
-        """
+        """Return True if a ColorGlyph called <glyph_name> exists
+        in the ColorFont, otherwise return False."""
         return glyph_name in self._glyphs
 
     def __len__(self):
-        """
-        Return the number of glyphs in the ColorFont.
-        """
+        """Return the number of glyphs in the ColorFont."""
         return len(self._glyphs)
 
     def keys(self):
-        """
-        Return a list of the ColorFont's glyph names.
-        """
+        """Return a list of the ColorFont's glyph names."""
         return self._glyphs.keys()
 
     def itervalues(self):
-        """
-        Iterate through the ColorFont's glyph objects.
-        """
+        """Iterate through the ColorFont's glyph objects."""
         for glyph_name in self._glyphs.keys():
             yield self[glyph_name]
     
     # normal methods
     
     def import_from_otf(self, otfpath):
-        """
-        Import color data (CPAL/COLR) from a font file.
-            otfpath: Path of the font file
-        """
+        """Import color data (CPAL/COLR) from a font file.
+            otfpath: Path of the font file"""
         font = TTFont(otfpath)
         if not (font.has_key("COLR") and font.has_key("CPAL")):
             print "ERROR: No COLR and CPAL table present in %s" % otfpath
@@ -254,23 +236,17 @@ class ColorFont(object):
         return result
     
     def reset_auto_layer_regex(self):
-        """
-        Reset the regex for the Auto Layer function to its default value.
-        """
+        """Reset the regex for the Auto Layer function to its default value."""
         self.auto_layer_regex = self._auto_layer_regex_default
     
     def reset_bitmap_sizes(self):
-        """
-        Reset the list of bitmap sizes for the Generate function to its
-        default value.
-        """
+        """Reset the list of bitmap sizes for the Generate function to its
+        default value."""
         self.bitmap_sizes = self._bitmap_sizes_default
     
     def reset_generate_formats(self):
-        """
-        Reset the choices of table formats for the Generate function to
-        their default states.
-        """
+        """Reset the choices of table formats for the Generate function to
+        their default states."""
         self.write_colr = self._write_colr_default
         self.write_sbix = self._write_sbix_default
         self.write_cbdt = self._write_cbdt_default
@@ -292,9 +268,7 @@ class ColorFont(object):
         return rgba(r, g, b, a)
     
     def read_from_rfont(self):
-        """
-        Read color data from RFont.
-        """
+        """Read color data from RFont."""
         #print "DEBUG ColorFont.read_from_rfont"
         # Load color info from font lib
         
@@ -313,24 +287,20 @@ class ColorFont(object):
                     self.add_glyph(glyph.name)
 
     def export_png(self, glyph_name, png_path, palette_index, size):
-        """
-        Export a glyph as PNG image to a file.
+        """Export a glyph as PNG image to a file.
             glyph_name:    The glyph name
             png_path:      The path of the image file
             palette_index: Use colors from this palette
-            size:          Size in pixels per em
-        """
+            size:          Size in pixels per em"""
         image = self[glyph_name].get_png(palette_index, size)
         f = open(png_path, "wb")
         f.write(image)
         f.close()
 
     def rasterize(self, palette_index, sizes):
-        """
-        Rasterize all glyphs.
+        """Rasterize all glyphs.
             palette_index: Use colors from this palette
-            sizes:         A list of sizes in pixels per em
-        """
+            sizes:         A list of sizes in pixels per em"""
         if not have_flat:
             print "The 'flat' Python module is missing."
             print "Please see <https://github.com/fontfont/RoboChrome/blob/master/README.md>"
@@ -339,12 +309,10 @@ class ColorFont(object):
             self[g].rasterize(palette_index, sizes)
 
     def export_to_otf(self, otfpath, palette_index=0, parent_window=None):
-        """
-        Export all color data to an existing font file.
+        """Export all color data to an existing font file.
             otfpath:       The font file to export the color data to
             palette_index: Use colors from this palette
-            parent_window: The ColorFontEditor window, needed to display progress bar.
-        """
+            parent_window: The ColorFontEditor window, needed to display progress bar."""
         if self.write_sbix:
             # export sbix first because it adds glyphs
             # (alternates for windows so it doesn't display the special outlines)
@@ -579,9 +547,7 @@ class ColorFont(object):
         font.close()
 
     def save_to_rfont(self):
-        """
-        Save color data to RFont.
-        """
+        """Save color data to RFont."""
         if self.rfont is not None:
             for propkey in self.settings.iterkeys():
                 self._save_key_to_lib(propkey, getattr(self, propkey))
@@ -591,18 +557,14 @@ class ColorFont(object):
         #    cglyph.save_to_rfont()
 
     def save_all_glyphs_to_rfont(self):
-        """
-        Save color data for each ColorGlyph to RFont.
-        """
+        """Save color data for each ColorGlyph to RFont."""
         # save each glyph color layer data
         for cglyph in self.itervalues():
             cglyph.save_to_rfont()
 
     def save_glyph_to_rfont(self, glyph_name):
-        """
-        Save color data for one ColorGlyph to RFont.
-            glyph_name: The glyph name
-        """
+        """Save color data for one ColorGlyph to RFont.
+            glyph_name: The glyph name"""
         #print "DEBUG ColorFont.save_glyph_to_rfont(%s)" % name
         if glyph_name in self.keys():
             self[glyph_name].save_to_rfont()
@@ -627,27 +589,21 @@ class ColorFont(object):
             self.rfont.update()
 
     def add_glyph(self, glyph_name):
-        """
-        Add a glyph by name.
-            glyph_name: The glyph name
-        """
+        """Add a glyph by name.
+            glyph_name: The glyph name"""
         self[glyph_name] = ColorGlyph(self, glyph_name)
     
     def add_svg(self, glyph_name, file_name):
-        """
-        Add an SVG document from a file to a glyph.
+        """Add an SVG document from a file to a glyph.
             glyph_name: The glyph name
-            file_name:  The path to the SVG file
-        """
+            file_name:  The path to the SVG file"""
         if not glyph_name in self:
             self.add_glyph(glyph_name)
         self[glyph_name].add_svg(file_name)
 
     def auto_layers(self):
-        """
-        Assign layers for all base glyphs in RFont based on the
-        regular expression <ColorFont.auto_layer_regex>.
-        """
+        """Assign layers for all base glyphs in RFont based on the
+        regular expression <ColorFont.auto_layer_regex>."""
         from re import search, compile
         regex = compile(self.auto_layer_regex)
         _layer_base_glyphs = []
@@ -674,10 +630,8 @@ class ColorFont(object):
                 self[baseglyph].add_layer(baseglyph, 0xffff)
 
     def auto_palette(self):
-        """
-        Automatically build a color palette with max(layers) entries
-        and assign it to all color glyphs.
-        """
+        """Automatically build a color palette with max(layers) entries
+        and assign it to all color glyphs."""
         # FIXME: Doesn't work for non-continuous color indices
         from random import randint
         self.colorpalette = [{}]
@@ -694,13 +648,10 @@ class ColorFont(object):
 
 class ColorGlyph(object):
     def __init__(self, parent, basename=""):
-        """
-            parent: the ColorFont instance
-            basename: name of the base glyph
-        
-        Each ColorGlyph consists of a base glyph and some layer glyphs
+        """Each ColorGlyph consists of a base glyph and some layer glyphs
         which are assigned to colors via palette indices.
-        """
+            parent:   the ColorFont instance
+            basename: name of the base glyph"""
         self.font = parent
         self.basename = basename
         self.layers = []
@@ -720,28 +671,22 @@ class ColorGlyph(object):
         return result
 
     def add_layer(self, layer_name, color_index):
-        """
-        Add a layer glyph and assign a color to it.
+        """Add a layer glyph and assign a color to it.
             layer_name:  The name of the layer glyph to add
-            color_index: Index of the color to assign to the layer
-        """
+            color_index: Index of the color to assign to the layer"""
         self.layers.append(layer_name)
         self.colors.append(color_index)
     
     def add_svg(self, file_name):
-        """
-        Add an SVG document from a file.
-            file_name: The path of the SVG file
-        """
+        """Add an SVG document from a file.
+            file_name: The path of the SVG file"""
         f = open(file_name, "rb")
         self.svg = f.read()
         f.close()
         self.save_to_rfont()
     
     def read_from_rfont(self):
-        """
-        Load the ColorGlyph data from the ColorFont's RFont/RGlyph.
-        """
+        """Load the ColorGlyph data from the ColorFont's RFont/RGlyph."""
         self.layers = []
         self.colors = []
         self.svg = None
@@ -768,9 +713,7 @@ class ColorGlyph(object):
             self.svg = _svg_data.data
     
     def save_to_rfont(self):
-        """
-        Save the ColorGlyph data to the ColorFont's RFont/RGlyph.
-        """
+        """Save the ColorGlyph data to the ColorFont's RFont/RGlyph."""
         # outlines may have changed, clear the rasterized image
         self.bitmaps = {}
         if self.font is not None:
@@ -819,12 +762,10 @@ class ColorGlyph(object):
     # sbix export stuff
 
     def rasterize(self, palette_index, sizes=[]):
-        """
-        Rasterize the ColorGlyph with the colors of a palette
+        """Rasterize the ColorGlyph with the colors of a palette
         in a range of sizes.
             palette_index: Use colors from this palette
-            sizes:         A list of sizes in pixels per em
-        """
+            sizes:         A list of sizes in pixels per em"""
         if not 0 in self.bitmaps.keys():
             _page = self._get_drawing(palette_index)
             self.bitmaps[0] = _page.image(ppi=72, kind="rgba", samples=32).flip(False, True)
@@ -856,10 +797,8 @@ class ColorGlyph(object):
         return p
 
     def get_tt_glyph(self):
-        """
-        Return a special TT Glyph record for the sbix format. It contains
-        two dummy contours with one point (bottom left and top right) each.
-        """
+        """Return a special TT Glyph record for the sbix format. It contains
+        two dummy contours with one point (bottom left and top right) each."""
         # make dummy contours
         box = self.get_box()
         contours = [
@@ -899,19 +838,15 @@ class ColorGlyph(object):
         return glyph
 
     def get_png(self, palette_index, size):
-        """
-        Return the ColorGlyph as a PNG image.
+        """Return the ColorGlyph as a PNG image.
             palette_index: Use colors from this palette
-            size:          The size in pixels per em
-        """
+            size:          The size in pixels per em"""
         if size not in self.bitmaps.keys():
             self.rasterize(palette_index, [size])
         return self.bitmaps[size]
 
     def get_box(self):
-        """
-        Return the total bounding box of all layer glyphs.
-        """
+        """Return the total bounding box of all layer glyphs."""
         # Get the bounding box of the composite glyph.
         # Check all layers because they can be bigger than the base glyph.
         box = self.font.rfont[self.basename].box
