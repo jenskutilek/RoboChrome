@@ -9,7 +9,6 @@ from mojo.events import addObserver, removeObserver
 from mojo.drawingTools import *
 from mojo.canvas import Canvas
 from mojo.UI import UpdateCurrentGlyphView, CurrentGlyphWindow, setGlyphViewDisplaySettings, getGlyphViewDisplaySettings
-from robofab.interface.all.dialogs import GetFile
 import colorfont
 reload(colorfont)
 from colorfont import ColorFont
@@ -183,7 +182,7 @@ class ColorFontEditor(BaseWindowController):
             callback=self._callback_layer_add,
         )
         #self.w.add_svg_button = vanilla.Button((col2+43, y-10, 60, 24), "Add SVG",
-        #    callback=self._callback_layer_add_svg,
+        #    callback=self._choose_svg_to_import,
         #    sizeStyle="small"
         #)
         y += 28
@@ -194,7 +193,7 @@ class ColorFontEditor(BaseWindowController):
             callback = self._callback_auto_palette,
         )
         self.w.png_button = vanilla.Button((380, y, 110, 20), "Export PNG",
-            callback = self._save_png,
+            callback = self._choose_png_to_export,
         )
         y +=31
         self.w.toggleSettingsButton = vanilla.Button((10, y, 115, 20), "Settings...",
@@ -204,10 +203,10 @@ class ColorFontEditor(BaseWindowController):
             callback = self._callback_auto_layers,
         )
         self.w.import_button = vanilla.Button((col2+10, y, 110, 20), "Import font",
-            callback = self._import_from_font,
+            callback = self._choose_file_to_import,
         )
         self.w.export_button = vanilla.Button((380, y, 110, 20), "Export to font",
-            callback = self._export_to_font,
+            callback = self._choose_file_to_export,
         )
         
         
@@ -332,22 +331,24 @@ class ColorFontEditor(BaseWindowController):
     def _show_font_info(self, sender=None):
         print self.cfont
 
-    def _import_from_font(self, sender=None):
-        _font = -1
-        _font = GetFile("Select a font file to import layer and color information from.")
-        if _font > -1:
-            _cf = ColorFont(CurrentFont())
-            _cf.import_from_otf(_font)
-            _cf.save_to_rfont()
-            _cf.save_all_glyphs_to_rfont()
-            self.cfont = _cf
+    def _choose_file_to_import(self, sender=None):
+        self.showGetFile(["public.opentype-font", "public.truetype-ttf-font"], self._import_from_font)
+        
+    def _import_from_font(self, file_paths=None):
+        if file_paths is not None:
+            self.cfont = ColorFont(CurrentFont())
+            self.cfont.import_from_otf(file_paths[0])
+            self.cfont.save_to_rfont()
+            self.cfont.save_all_glyphs_to_rfont()
+        
             self._ui_update_palette_chooser()
             self._ui_update_palette(self.palette_index)
             self._callback_update_ui_glyph_list()
+        
             if len(self.cfont) > 0:
                 self.w.glyph_list.setSelection([0])
-
-    def _export_to_font(self, sender=None):
+    
+    def _choose_file_to_export(self, sender=None):
         pathkey = "com.typemytype.robofont.compileSettings.path"
         _font = -1
         if pathkey in self.font.lib:
@@ -355,26 +356,29 @@ class ColorFontEditor(BaseWindowController):
             if not exists(_font):
                 _font = -1
         if _font == -1:
-            from robofab.interface.all.dialogs import GetFile
-            _font = GetFile("Select a font file to export layer and color information to.")
-        
-        if _font > -1:
-            print "Exporting to", _font
-            if _font[-4:].lower() in [".ttf", ".otf"]:
-                self.cfont.export_to_otf(_font,
+            self.showPutFile(["public.opentype-font", "public.truetype-ttf-font"], self._export_to_font)
+        else:
+            self._export_to_font(_font)
+    
+    def _export_to_font(self, file_path=None):
+        print "_export_to_font", file_path
+        if file_path is not None:
+            if len(self.cfont.colorpalette[0]) > 0:
+                print "Exporting to", file_path
+                self.cfont.export_to_otf(file_path,
                     palette_index=self.palette_index,
                     parent_window=self.w,
                 )
             else:
-                print "ERROR: Can only export color information to TTFs and OTFs."
+                print "ERROR: No color data in UFO."
     
-    def _save_png(self, sender=None):
+    def _choose_png_to_export(self, sender=None):
+        self.showPutFile(["public.png"], self._save_png, "%s.png" % self.glyph)
+    
+    def _save_png(self, png_path=None):
         # save current glyph as PNG
-        from robofab.interface.all.dialogs import PutFile
-        _file = -1
-        _file = PutFile("Save current glyph as PNG", "%s.png" % self.glyph)
-        if _file > -1:
-            self.cfont.export_png(self.glyph, _file, self.palette_index, self.font.info.unitsPerEm)
+        if png_path is not None:
+            self.cfont.export_png(self.glyph, png_path, self.palette_index, self.font.info.unitsPerEm)
     
     def _ui_update_layer_list(self):
         # set layer UI for current glyph
@@ -582,12 +586,13 @@ class ColorFontEditor(BaseWindowController):
                 self.w.colorpalette.setSelection([self._selected_color_index])
         self.w.preview.update()
     
-    def _callback_layer_add_svg(self, sender):
+    def _choose_svg_to_import(self, sender=None):
+        self.showGetFile(["public.svg-image"], self._layer_add_svg_from_file)
+    
+    def _layer_add_svg_from_file(self, file_paths=None):
         # Add an SVG from external file
-        _file = -1
-        _file = GetFile("Select an SVG file to import.")
-        if _file > -1:
-            self.cfont.add_svg(self.glyph, _file)
+        if file_paths is not None:
+            self.cfont.add_svg(self.glyph, file_paths[0])
             sel = self.w.glyph_list.getSelection()
             self._callback_update_ui_glyph_list()
             self.w.glyph_list.setSelection(sel)
