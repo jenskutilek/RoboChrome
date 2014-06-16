@@ -446,25 +446,20 @@ class ColorFontEditor(BaseWindowController):
                     self.layer_colors = []
             self.font.update()
         
+        self.cfont = ColorFont(self.font) 
+        
         # Reset UI
         self.w.colorpalette.set([{"Index": str(0xffff), "Color": "(foreground)"}])
-        self.color = "#000000"
-        self.colorbg = "#ffffff"
+        #self.color = "#000000"
+        #self.colorbg = "#ffffff"
         
-        self.cfont.save_settings = False
-        self.cfont.colorpalette = []
-        self.cfont = ColorFont(self.font)
         self._callback_update_ui_glyph_list()
         self._callback_ui_glyph_list_selection()
         
-        self.cfont.reset_bitmap_sizes()
         self.d.generate_sbix_sizes.set(self._ui_get_sbix_sizes())
-        self.cfont.reset_auto_layer_regex()
         self.d.auto_layer_regex_box.set(self.cfont.auto_layer_regex)
         self.w.auto_layer_button.enable(True)
-        self.cfont.reset_generate_formats()
-        #TODO
-        #self._callback_update_ui_formats()
+        self._callback_update_ui_formats()
 
     def addColorToPalette(self, sender=None):
         # find a new palette index
