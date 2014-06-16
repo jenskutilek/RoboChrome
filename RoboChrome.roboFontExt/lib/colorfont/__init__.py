@@ -585,20 +585,21 @@ class ColorFont(object):
         for cglyph in self.itervalues():
             cglyph.save_to_rfont()
 
-    def save_glyph_to_rfont(self, name):
+    def save_glyph_to_rfont(self, glyph_name):
         """
         Save color data for one ColorGlyph to RFont.
+            glyph_name: The glyph name
         """
         #print "DEBUG ColorFont.save_glyph_to_rfont(%s)" % name
-        if name in self.keys():
-            self[name].save_to_rfont()
+        if glyph_name in self.keys():
+            self[glyph_name].save_to_rfont()
         else:
             # if the glyph is not in ColorFont, but has layer info in RFont,
             # delete layer info from RFont
             #print "DEBUG Delete layer info from glyph not in ColorFont"
-            if name in self.rfont.keys():
-                if "%s.layers" % self.libkey in self.rfont[name].lib.keys():
-                    del self.rfont[name].lib["%s.layers" % self.libkey]
+            if glyph_name in self.rfont.keys():
+                if "%s.layers" % self.libkey in self.rfont[glyph_name].lib.keys():
+                    del self.rfont[glyph_name].lib["%s.layers" % self.libkey]
                     self.rfont.update()
 
     def _save_key_to_lib(self, name, value):
