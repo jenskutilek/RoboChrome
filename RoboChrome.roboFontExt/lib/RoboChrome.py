@@ -1,5 +1,7 @@
 import vanilla
 
+from Cocoa import NSColorPboardType
+
 from os.path import basename, exists
 
 from AppKit import NSColor
@@ -96,6 +98,13 @@ class ColorFontEditor(BaseWindowController):
             "editable": True},
         ]
         
+        layer_drop_settings = {
+            "type": NSColorPboardType,
+            "allowDropBetweenRows": False,
+            "allowDropOnRow": True,
+            "callback": self._callback_layer_drop,
+        }
+        
         
         width = 500
         col2 = int(round(width/2))
@@ -170,6 +179,7 @@ class ColorFontEditor(BaseWindowController):
             enableDelete=True,
             selectionCallback=self._callback_layer_select,
             allowsMultipleSelection=False,
+            otherApplicationDropSettings=layer_drop_settings,
             )
         y += 160
         self.w.show_only_glyphs_with_layers = vanilla.CheckBox((10, y, 176, -10), "Show only glyphs with layers",
@@ -580,6 +590,41 @@ class ColorFontEditor(BaseWindowController):
             else:
                 self.w.colorpalette.setSelection([self._selected_color_index])
         self.w.preview.update()
+    
+    """example dropinfo:
+        Something was dropped on the layer list:
+{'rowIndex': 0, 'source': <objective-c class NSColorPanel at 0x7fff72b29ef0>, 'data': {
+    "$archiver" = NSKeyedArchiver;
+    "$objects" =     (
+        "$null",
+                {
+            "$class" = "<CFKeyedArchiverUID 0x608000c2d220 [0x7fff70e30f00]>{value = 2}";
+            NSColorSpace = 1;
+            NSRGB = <30203020 3000>;
+        },
+                {
+            "$classes" =             (
+                NSColor,
+                NSObject
+            );
+            "$classname" = NSColor;
+        }
+    );
+    "$top" =     {
+        root = "<CFKeyedArchiverUID 0x608000c33260 [0x7fff70e30f00]>{value = 1}";
+    };
+    "$version" = 100000;
+}, 'dropOnRow': False, 'isProposal': True}
+    """
+    
+    def _callback_layer_drop(self, sender=None, dropInfo=None):
+        if dropInfo["isProposal"]:
+            # TODO: check if drop is acceptable
+            return True
+        else:
+            print "DEBUG: dropped color on row %i" % dropInfo["rowIndex"]
+            # TODO: accept the drop (actually do something)
+            return True
     
     def _choose_svg_to_import(self, sender=None):
         self.showGetFile(["public.svg-image"], self._layer_add_svg_from_file)
