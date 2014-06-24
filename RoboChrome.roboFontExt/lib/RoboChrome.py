@@ -472,7 +472,7 @@ class ColorFontEditor(BaseWindowController):
         self.colorbg = self.getNSColor(self.cfont.colorbg)
         
         # Reset UI
-        self.w.colorpalette.set([{"Index": "Foreground", "Color": self.color}])
+        self.w.colorpalette.set([{"Index": 0xffff, "Color": self.color}])
         self._callback_update_ui_glyph_list()
         self._callback_ui_glyph_list_selection()
         
@@ -518,7 +518,7 @@ class ColorFontEditor(BaseWindowController):
         # self.layer_glyphs is used for drawing
         _layers = sorted(self.w.layer_list.get(), key=lambda k: int(k["Index"]))
         if _layers == []:
-            self.layer_glyphs = [{"Color": "Foreground", "Index": 0, "Layer Glyph": self.glyph}]
+            self.layer_glyphs = [{"Color": 0xffff, "Index": 0, "Layer Glyph": self.glyph}]
         else:
             self.layer_glyphs = _layers
     
@@ -528,11 +528,10 @@ class ColorFontEditor(BaseWindowController):
         colorDict = self.getColorDict()
         _layer_colors = []
         for g in self.layer_glyphs:
-            colorIndex = g["Color"]
-            if g["Color"] == "Foreground":
+            colorIndex = int(g["Color"])
+            if colorIndex == 0xffff:
                 _layer_colors.append(self.color)
             else:
-                colorIndex = int(colorIndex)
                 if colorIndex in colorDict.keys():
                     _layer_colors.append(colorDict[colorIndex])
                 else:
@@ -546,7 +545,7 @@ class ColorFontEditor(BaseWindowController):
         if self.glyphPreview is not None and self.glyphPreview in self.cfont.keys():
             colorDict = self.getColorDict()
             for colorIndex in self.cfont[self.glyphPreview].colors:
-                if colorIndex == "Foreground":
+                if colorIndex == 0xffff:
                     _layer_colors.append(self.color)
                 else:
                     if colorIndex in colorDict.keys():
@@ -567,7 +566,7 @@ class ColorFontEditor(BaseWindowController):
                 newlayer = self.glyph
             _color = self.getSelectedColorIndex()
             if _color is None:
-                _color = "Foreground"
+                _color = 0xffff
             self.w.layer_list.append({"Index": str(len(self.w.layer_list)+1), "Color": _color, "Layer Glyph": newlayer})
             #self._ui_layer_list_save_to_cfont()
             if not self.glyph in self.cfont.keys():
@@ -594,8 +593,8 @@ class ColorFontEditor(BaseWindowController):
             self.w.colorpalette.setSelection([])
             self._selected_color_index = None
         else:
-            i = layers[sel[0]]["Color"]
-            self._selected_color_index = self._get_list_index_for_layer_color_index(int(i))
+            i = int(layers[sel[0]]["Color"])
+            self._selected_color_index = self._get_list_index_for_layer_color_index(i)
             if self._selected_color_index is None:
                 self.w.colorpalette.setSelection([])
             else:
@@ -719,13 +718,12 @@ class ColorFontEditor(BaseWindowController):
             self.w.colorPaletteColorChooser.enable(False)
         else:
             sel = sender.get()
-            selIndex = sel[i[0]]["Index"]
-            if selIndex == "Foreground":
+            selIndex = int(sel[i[0]]["Index"])
+            if selIndex == 0xffff:
                 # use foreground color
                 self.w.colorPaletteColorChooser.set(self.w.colorChooser.get())
                 self.w.colorPaletteColorChooser.enable(False)
             else:
-                selIndex = int(selIndex)
                 self.w.colorPaletteColorChooser.set(sel[i[0]]["Color"])
                 self.w.colorPaletteColorChooser.enable(True)
     
@@ -757,7 +755,7 @@ class ColorFontEditor(BaseWindowController):
         # make a dict for active palette and write it to self.cfont.palettes
         _dict = {}
         for _color in sorted(self.w.colorpalette.get(), key=lambda _key: _key["Index"]):
-            if _color["Index"] != "Foreground":
+            if _color["Index"] != 0xffff:
                 _dict[str(_color["Index"])] = self.getHexColor(_color["Color"])
         self.cfont.palettes[self.palette_index] = _dict
         self.cfont.save_to_rfont()
@@ -796,7 +794,7 @@ class ColorFontEditor(BaseWindowController):
         newColorpalette = []
         for k in sorted(colorpalette.keys()):
             newColorpalette.append({"Index": str(k), "Color": self.getNSColor(colorpalette[k])})
-        newColorpalette.append({"Index": "Foreground", "Color": self.color})
+        newColorpalette.append({"Index": 0xffff, "Color": self.color})
         
         self.w.colorpalette.set(newColorpalette)
         self.w.colorpalette.setSelection(selectedColorIndex)
@@ -926,10 +924,7 @@ class ColorFontEditor(BaseWindowController):
         # returns the current UI color palette as dictionary
         _dict = {}
         for _color in self.w.colorpalette.get():
-            if _color["Index"] == "Foreground":
-                _dict[_color["Index"]] = _color["Color"]
-            else:
-                _dict[int(_color["Index"])] = _color["Color"]
+            _dict[int(_color["Index"])] = _color["Color"]
         return _dict
     
     def draw(self):
