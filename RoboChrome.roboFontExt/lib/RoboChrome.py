@@ -117,23 +117,30 @@ class ColorFontEditor(BaseWindowController):
             title = basename(self.font.fileName)
         else:
             title = "None"
-        self.w = vanilla.Window((width, 496), "%s - RoboChrome" % title)
-        self.w.preview = Canvas((10, y, 320, 200), canvasSize=(318, 200),
-                                hasHorizontalScroller=False,
-                                hasVerticalScroller=False,
-                                delegate=self)
+        self.w = vanilla.Window(
+            (width, 496),
+            "%s - RoboChrome" % title
+        )
+        self.w.preview = Canvas(
+            (10, y, 320, 200),
+            canvasSize=(318, 200),
+            hasHorizontalScroller=False,
+            hasVerticalScroller=False,
+            delegate=self,
+        )
         self.w.paletteswitch = vanilla.PopUpButton((340, y, -10, 20),
-                                                   [],
-                                                   callback=self._paletteSwitchCallback)
+            [],
+            callback=self._paletteSwitchCallback,
+        )
         self.w.colorpalette  = vanilla.List((340, y+30, -10, 170),
-                                            [],
-                                            columnDescriptions=palette_columns,
-                                            drawFocusRing=True,
-                                            editCallback=self.paletteEdit,
-                                            selectionCallback=self._callback_color_select_in_palette,
-                                            allowsMultipleSelection=False,
-                                            # enableDelete=True, # TODO
-            )
+            [],
+            columnDescriptions=palette_columns,
+            drawFocusRing=True,
+            editCallback=self.paletteEdit,
+            selectionCallback=self._callback_color_select_in_palette,
+            allowsMultipleSelection=False,
+            enableDelete=True,
+        )
         self.w.addPalette = vanilla.GradientButton((340, 215, 24, 24),
             imagePath="iconColorFontPalette.pdf",
             callback=self.paletteDuplicate,
@@ -920,7 +927,6 @@ class ColorFontEditor(BaseWindowController):
             self.setFill(self.getTupleColor(self.colorbg))
             rect(0, 0, 310, 200)
             self.setFill(self.getTupleColor(self.color))
-            #rect(50, 100, 20, 20)
             scale(self.scale)
             translate(50.5, -self.metrics[0]+20.5)
             self._canvas_draw_metrics()
@@ -982,8 +988,6 @@ class ColorFontEditor(BaseWindowController):
         if self.glyphPreview in self.cfont.keys():
             ##print "DEBUG: draw glyph"
             save()
-            #self.setFill(self.getTupleColor(self.colorbg))
-            #rect(0, 0, self.width, 200)
             self.setFill(self.getTupleColor(self.color))
             g = RGlyph()
             for i in range(len(self.layer_glyphs_glyph_window)):
