@@ -5,6 +5,7 @@ from Cocoa import NSColorPboardType
 from os.path import basename, exists
 
 from AppKit import NSColor
+from lib.cells.colorCell import ColorCell, PopupColorPanel
 from defconAppKit.windows.baseWindow import BaseWindowController
 from fontTools.misc.transform import Offset
 from mojo.events import addObserver, removeObserver
@@ -70,6 +71,9 @@ class ColorFontEditor(BaseWindowController):
             "width": 45},
             {"title": "Color",
             "typingSensitive": True,
+            "editable": True},
+            {"title": "Preview",
+            "cell": ColorCell.alloc().initWithDoubleClickCallack_(self.paletteEditColorCell),
             "editable": True},
         ]
         
@@ -459,7 +463,7 @@ class ColorFontEditor(BaseWindowController):
         self.cfont = ColorFont(self.font) 
         
         # Reset UI
-        self.w.colorpalette.set([{"Index": str(0xffff), "Color": "(foreground)"}])
+        self.w.colorpalette.set([{"Index": str(0xffff), "Color": "(foreground)", "Preview": self.getNSColor(self.color)}])
         #self.color = "#000000"
         #self.colorbg = "#ffffff"
         
@@ -481,7 +485,7 @@ class ColorFontEditor(BaseWindowController):
         
         if newIndex < 0xffff:
             # add new color to current palette
-            self.w.colorpalette.append({"Index": str(newIndex), "Color": "#ffde00"})
+            self.w.colorpalette.append({"Index": str(newIndex), "Color": "#ffde00", "Preview": self.getNSColor("#ffde00")})
             # add new color to all other palettes
             for p in self.cfont.palettes:
                 p[newIndex] = "#ffde00"
@@ -729,6 +733,9 @@ class ColorFontEditor(BaseWindowController):
                 print "Ignored edit of foreground color"
         self.w.preview.update()
     
+    def paletteEditColorCell(self, sender):
+        print sender
+    
     def _paletteWriteToColorFont(self):
         #print "DEBUG _paletteWriteToColorFont"
         # make a dict for active palette and write it to self.cfont.palettes
@@ -772,8 +779,8 @@ class ColorFontEditor(BaseWindowController):
             colorpalette = {}
         newColorpalette = []
         for k in sorted(colorpalette.keys()):
-            newColorpalette.append({"Index": str(k), "Color": colorpalette[k]})
-        newColorpalette.append({"Index": str(0xffff), "Color": "(foreground)"})
+            newColorpalette.append({"Index": str(k), "Color": colorpalette[k], "Preview": self.getNSColor(colorpalette[k])})
+        newColorpalette.append({"Index": str(0xffff), "Color": "(foreground)", "Preview": NSColor.whiteColor()})
         
         self.w.colorpalette.set(newColorpalette)
         self.w.colorpalette.setSelection(selectedColorIndex)
