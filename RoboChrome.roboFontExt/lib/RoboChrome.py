@@ -4,7 +4,7 @@ from Cocoa import NSColorPboardType
 
 from os.path import basename, exists
 
-from AppKit import NSColor
+from AppKit import NSColor, NSCalibratedRGBColorSpace
 from lib.cells.colorCell import ColorCell, PopupColorPanel
 from defconAppKit.windows.baseWindow import BaseWindowController
 from fontTools.misc.transform import Offset
@@ -40,8 +40,8 @@ class ColorFontEditor(BaseWindowController):
         
         self.show_only_glyphs_with_layers = True
         
-        self.color = "#000000"
-        self.colorbg = "#ffffff"
+        self.color = NSColor.blackColor()
+        self.colorbg = NSColor.whiteColor()
         self._selected_color_index = None
         
         # live update the canvas when glyphs are edited
@@ -68,13 +68,13 @@ class ColorFontEditor(BaseWindowController):
         palette_columns = [
             {"title": "Index",
             #"cell": IntType, #TODO
-            "width": 45},
-            {"title": "Color",
+            "width": 60,
             "typingSensitive": True,
-            "editable": True},
-            {"title": "Preview",
+            },
+            {"title": "Color",
             "cell": ColorCell.alloc().initWithDoubleClickCallack_(self.paletteEditColorCell),
-            "editable": True},
+            "typingSensitive": False,
+            "editable": False},
         ]
         
         column_descriptions = [
@@ -162,15 +162,15 @@ class ColorFontEditor(BaseWindowController):
         )
         self.w.colorChooser = vanilla.ColorWell((240, y-4, 40, 22), 
             callback=self._callback_color_changed_foreground,
-            color=self.getNSColor(self.color),
+            color=self.color,
         )
         self.w.colorbgChooser = vanilla.ColorWell((290, y-4, 40, 22), 
-            color=self.getNSColor(self.colorbg),
+            color=self.colorbg,
             callback=self._callback_color_changed_background
         )
         self.w.colorPaletteColorChooser = vanilla.ColorWell((450, y-4, 40, 22), 
             callback=self._callback_color_changed_layer,
-            color=self.getNSColor(self.color),
+            color=self.color,
         )
         y += 25
         self.w.glyph_list = vanilla.List((10, y, col2-10, 150),
@@ -468,12 +468,11 @@ class ColorFontEditor(BaseWindowController):
             self.font.update()
         
         self.cfont = ColorFont(self.font) 
+        self.color = self.getNSColor(self.cfont.color)
+        self.colorbg = self.getNSColor(self.cfont.colorbg)
         
         # Reset UI
-        self.w.colorpalette.set([{"Index": str(0xffff), "Color": "(foreground)", "Preview": self.getNSColor(self.color)}])
-        #self.color = "#000000"
-        #self.colorbg = "#ffffff"
-        
+        self.w.colorpalette.set([{"Index": "Foreground", "Color": self.color}])
         self._callback_update_ui_glyph_list()
         self._callback_ui_glyph_list_selection()
         
@@ -492,10 +491,10 @@ class ColorFontEditor(BaseWindowController):
         
         if newIndex < 0xffff:
             # add new color to current palette
-            self.w.colorpalette.append({"Index": str(newIndex), "Color": "#ffde00", "Preview": self.getNSColor("#ffde00")})
+            self.w.colorpalette.append({"Index": str(newIndex), "Color": NSColor.yellowColor()})
             # add new color to all other palettes
             for p in self.cfont.palettes:
-                p[newIndex] = "#ffde00"
+                p[newIndex] = NSColor.yellowColor()
             self.cfont.save_settings = True
             self.currentPaletteChanged = True
         else:
@@ -519,7 +518,7 @@ class ColorFontEditor(BaseWindowController):
         # self.layer_glyphs is used for drawing
         _layers = sorted(self.w.layer_list.get(), key=lambda k: int(k["Index"]))
         if _layers == []:
-            self.layer_glyphs = [{"Color": 0xffff, "Index": 0, "Layer Glyph": self.glyph}]
+            self.layer_glyphs = [{"Color": "Foreground", "Index": 0, "Layer Glyph": self.glyph}]
         else:
             self.layer_glyphs = _layers
     
@@ -529,10 +528,11 @@ class ColorFontEditor(BaseWindowController):
         colorDict = self.getColorDict()
         _layer_colors = []
         for g in self.layer_glyphs:
-            colorIndex = int(g["Color"])
-            if colorIndex == 0xffff:
+            colorIndex = g["Color"]
+            if g["Color"] == "Foreground":
                 _layer_colors.append(self.color)
             else:
+                colorIndex = int(colorIndex)
                 if colorIndex in colorDict.keys():
                     _layer_colors.append(colorDict[colorIndex])
                 else:
@@ -546,7 +546,7 @@ class ColorFontEditor(BaseWindowController):
         if self.glyphPreview is not None and self.glyphPreview in self.cfont.keys():
             colorDict = self.getColorDict()
             for colorIndex in self.cfont[self.glyphPreview].colors:
-                if colorIndex == 0xffff:
+                if colorIndex == "Foreground":
                     _layer_colors.append(self.color)
                 else:
                     if colorIndex in colorDict.keys():
@@ -567,7 +567,7 @@ class ColorFontEditor(BaseWindowController):
                 newlayer = self.glyph
             _color = self.getSelectedColorIndex()
             if _color is None:
-                _color = str(0xffff)
+                _color = "Foreground"
             self.w.layer_list.append({"Index": str(len(self.w.layer_list)+1), "Color": _color, "Layer Glyph": newlayer})
             #self._ui_layer_list_save_to_cfont()
             if not self.glyph in self.cfont.keys():
@@ -649,11 +649,16 @@ class ColorFontEditor(BaseWindowController):
             self.w.glyph_list.setSelection(sel)
     
     def getNSColor(self, hexrgba):
-        # return NSColor for r, g, b, a tuple
-        r, g, b, a = self.getTupleColor(hexrgba)
+        r = float(int(hexrgba[1:3], 16)) / 255
+        g = float(int(hexrgba[3:5], 16)) / 255
+        b = float(int(hexrgba[5:7], 16)) / 255
+        if len(hexrgba) == 9:
+            a = float(int(hexrgba[7:9], 16)) / 255
         return NSColor.colorWithCalibratedRed_green_blue_alpha_(r, g, b, a)
     
     def getHexColor(self, nscolor):
+        if nscolor.colorSpaceName != NSCalibratedRGBColorSpace:
+            nscolor = nscolor.colorUsingColorSpaceName_(NSCalibratedRGBColorSpace)
         r = int(round(255 * float(nscolor.redComponent())))
         g = int(round(255 * float(nscolor.greenComponent())))
         b = int(round(255 * float(nscolor.blueComponent())))
@@ -663,14 +668,13 @@ class ColorFontEditor(BaseWindowController):
         else:
             return "#%02x%02x%02x%02x" % (r, g, b, a)
     
-    def getTupleColor(self, hexrgba, opacity_factor=1):
-        r = float(int(hexrgba[1:3], 16)) / 255
-        g = float(int(hexrgba[3:5], 16)) / 255
-        b = float(int(hexrgba[5:7], 16)) / 255
-        if len(hexrgba) == 9:
-            a = float(int(hexrgba[7:9], 16)) / 255 * opacity_factor
-        else:
-            a = opacity_factor
+    def getTupleColor(self, nscolor, opacity_factor=1):
+        if nscolor.colorSpaceName != NSCalibratedRGBColorSpace:
+            nscolor = nscolor.colorUsingColorSpaceName_(NSCalibratedRGBColorSpace)
+        r = nscolor.redComponent()
+        g = nscolor.greenComponent()
+        b = nscolor.blueComponent()
+        a = nscolor.alphaComponent() * opacity_factor
         return (r, g, b, a)
     
     def _callback_set_show_only_glyphs_with_layers(self, sender):
@@ -692,13 +696,15 @@ class ColorFontEditor(BaseWindowController):
     
     def _callback_color_changed_foreground(self, sender):
         if sender is not None:
-            self.color = self.getHexColor(sender.get())
+            self.color = sender.get()
+            self._ui_update_palette(self.palette_index)
+            self.w.colorPaletteColorChooser.set(self.color)
             self._cache_color_info()
             self.w.preview.update()
     
     def _callback_color_changed_background(self, sender):
         if sender is not None:
-            self.colorbg = self.getHexColor(sender.get())
+            self.colorbg = sender.get()
             self._cache_color_info()
             self.w.preview.update()
     
@@ -710,14 +716,14 @@ class ColorFontEditor(BaseWindowController):
             self.w.colorPaletteColorChooser.enable(False)
         else:
             sel = sender.get()
-            selIndex = int(sel[i[0]]["Index"])
-            if selIndex == 0xffff:
+            selIndex = sel[i[0]]["Index"]
+            if selIndex == "Foreground":
                 # use foreground color
                 self.w.colorPaletteColorChooser.set(self.w.colorChooser.get())
                 self.w.colorPaletteColorChooser.enable(False)
             else:
-                _color = sel[i[0]]["Color"]
-                self.w.colorPaletteColorChooser.set(self.getNSColor(_color))
+                selIndex = int(selIndex)
+                self.w.colorPaletteColorChooser.set(sel[i[0]]["Color"])
                 self.w.colorPaletteColorChooser.enable(True)
     
     def _ui_update_palette_chooser(self):
@@ -748,8 +754,8 @@ class ColorFontEditor(BaseWindowController):
         # make a dict for active palette and write it to self.cfont.palettes
         _dict = {}
         for _color in sorted(self.w.colorpalette.get(), key=lambda _key: _key["Index"]):
-            if int(_color["Index"]) != 0xffff:
-                _dict[str(_color["Index"])] = _color["Color"]
+            if _color["Index"] != "Foreground":
+                _dict[str(_color["Index"])] = self.getHexColor(_color["Color"])
         self.cfont.palettes[self.palette_index] = _dict
         self.cfont.save_to_rfont()
     
@@ -786,8 +792,8 @@ class ColorFontEditor(BaseWindowController):
             colorpalette = {}
         newColorpalette = []
         for k in sorted(colorpalette.keys()):
-            newColorpalette.append({"Index": str(k), "Color": colorpalette[k], "Preview": self.getNSColor(colorpalette[k])})
-        newColorpalette.append({"Index": str(0xffff), "Color": "(foreground)", "Preview": NSColor.whiteColor()})
+            newColorpalette.append({"Index": str(k), "Color": self.getNSColor(colorpalette[k])})
+        newColorpalette.append({"Index": "Foreground", "Color": self.color})
         
         self.w.colorpalette.set(newColorpalette)
         self.w.colorpalette.setSelection(selectedColorIndex)
@@ -817,7 +823,7 @@ class ColorFontEditor(BaseWindowController):
                 _colors = self.w.colorpalette.get()
                 #print "Colors:", _colors
                 #print "Selected:", _selected_color[0]
-                _colors[_selected_color[0]]["Color"] = self.getHexColor(sender.get())
+                _colors[_selected_color[0]]["Color"] = sender.get()
                 self.w.colorpalette.set(_colors)
             self.currentPaletteChanged = True
             self._cache_color_info()
@@ -917,7 +923,10 @@ class ColorFontEditor(BaseWindowController):
         # returns the current UI color palette as dictionary
         _dict = {}
         for _color in self.w.colorpalette.get():
-            _dict[int(_color["Index"])] = _color["Color"]
+            if _color["Index"] == "Foreground":
+                _dict[_color["Index"]] = _color["Color"]
+            else:
+                _dict[int(_color["Index"])] = _color["Color"]
         return _dict
     
     def draw(self):
