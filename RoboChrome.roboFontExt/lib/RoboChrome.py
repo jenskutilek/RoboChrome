@@ -698,7 +698,10 @@ class ColorFontEditor(BaseWindowController):
         if sender is not None:
             self.color = sender.get()
             self._ui_update_palette(self.palette_index)
-            self.w.colorPaletteColorChooser.set(self.color)
+            i = self.w.colorpalette.getSelection()
+            if i != []:
+                if int(self.w.colorpalette.get()[i[0]]["Index"]) == 0xffff:
+                    self.w.colorPaletteColorChooser.set(self.color)
             self._cache_color_info()
             self.w.preview.update()
     
