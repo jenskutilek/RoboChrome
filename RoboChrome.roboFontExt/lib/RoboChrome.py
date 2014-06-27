@@ -415,6 +415,7 @@ class ColorFontEditor(BaseWindowController):
     """
     
     def _callback_layer_drop(self, sender=None, dropInfo=None):
+        # a color has been dropped on the layer list
         if dropInfo["isProposal"]:
             # TODO: check if drop is acceptable
             return True
@@ -435,6 +436,7 @@ class ColorFontEditor(BaseWindowController):
             self.w.glyph_list.setSelection(sel)
     
     def getNSColor(self, hexrgba):
+        # get NSColor for a HTML-style hex rgb(a) color
         r = float(int(hexrgba[1:3], 16)) / 255
         g = float(int(hexrgba[3:5], 16)) / 255
         b = float(int(hexrgba[5:7], 16)) / 255
@@ -455,6 +457,7 @@ class ColorFontEditor(BaseWindowController):
             return "#%02x%02x%02x%02x" % (r, g, b, a)
     
     def getTupleColor(self, nscolor, opacity_factor=1):
+        # get (r, g, b, a) tuple for a NSColor (needed for mojoDrawinTools.fill etc.)
         if nscolor.colorSpaceName != NSCalibratedRGBColorSpace:
             nscolor = nscolor.colorUsingColorSpaceName_(NSCalibratedRGBColorSpace)
         r = nscolor.redComponent()
@@ -468,6 +471,7 @@ class ColorFontEditor(BaseWindowController):
         self._callback_update_ui_glyph_list()
     
     def _callback_toggle_settings(self, sender):
+        # show or hide the settings drawer
         self.d.toggle()
         
     def _callback_set_sbix_sizes(self, sender):
@@ -477,7 +481,6 @@ class ColorFontEditor(BaseWindowController):
             entry = entry.strip("[], ")
             if entry != "":
                 sizes.append(int(entry))
-        print sizes
         self.cfont.bitmap_sizes = sizes
     
     def _callback_color_changed_foreground(self, sender):
@@ -515,10 +518,7 @@ class ColorFontEditor(BaseWindowController):
                 self.w.colorPaletteColorChooser.enable(True)
     
     def _ui_update_palette_chooser(self):
-        pl = []
-        for i in range(len(self.cfont.palettes)):
-            pl.append("Palette %s" % i)
-        self.w.paletteswitch.setItems(pl)
+        self.w.paletteswitch.setItems(["Palette %s" % i for i in range(len(self.cfont.palettes))])
     
     def paletteEdit(self, sender):
         ##print "DEBUG ColorFontEditor.paletteEdit"
@@ -535,6 +535,7 @@ class ColorFontEditor(BaseWindowController):
         self.w.preview.update()
     
     def paletteEditColorCell(self, sender):
+        # double-click on a color cell in the palette
         print sender
     
     def _paletteWriteToColorFont(self):
@@ -578,9 +579,7 @@ class ColorFontEditor(BaseWindowController):
             colorpalette = self.cfont.palettes[self.palette_index]
         else:
             colorpalette = {}
-        newColorpalette = []
-        for k in sorted(colorpalette.keys()):
-            newColorpalette.append({"Index": str(k), "Color": self.getNSColor(colorpalette[k])})
+        newColorpalette = [{"Index": str(k), "Color": self.getNSColor(colorpalette[k])} for k in sorted(colorpalette.keys())]
         newColorpalette.append({"Index": 0xffff, "Color": self.color})
         
         self.w.colorpalette.set(newColorpalette)
@@ -604,13 +603,11 @@ class ColorFontEditor(BaseWindowController):
             return self.w.colorpalette.get()[i[0]]["Index"]
     
     def _callback_color_changed_layer(self, sender):
+        # a color has been edited in the palette
         if sender is not None:
-            #print "Set color in palette"
             _selected_color = self.w.colorpalette.getSelection()
             if _selected_color != []:
                 _colors = self.w.colorpalette.get()
-                #print "Colors:", _colors
-                #print "Selected:", _selected_color[0]
                 _colors[_selected_color[0]]["Color"] = sender.get()
                 self.w.colorpalette.set(_colors)
             self.currentPaletteChanged = True
@@ -715,7 +712,7 @@ class ColorFontEditor(BaseWindowController):
         return _dict
     
     def draw(self):
-        # draw the color glyph in the canvas
+        # draw the color glyph on the canvas
         if self.font is not None:
             save()
             self.setFill(self.getTupleColor(self.colorbg))
