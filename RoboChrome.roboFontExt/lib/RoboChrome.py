@@ -1,26 +1,15 @@
-import vanilla
-
-from Cocoa import NSColorPboardType
-
-from os.path import basename, exists
-
-from AppKit import NSColor, NSCalibratedRGBColorSpace, NSAttributedString, NSForegroundColorAttributeName #, NSActionCell
-from lib.cells.colorCell import ColorCell, PopupColorPanel
+from AppKit import NSColor, NSCalibratedRGBColorSpace
+#from AppKit import NSAttributedString, NSForegroundColorAttributeName # for popup listbox cells
+from colorfont import ColorFont
 from defconAppKit.windows.baseWindow import BaseWindowController
 from fontTools.misc.transform import Offset
 from mojo.events import addObserver, removeObserver
-from mojo.drawingTools import *
-from mojo.canvas import Canvas
-from mojo.UI import UpdateCurrentGlyphView, CurrentGlyphWindow, setGlyphViewDisplaySettings, getGlyphViewDisplaySettings
-import colorfont
-reload(colorfont)
-from colorfont import ColorFont
+from mojo.drawingTools import drawGlyph, fill, line, rect, restore, save, scale, stroke, strokeWidth, translate
+from mojo.UI import UpdateCurrentGlyphView, CurrentGlyphWindow
+#from mojo.UI import setGlyphViewDisplaySettings, getGlyphViewDisplaySettings
+from os.path import basename, exists
+from RoboChromeUI import get_ui, get_drawer
 
-"""
-# TODO: make a custom cell class so that the indices can be stored as integers?
-class IntegerCell(NSActionCell):
-    pass
-"""
 
 class ColorFontEditor(BaseWindowController):
 
@@ -53,8 +42,8 @@ class ColorFontEditor(BaseWindowController):
         
         self._auto_layer_regex_ok = True
         
-        self.oldDisplaySettings = getGlyphViewDisplaySettings()
-        setGlyphViewDisplaySettings({"On Curve Points": False, "Off Curve Points": False})
+        #self.oldDisplaySettings = getGlyphViewDisplaySettings()
+        #setGlyphViewDisplaySettings({"On Curve Points": False, "Off Curve Points": False})
         
         if self.font is not None:
             self.metrics = (
@@ -69,263 +58,13 @@ class ColorFontEditor(BaseWindowController):
             #print "Hey, I work better when there's an open font!"
         self.scale = 180.0 / (self.metrics[3] - self.metrics[0])
         
-        palette_columns = [
-            {
-                "title": "Index",
-                #"cell": IntType, #TODO
-                "width": 60,
-                "typingSensitive": True,
-            },
-            {
-                "title": "Color",
-                "cell": ColorCell.alloc().initWithDoubleClickCallack_(self.paletteEditColorCell),
-                "typingSensitive": False,
-                "editable": False,
-            },
-        ]
-        
-        column_descriptions = [
-            {
-                "title": "Layers",
-                "cell": vanilla.CheckBoxListCell(),
-                #"cell": "X",
-                "width": 35,
-                "editable": False,
-            },
-            {
-                "title": "Name",
-                "typingSensitive": True,
-                "editable": False,
-            },
-        ]
-        
-        layer_columns = [
-            {
-                "title": "Index",
-                "key": "layer_index",
-                #"cell": vanilla.CheckBoxListCell(),
-                "width": 45,
-                "editable": True,
-            },
-            {
-                "title": "ColorIndex",
-                "key": "layer_color_index",
-                "width": 45,
-                "editable": True,
-            },
-            #{
-            #    "title": "Color",
-            #    "binding": "selectedValue",
-            #    "cell": vanilla.PopUpButtonListCell([]),
-            #    "width": 30,
-            #    "editable": True,
-            #},
-            {
-                "title": "Layer Glyph",
-                "typingSensitive": True,
-                "editable": True,
-            },
-        ]
-        
-        layer_drop_settings = {
-            "type": NSColorPboardType,
-            "allowDropBetweenRows": False,
-            "allowDropOnRow": True,
-            "callback": self._callback_layer_drop,
-        }
-        
-        
-        width = 500
-        col2 = int(round(width/2))
-        y = 10
         if self.font:
             title = basename(self.font.fileName)
         else:
             title = "None"
-        self.w = vanilla.Window(
-            (width, 496),
-            "%s - RoboChrome" % title
-        )
-        self.w.preview = Canvas(
-            (10, y, 320, 200),
-            canvasSize=(318, 200),
-            hasHorizontalScroller=False,
-            hasVerticalScroller=False,
-            delegate=self,
-        )
-        self.w.paletteswitch = vanilla.PopUpButton((340, y, -10, 20),
-            [],
-            callback=self._paletteSwitchCallback,
-        )
-        self.w.colorpalette  = vanilla.List((340, y+30, -10, 170),
-            [],
-            columnDescriptions=palette_columns,
-            drawFocusRing=True,
-            editCallback=self.paletteEdit,
-            selectionCallback=self._callback_color_select_in_palette,
-            allowsMultipleSelection=False,
-            enableDelete=True,
-        )
-        self.w.addPalette = vanilla.GradientButton((340, 215, 24, 24),
-            imagePath="iconColorFontPalette.pdf",
-            callback=self.paletteDuplicate,
-        )
-        self.w.deletePalette = vanilla.GradientButton((363, 215, 24, 24),
-            imagePath="iconColorFontPaletteMinus.pdf",
-            callback=self.paletteDelete,
-        )
-        self.w.addColorToPalette = vanilla.GradientButton((410, 215, 24, 24),
-            imagePath="iconColorFontPlus.pdf",
-            callback=self.addColorToPalette,
-        )
-        y += 210
-        self.w.glyph_list_label = vanilla.TextBox((10, y, 120, 20), "Glyphs with layers:", sizeStyle="small")
-        self.w.glyph_list_search_box = vanilla.SearchBox((118, y-3, 114, 20),
-            placeholder="Filter glyphs",
-            callback=self._callback_update_ui_glyph_list,
-            sizeStyle="small",
-        )
-        self.w.colorChooser = vanilla.ColorWell((240, y-4, 40, 22), 
-            callback=self._callback_color_changed_foreground,
-            color=self.color,
-        )
-        self.w.colorbgChooser = vanilla.ColorWell((290, y-4, 40, 22), 
-            color=self.colorbg,
-            callback=self._callback_color_changed_background
-        )
-        self.w.colorPaletteColorChooser = vanilla.ColorWell((450, y-4, 40, 22), 
-            callback=self._callback_color_changed_layer,
-            color=self.color,
-        )
-        y += 25
-        self.w.glyph_list = vanilla.List((10, y, col2-10, 150),
-            [],
-            columnDescriptions=column_descriptions,
-            drawFocusRing=True,
-            #editCallback=None,
-            doubleClickCallback=self._callback_goto_glyph,
-            selectionCallback=self._callback_ui_glyph_list_selection,
-            allowsMultipleSelection=False,
-            )
-        self.w.layer_list = vanilla.List((col2+10, y, -10, 150),
-            [],
-            columnDescriptions=layer_columns,
-            drawFocusRing=True,
-            editCallback=self._callback_layer_edit,
-            enableDelete=True,
-            selectionCallback=self._callback_layer_select,
-            allowsMultipleSelection=False,
-            otherApplicationDropSettings=layer_drop_settings,
-            )
-        y += 160
-        self.w.show_only_glyphs_with_layers = vanilla.CheckBox((10, y, 176, -10), "Show only glyphs with layers",
-            callback=self._callback_set_show_only_glyphs_with_layers,
-            value=self.show_only_glyphs_with_layers,
-            sizeStyle="small"
-        )
-        self.w.add_layer_button = vanilla.GradientButton((col2+10, y-10, 24, 24),
-            imagePath="iconColorFontPlus.pdf",
-            callback=self._callback_layer_add,
-        )
-        #self.w.add_svg_button = vanilla.Button((col2+43, y-10, 60, 24), "Add SVG",
-        #    callback=self._choose_svg_to_import,
-        #    sizeStyle="small"
-        #)
-        y += 28
-        self.w.selectButton = vanilla.Button((10, y, col2-10, 20), "Select glyphs with layers",
-            callback = self._callback_select_glyphs_in_font_window,
-        )
-        self.w.auto_palette_button = vanilla.Button((col2+10, y, 110, 20), "Mix palette",
-            callback = self._callback_auto_palette,
-        )
-        self.w.png_button = vanilla.Button((380, y, 110, 20), "Export PNG",
-            callback = self._choose_png_to_export,
-        )
-        y +=31
-        self.w.toggleSettingsButton = vanilla.Button((10, y, 115, 20), "Settings...",
-            callback = self._callback_toggle_settings,
-        )
-        self.w.auto_layer_button = vanilla.Button((135, y, 115, 20), "Auto layers",
-            callback = self._callback_auto_layers,
-        )
-        self.w.import_button = vanilla.Button((col2+10, y, 110, 20), "Import font",
-            callback = self._choose_file_to_import,
-        )
-        self.w.export_button = vanilla.Button((380, y, 110, 20), "Export to font",
-            callback = self._choose_file_to_export,
-        )
-        
-        
-        # Settings drawer
-        self.d = vanilla.Drawer((width, 204), self.w, preferredEdge='bottom', forceEdge=True)
-        
-        y = 22
-        self.d.generate_formats_label = vanilla.TextBox((10, y+2, 160, 20), "Generate formats:", sizeStyle="small")
-        y += 20
-        self.d.generateMSFormat = vanilla.CheckBox((10, y, 200, -10), "COLR/CPAL (Windows)",
-            callback=self._callback_select_formats,
-            value=self.cfont.write_colr,
-            sizeStyle="small"
-        )
-        self.d.generateAppleFormat = vanilla.CheckBox((235, y, 200, -10), "sbix (Mac OS/iOS)",
-            callback=self._callback_select_formats,
-            value=self.cfont.write_sbix,
-            sizeStyle="small"
-        )
-        y += 20
-        self.d.generateSVGFormat = vanilla.CheckBox((10, y, 200, -10), "SVG (Mozilla/Adobe)",
-            callback=self._callback_select_formats,
-            value=self.cfont.write_svg,
-            sizeStyle="small",
-        )
-        self.d.generateGoogleFormat = vanilla.CheckBox((235, y, 200, -10), "CBDT/CBLC (Google)",
-            callback=self._callback_select_formats,
-            value=self.cfont.write_cbdt,
-            sizeStyle="small",
-        )
-        y += 32
-        self.d.generate_sizes_label = vanilla.TextBox((10, y, 160, 20), "Generate bitmap sizes:", sizeStyle="small")
-        self.d.auto_layer_suffix_label = vanilla.TextBox((235, y, 160, 20), "Auto layer suffix regex:", sizeStyle="small")
-        self.d.regex_test_button = vanilla.Button((-70, y-3, -30, 20), "Test",
-            callback = self._callback_test_regex,
-            sizeStyle="small",
-        )
-        y += 25
-        self.d.generate_sbix_sizes = vanilla.EditText((10, y, 200, 36),
-            callback=self._callback_set_sbix_sizes,
-            text=self._ui_get_sbix_sizes(),
-            sizeStyle="small"
-        )
-        self.d.auto_layer_regex_box = vanilla.EditText((235, y, 178, 20),
-            callback=self._callback_check_regex,
-            text=self.cfont.auto_layer_regex,
-            sizeStyle="small"
-        )
-        self.d.auto_layer_regex_ok = vanilla.CheckBox((-22, y, 20, 20), "",
-            callback=None,
-            value=self._auto_layer_regex_ok,
-            sizeStyle="small",
-        )
-        y += 26
-        self.d._add_base_layer = vanilla.CheckBox((235, y, -10, 20), "Auto layers include base glyph",
-            callback=self._callback_auto_layer_include_baseglyph,
-            value=False,
-            sizeStyle="small",
-        )
-        self.d.preferPlacedImages = vanilla.CheckBox((10, y+16, 280, -10), "Prefer placed images over outlines",
-            callback=self._callback_prefer_placed_images,
-            value=False,
-            sizeStyle="small",
-        )
-        self.d.infoButton = vanilla.Button((-150, -30, -80, -10), "Debug",
-            callback = self._show_font_info,
-        )
-        self.d.resetButton = vanilla.Button((-70, -30, -10, -10), "Reset",
-            callback = self._reset_color_data,
-        )
-        
-        
-        
+
+        self.w = get_ui(self, title)
+        self.d = get_drawer(self)
         self.setUpBaseWindowBehavior()
         
         # load color data from rfont
@@ -374,12 +113,12 @@ class ColorFontEditor(BaseWindowController):
         
         self.w.open()
 
-    def  _getColorPopupList(self):
-        # build a list of current palette's colors that can be assigned
-        # to the color popup in the layer list
-        # FIXME: It seems the cell's popup list can't be changed easily after
-        # the list has been built.
-        return [NSAttributedString.alloc().initWithString_attributes_(str(entry["layer_index"]), {NSForegroundColorAttributeName: entry["Color"]}) for entry in self.w.colorpalette]
+    #def  _getColorPopupList(self):
+    #    # build a list of current palette's colors that can be assigned
+    #    # to the color popup in the layer list
+    #    # FIXME: It seems the cell's popup list can't be changed easily after
+    #    # the list has been built.
+    #    return [NSAttributedString.alloc().initWithString_attributes_(str(entry["layer_index"]), {NSForegroundColorAttributeName: entry["Color"]}) for entry in self.w.colorpalette]
 
     def _show_font_info(self, sender=None):
         print self.cfont
@@ -455,6 +194,7 @@ class ColorFontEditor(BaseWindowController):
         self._cache_color_info()
         
     def _ui_layer_list_save_to_cfont(self):
+        # save the ui layer list to colorfont
         ##print "DEBUG ColorFontEditor._ui_layer_list_save_to_cfont"
         if self.glyph is not None:
             if self.glyph in self.cfont.keys():
@@ -484,10 +224,11 @@ class ColorFontEditor(BaseWindowController):
         #    print "  Glyph is None."
 
     def _ui_get_sbix_sizes(self):
+        # get the display string for a python list
         return str(self.cfont.bitmap_sizes).strip("[]")
 
     def _reset_color_data(self, sender=None):
-        #completely remove color info from UFO
+        # completely remove color info from UFO
         if self.font is not None:
             # font lib
             if "%s.colorpalette" % self.libkey in self.font.lib.keys():
@@ -519,6 +260,8 @@ class ColorFontEditor(BaseWindowController):
         self._callback_update_ui_formats()
 
     def addColorToPalette(self, sender=None):
+        # add a new color to the current palette
+        
         # find a new palette index
         paletteIndices = sorted(self.cfont.palettes[0].keys(), key=lambda k: int(k))
         if len(paletteIndices) > 0:
@@ -537,14 +280,8 @@ class ColorFontEditor(BaseWindowController):
         else:
             print "ERROR: Color Index 0xffff is reserved."
     
-    def _get_color_for_layer_color_index(self, index):
-        # TODO: unused?
-        for c in self.w.colorpalette.get():
-            if int(c["Index"]) == index:
-                return c["Color"]
-        return self.color
-    
-    def _get_list_index_for_layer_color_index(self, index):
+    def _get_palette_color_ui_index_for_layer_color_index(self, index):
+        # find the index of a color in the palette (= ui list index, not layer_color_index)
         _palette = self.w.colorpalette.get()
         for i in range(len(_palette)):
             if int(_palette[i]["Index"]) == index:
@@ -644,7 +381,7 @@ class ColorFontEditor(BaseWindowController):
             self._selected_color_index = None
         else:
             i = int(layers[sel[0]]["layer_color_index"])
-            self._selected_color_index = self._get_list_index_for_layer_color_index(i)
+            self._selected_color_index = self._get_palette_color_ui_index_for_layer_color_index(i)
             if self._selected_color_index is None:
                 self.w.colorpalette.setSelection([])
             else:
@@ -887,7 +624,7 @@ class ColorFontEditor(BaseWindowController):
         removeObserver(self, "currentGlyphChanged")
         removeObserver(self, "drawBackground")
         removeObserver(self, "drawInactive")
-        setGlyphViewDisplaySettings(self.oldDisplaySettings)
+        #setGlyphViewDisplaySettings(self.oldDisplaySettings)
         self._ui_layer_list_save_to_cfont()
         if self.cfont.save_settings and self.currentPaletteChanged:
             self._paletteWriteToColorFont()
@@ -1113,7 +850,6 @@ class ColorFontEditor(BaseWindowController):
         
     def _callback_auto_layer_include_baseglyph(self, sender=None):
         self.cfont.auto_layer_include_baseglyph = sender.get()
-        #self.cfont.save_to_rfont()
 
 if __name__ == "__main__":
     OpenWindow(ColorFontEditor)
