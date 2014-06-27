@@ -827,11 +827,8 @@ class ColorFontEditor(BaseWindowController):
         # select glyphs based on current regex
         from re import search, compile
         regex = compile(self.cfont.auto_layer_regex)
-        _glyph_list = []
-        for glyphname in self.font.glyphOrder:
-            if regex.search(glyphname):
-                _glyph_list.append(glyphname)
-        print "_callback_test_regex matched %i glyphs." % len(_glyph_list)
+        _glyph_list = [glyphname for glyphname in self.font.glyphOrder if regex.search(glyphname)]
+        #print "_callback_test_regex matched %i glyphs." % len(_glyph_list)
         self.font.selection = _glyph_list
     
     def _callback_prefer_placed_images(self, sender=None):
