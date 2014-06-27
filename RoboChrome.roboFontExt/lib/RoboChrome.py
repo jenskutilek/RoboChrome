@@ -698,10 +698,7 @@ class ColorFontEditor(BaseWindowController):
     
     def getColorDict(self):
         # returns the current UI color palette as dictionary
-        _dict = {}
-        for _color in self.w.colorpalette.get():
-            _dict[int(_color["Index"])] = _color["Color"]
-        return _dict
+        return {int(_color["Index"]): _color["Color"] for _color in self.w.colorpalette.get()}
     
     def draw(self):
         # draw the color glyph on the canvas
