@@ -456,16 +456,6 @@ class ColorFontEditor(BaseWindowController):
         else:
             return "#%02x%02x%02x%02x" % (r, g, b, a)
     
-    def getTupleColor(self, nscolor, opacity_factor=1):
-        # get (r, g, b, a) tuple for a NSColor (needed for mojoDrawinTools.fill etc.)
-        if nscolor.colorSpaceName != NSCalibratedRGBColorSpace:
-            nscolor = nscolor.colorUsingColorSpaceName_(NSCalibratedRGBColorSpace)
-        r = nscolor.redComponent()
-        g = nscolor.greenComponent()
-        b = nscolor.blueComponent()
-        a = nscolor.alphaComponent() * opacity_factor
-        return (r, g, b, a)
-    
     def _callback_set_show_only_glyphs_with_layers(self, sender):
         self.show_only_glyphs_with_layers = sender.get()
         self._callback_update_ui_glyph_list()
@@ -700,9 +690,11 @@ class ColorFontEditor(BaseWindowController):
         _ui_active = self.cfont.write_sbix or self.cfont.write_cbdt or self.cfont.write_colr or self.cfont.write_svg
         self.w.export_button.enable(_ui_active)
     
-    def setFill(self, rgba):
-        red, green, blue, alpha = rgba
-        fill(red, green, blue, alpha)
+    def setFill(self, nscolor, opacity_factor=1):
+        # set fill color for mojoDrawingTools, optionally with changed opacity
+        if nscolor.colorSpaceName != NSCalibratedRGBColorSpace:
+            nscolor = nscolor.colorUsingColorSpaceName_(NSCalibratedRGBColorSpace)
+        fill(nscolor.redComponent(), nscolor.greenComponent(), nscolor.blueComponent(), nscolor.alphaComponent() * opacity_factor)
     
     def getColorDict(self):
         # returns the current UI color palette as dictionary
@@ -715,9 +707,9 @@ class ColorFontEditor(BaseWindowController):
         # draw the color glyph on the canvas
         if self.font is not None:
             save()
-            self.setFill(self.getTupleColor(self.colorbg))
+            self.setFill(self.colorbg)
             rect(0, 0, 310, 200)
-            self.setFill(self.getTupleColor(self.color))
+            self.setFill(self.color)
             scale(self.scale)
             translate(50.5, -self.metrics[0]+20.5)
             self._canvas_draw_metrics()
@@ -734,7 +726,7 @@ class ColorFontEditor(BaseWindowController):
                 if layerGlyph in self.font:
                     if i < len(self.layer_colors):
                         _color = self.layer_colors[i]
-                        self.setFill(self.getTupleColor(_color, op_factor))
+                        self.setFill(_color, op_factor)
                         drawGlyph(self.font[layerGlyph])
             restore()
 
@@ -779,14 +771,14 @@ class ColorFontEditor(BaseWindowController):
         if self.glyphPreview in self.cfont.keys():
             ##print "DEBUG: draw glyph"
             save()
-            self.setFill(self.getTupleColor(self.color))
+            self.setFill(self.color)
             g = RGlyph()
             for i in range(len(self.layer_glyphs_glyph_window)):
                 layerGlyph = self.layer_glyphs_glyph_window[i]
                 if layerGlyph in self.font:
                     if i < len(self.layer_colors_glyph_window):
                         _color = self.layer_colors_glyph_window[i]
-                        self.setFill(self.getTupleColor(_color))
+                        self.setFill(_color)
                         drawGlyph(self.font[layerGlyph])
             restore()
         if self._debug_enable_live_editing:
