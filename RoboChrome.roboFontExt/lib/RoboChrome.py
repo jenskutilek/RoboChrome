@@ -4,7 +4,7 @@ from Cocoa import NSColorPboardType
 
 from os.path import basename, exists
 
-from AppKit import NSColor, NSCalibratedRGBColorSpace
+from AppKit import NSColor, NSCalibratedRGBColorSpace, NSAttributedString, NSForegroundColorAttributeName #, NSActionCell
 from lib.cells.colorCell import ColorCell, PopupColorPanel
 from defconAppKit.windows.baseWindow import BaseWindowController
 from fontTools.misc.transform import Offset
@@ -16,7 +16,11 @@ import colorfont
 reload(colorfont)
 from colorfont import ColorFont
 
-
+"""
+# TODO: make a custom cell class so that the indices can be stored as integers?
+class IntegerCell(NSActionCell):
+    pass
+"""
 
 class ColorFontEditor(BaseWindowController):
 
@@ -66,40 +70,61 @@ class ColorFontEditor(BaseWindowController):
         self.scale = 180.0 / (self.metrics[3] - self.metrics[0])
         
         palette_columns = [
-            {"title": "Index",
-            #"cell": IntType, #TODO
-            "width": 60,
-            "typingSensitive": True,
+            {
+                "title": "Index",
+                #"cell": IntType, #TODO
+                "width": 60,
+                "typingSensitive": True,
             },
-            {"title": "Color",
-            "cell": ColorCell.alloc().initWithDoubleClickCallack_(self.paletteEditColorCell),
-            "typingSensitive": False,
-            "editable": False},
+            {
+                "title": "Color",
+                "cell": ColorCell.alloc().initWithDoubleClickCallack_(self.paletteEditColorCell),
+                "typingSensitive": False,
+                "editable": False,
+            },
         ]
         
         column_descriptions = [
-            {"title": "Layers",
-            "cell": vanilla.CheckBoxListCell(),
-            #"cell": "X",
-            "width": 35,
-            "editable": False},
-            {"title": "Name",
-            "typingSensitive": True,
-            "editable": False},
+            {
+                "title": "Layers",
+                "cell": vanilla.CheckBoxListCell(),
+                #"cell": "X",
+                "width": 35,
+                "editable": False,
+            },
+            {
+                "title": "Name",
+                "typingSensitive": True,
+                "editable": False,
+            },
         ]
         
         layer_columns = [
-            {"title": "Index",
-            #"cell": vanilla.CheckBoxListCell(),
-            "width": 45,
-            "editable": True},
-            {"title": "Color",
-            #"cell": vanilla.CheckBoxListCell(),
-            "width": 45,
-            "editable": True},
-            {"title": "Layer Glyph",
-            "typingSensitive": True,
-            "editable": True},
+            {
+                "title": "Index",
+                "key": "layer_index",
+                #"cell": vanilla.CheckBoxListCell(),
+                "width": 45,
+                "editable": True,
+            },
+            {
+                "title": "ColorIndex",
+                "key": "layer_color_index",
+                "width": 45,
+                "editable": True,
+            },
+            #{
+            #    "title": "Color",
+            #    "binding": "selectedValue",
+            #    "cell": vanilla.PopUpButtonListCell([]),
+            #    "width": 30,
+            #    "editable": True,
+            #},
+            {
+                "title": "Layer Glyph",
+                "typingSensitive": True,
+                "editable": True,
+            },
         ]
         
         layer_drop_settings = {
@@ -349,6 +374,13 @@ class ColorFontEditor(BaseWindowController):
         
         self.w.open()
 
+    def  _getColorPopupList(self):
+        # build a list of current palette's colors that can be assigned
+        # to the color popup in the layer list
+        # FIXME: It seems the cell's popup list can't be changed easily after
+        # the list has been built.
+        return [NSAttributedString.alloc().initWithString_attributes_(str(entry["layer_index"]), {NSForegroundColorAttributeName: entry["Color"]}) for entry in self.w.colorpalette]
+
     def _show_font_info(self, sender=None):
         print self.cfont
 
@@ -408,7 +440,12 @@ class ColorFontEditor(BaseWindowController):
             for i in range(len(self.cfont[self.glyph].layers)):
                 g = self.cfont[self.glyph].layers[i]
                 if g in self.font.keys():
-                    _ui_list.append({"Index": str(i), "Color": self.cfont[self.glyph].colors[i], "Layer Glyph": g})
+                    _ui_list.append({
+                            "layer_index": str(i),
+                            "layer_color_index": self.cfont[self.glyph].colors[i],
+                            #"Color": self._getColorPopupList(),
+                            "Layer Glyph": g,
+                        })
                 else:
                     print "Warning: Missing layer glyph '%s' referenced in glyph '%s'." % (g, self.glyph)
         ##print "DEBUG: self.w.layer_list.set(_ui_list)"
@@ -423,9 +460,9 @@ class ColorFontEditor(BaseWindowController):
             if self.glyph in self.cfont.keys():
                 layerGlyphs = []
                 _layer_colors = []
-                for layerDict in sorted(self.w.layer_list.get(), key=lambda k: int(k["Index"])):
+                for layerDict in sorted(self.w.layer_list.get(), key=lambda k: int(k["layer_index"])):
                     layerGlyphs.append(layerDict["Layer Glyph"])
-                    _layer_colors.append(int(layerDict["Color"]))
+                    _layer_colors.append(int(layerDict["layer_color_index"]))
                 if len(layerGlyphs) > 0 or len(_layer_colors) > 0:
                     _modified = False
                     if self.cfont[self.glyph].layers != layerGlyphs:
@@ -516,9 +553,14 @@ class ColorFontEditor(BaseWindowController):
     
     def _cache_layer_info(self):
         # self.layer_glyphs is used for drawing
-        _layers = sorted(self.w.layer_list.get(), key=lambda k: int(k["Index"]))
+        _layers = sorted(self.w.layer_list.get(), key=lambda k: int(k["layer_index"]))
         if _layers == []:
-            self.layer_glyphs = [{"Color": 0xffff, "Index": 0, "Layer Glyph": self.glyph}]
+            self.layer_glyphs = [{
+                "layer_color_index": 0xffff,
+                #"Color": self._getColorPopupList(),
+                "layer_index": 0,
+                "Layer Glyph": self.glyph
+            }]
         else:
             self.layer_glyphs = _layers
     
@@ -528,7 +570,7 @@ class ColorFontEditor(BaseWindowController):
         colorDict = self.getColorDict()
         _layer_colors = []
         for g in self.layer_glyphs:
-            colorIndex = int(g["Color"])
+            colorIndex = int(g["layer_color_index"])
             if colorIndex == 0xffff:
                 _layer_colors.append(self.color)
             else:
@@ -537,6 +579,9 @@ class ColorFontEditor(BaseWindowController):
                 else:
                     print "Missing color in palette %i: %i" % (self.palette_index, colorIndex)
         self.layer_colors = _layer_colors
+        
+        # update color list in layer list popup
+        #self.w.layer_list["Color"].set(self._getColorPopupList())
     
     def _cache_color_info_glyph_window(self):
         ##print "DEBUG _cache_color_info_glyph_window"
@@ -567,7 +612,12 @@ class ColorFontEditor(BaseWindowController):
             _color = self.getSelectedColorIndex()
             if _color is None:
                 _color = 0xffff
-            self.w.layer_list.append({"Index": str(len(self.w.layer_list)+1), "Color": _color, "Layer Glyph": newlayer})
+            self.w.layer_list.append({
+                "layer_index": str(len(self.w.layer_list)+1),
+                # "Color": self._getColorPopupList(),
+                "layer_color_index": _color,
+                "Layer Glyph": newlayer,
+            })
             #self._ui_layer_list_save_to_cfont()
             if not self.glyph in self.cfont.keys():
                 #print "DEBUG: Add new layer glyph to cfont"
@@ -593,7 +643,7 @@ class ColorFontEditor(BaseWindowController):
             self.w.colorpalette.setSelection([])
             self._selected_color_index = None
         else:
-            i = int(layers[sel[0]]["Color"])
+            i = int(layers[sel[0]]["layer_color_index"])
             self._selected_color_index = self._get_list_index_for_layer_color_index(i)
             if self._selected_color_index is None:
                 self.w.colorpalette.setSelection([])
@@ -943,7 +993,7 @@ class ColorFontEditor(BaseWindowController):
                 if self._selected_color_index is None:
                     op_factor = 1.0
                 else:
-                    if self._selected_color_index == self.layer_glyphs[i]["Color"]:
+                    if self._selected_color_index == self.layer_glyphs[i]["layer_color_index"]:
                         op_factor = 1.0
                     else:
                         op_factor = 0.2
