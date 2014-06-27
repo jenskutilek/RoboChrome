@@ -8,6 +8,7 @@ from mojo.drawingTools import drawGlyph, fill, line, rect, restore, save, scale,
 from mojo.UI import UpdateCurrentGlyphView, CurrentGlyphWindow
 #from mojo.UI import setGlyphViewDisplaySettings, getGlyphViewDisplaySettings
 from os.path import basename, exists
+from re import search, compile
 from RoboChromeUI import get_ui, get_drawer
 
 
@@ -806,7 +807,6 @@ class ColorFontEditor(BaseWindowController):
 
     def _callback_check_regex(self, sender=None):
         # check if the entered regex does compile
-        from re import compile
         test_re = sender.get()
         try:
             compile(test_re)
@@ -822,7 +822,6 @@ class ColorFontEditor(BaseWindowController):
     
     def _callback_test_regex(self, sender=None):
         # select glyphs based on current regex
-        from re import search, compile
         regex = compile(self.cfont.auto_layer_regex)
         _glyph_list = [glyphname for glyphname in self.font.glyphOrder if regex.search(glyphname)]
         #print "_callback_test_regex matched %i glyphs." % len(_glyph_list)

@@ -4,6 +4,7 @@ import numpy
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import Glyph
 from math import ceil
+from re import search, compile
 from tables.C_P_A_L_ import table_C_P_A_L_, Color
 from tables.C_O_L_R_ import table_C_O_L_R_, LayerRecord
 from tables._s_b_i_x import table__s_b_i_x
@@ -604,7 +605,6 @@ class ColorFont(object):
     def auto_layers(self):
         """Assign layers for all base glyphs in RFont based on the
         regular expression <ColorFont.auto_layer_regex>."""
-        from re import search, compile
         regex = compile(self.auto_layer_regex)
         _layer_base_glyphs = []
         
