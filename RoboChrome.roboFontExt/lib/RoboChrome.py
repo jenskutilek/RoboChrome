@@ -697,7 +697,7 @@ class ColorFontEditor(BaseWindowController):
         fill(nscolor.redComponent(), nscolor.greenComponent(), nscolor.blueComponent(), nscolor.alphaComponent() * opacity_factor)
     
     def getColorDict(self):
-        # returns the current UI color palette as dictionary
+        # returns the current UI color palette as dictionary {index: nscolor}
         return {int(_color["Index"]): _color["Color"] for _color in self.w.colorpalette.get()}
     
     def draw(self):
