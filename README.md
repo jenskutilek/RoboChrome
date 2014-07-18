@@ -3,8 +3,8 @@ RoboChrome
 
 Color Fonts for RoboFont
 
-To clone including the `flat` submodule, use:
+### Installation
 
-    git clone --recursive https://github.com/fontfont/RoboChrome
+Download or clone the git repository and install the extension by double-clicking on `RoboChome.roboFontExt`.
 
-When you use ‘Download ZIP’, the `flat` submodule is missing, preventing RoboChrome from rasterizing and exporting bitmap formats, so please use the `git clone` command whenever possible.
+Alternatively, you can use [Mechanic](https://github.com/jackjennings/mechanic) to install and update RoboChrome.

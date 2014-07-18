@@ -30,8 +30,10 @@
 	<key>requiresVersionMinor</key>
 	<string>5</string>
 	<key>timeStamp</key>
-	<real>1360841639.551887</real>
+	<real>1405687358</real>
 	<key>version</key>
-	<string>0.2</string>
+	<string>0.3</string>
+	<key>repository</key>
+    <string>fontfont/RoboChrome</string>
 </dict>
 </plist>
