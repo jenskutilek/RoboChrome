@@ -34,7 +34,6 @@ class Glyph(object):
 		# fix graphicType
 		if self.graphicType is not None:
 			if self.graphicType[-1] == "\0":
-				print("Fixing null terminated graphicType")
 				self.graphicType = self.graphicType[:-1]
 			if len(self.graphicType) > 4:
 				from fontTools import ttLib
