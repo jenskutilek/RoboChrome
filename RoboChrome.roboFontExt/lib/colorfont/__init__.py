@@ -2,14 +2,14 @@ from operator import itemgetter
 from types import ListType
 import numpy
 from fontTools.ttLib import TTFont
-from fontTools.ttLib.tables._g_l_y_f import Glyph
+from fontTools.ttLib.tables._g_l_y_f import Glyph as TTGlyph
 from math import ceil
 from re import search, compile
 from tables.C_P_A_L_ import table_C_P_A_L_, Color
 from tables.C_O_L_R_ import table_C_O_L_R_, LayerRecord
 from tables._s_b_i_x import table__s_b_i_x
-from tables.sbixBitmapSet import BitmapSet
-from tables.sbixBitmap import Bitmap
+from tables.sbixStrike import Strike
+from tables.sbixGlyph import Glyph as sbixGlyph
 from tables.S_V_G_ import table_S_V_G_
 
 # for png generation
@@ -509,10 +509,6 @@ class ColorFont(object):
                     glyf[glyphname] = glyph
     
     def _export_sbix(self, otfpath, palette=0, image_format="png", replace_outlines=False, parent_window=None):
-        if image_format == "png": # FIXME: too complicated
-            image_format_tag="png "
-        else:
-            image_format_tag="pdf "
         if replace_outlines:
             alt_glyphname_string = "%s"
         else:
@@ -527,20 +523,26 @@ class ColorFont(object):
         sbix = table__s_b_i_x("sbix")
         if parent_window is not None:
             progress = ProgressWindow("Rendering bitmaps ...", tickCount=len(self.bitmap_sizes)*len(self.keys()), parentWindow=parent_window)
-        for current_size in sorted(self.bitmap_sizes):
-            current_set = BitmapSet(size=current_size)
+        for current_ppem in sorted(self.bitmap_sizes):
+            current_set = Strike(ppem=current_ppem)
             for glyphname in self.keys():
                 if parent_window is not None:
-                    progress.update("Rendering /%s @ %i px ..." % (glyphname, current_size))
+                    progress.update("Rendering /%s @ %i px ..." % (glyphname, current_ppem))
                 alt_glyphname = alt_glyphname_string % glyphname
                 if image_format == "png":
-                    image_data = self[glyphname].get_png(palette, current_size)
+                    image_data = self[glyphname].get_png(palette, current_ppem)
+                elif image_format == "pdf":
+                    image_data = self[glyphname].get_pdf(palette, current_ppem)
                 else:
-                    image_data = self[glyphname].get_pdf(palette, current_size)
-                current_set.bitmaps[alt_glyphname] = Bitmap(glyphName=glyphname,
-                                                        imageFormatTag=image_format_tag,
-                                                        imageData=image_data)
-            sbix.bitmapSets[current_size] = current_set
+                    # TODO: handle tiff, jpg, (dupe, mask)
+                    # fallback
+                    image_data = self[glyphname].get_png(palette, current_ppem)
+                current_set.glyphs[alt_glyphname] = sbixGlyph(
+                    glyphName=glyphname,
+                    graphicType=image_format,
+                    imageData=image_data,
+                )
+            sbix.strikes[current_ppem] = current_set
         if parent_window is not None:
             progress.close()
         font["sbix"] = sbix    
@@ -805,7 +807,7 @@ class ColorGlyph(object):
             [(box[0], box[1], 1)],
             [(box[2], box[3], 1)],
         ]
-        glyph = Glyph()
+        glyph = TTGlyph()
         glyph.program = NoProgram()
         glyph.numberOfContours = 0
         for contour in contours:

@@ -1,79 +1,101 @@
+from __future__ import print_function, division, absolute_import
+from .py23 import *
+from fontTools.misc.textTools import readHex, safeEval
 import struct, sstruct
-from fontTools.misc.textTools import readHex
 
-sbixBitmapHeaderFormat = """
-	>
-	usReserved1:     H    # 00 00
-	usReserved2:     H    #       00 00
-	imageFormatTag:  4s   # e.g. "png "
+
+sbixGlyphHeaderFormat = """
+  >
+  originOffsetX:   h    # The x-value of the point in the glyph relative to its
+                        # lower-left corner which corresponds to the origin of
+                        # the glyph on the screen, that is the point on the
+                        # baseline at the left edge of the glyph.
+  originOffsetY:   h    # The y-value of the point in the glyph relative to its
+                        # lower-left corner which corresponds to the origin of
+                        # the glyph on the screen, that is the point on the
+                        # baseline at the left edge of the glyph.
+  graphicType:     4s   # e.g. "png "
 """
 
-sbixBitmapHeaderFormatSize = sstruct.calcsize(sbixBitmapHeaderFormat)
+sbixGlyphHeaderFormatSize = sstruct.calcsize(sbixGlyphHeaderFormat)
 
 
-class Bitmap(object):
-	def __init__(self, glyphName=None, referenceGlyphName=None, usReserved1=0, usReserved2=0, imageFormatTag=None, imageData=None, rawdata=None, gid=0):
+class Glyph(object):
+	def __init__(self, glyphName=None, referenceGlyphName=None, originOffsetX=0, originOffsetY=0, graphicType=None, imageData=None, rawdata=None, gid=0):
 		self.gid = gid
 		self.glyphName = glyphName
 		self.referenceGlyphName = referenceGlyphName
-		self.usReserved1 = usReserved1
-		self.usReserved2 = usReserved2
+		self.originOffsetX = originOffsetX
+		self.originOffsetY = originOffsetY
 		self.rawdata = rawdata
-		self.imageFormatTag = imageFormatTag
+		self.graphicType = graphicType
 		self.imageData = imageData
-	
+		
+		# fix graphicType
+		if self.graphicType is not None:
+			if self.graphicType[-1] == "\0":
+				print("Fixing null terminated graphicType")
+				self.graphicType = self.graphicType[:-1]
+			if len(self.graphicType) > 4:
+				from fontTools import ttLib
+				raise ttLib.TTLibError("Glyph.graphicType must not be longer than 4 characters.")
+			elif len(self.graphicType) < 4:
+				# pad with spaces
+				self.graphicType += "    "[:(4 - len(self.graphicType))]
+
 	def decompile(self, ttFont):
 		self.glyphName = ttFont.getGlyphName(self.gid)
 		if self.rawdata is None:
 			from fontTools import ttLib
-			raise(ttLib.TTLibError, "No table data to decompile.")
+			raise ttLib.TTLibError("No table data to decompile")
 		if len(self.rawdata) > 0:
-			if len(self.rawdata) < sbixBitmapHeaderFormatSize:
+			if len(self.rawdata) < sbixGlyphHeaderFormatSize:
 				from fontTools import ttLib
-				#print "Bitmap %i header too short: Expected %x, got %x." % (self.gid, sbixBitmapHeaderFormatSize, len(self.rawdata))
-				raise(ttLib.TTLibError, "Bitmap header too short.")
-			
-			sstruct.unpack(sbixBitmapHeaderFormat, self.rawdata[:sbixBitmapHeaderFormatSize], self)
-			
-			if self.imageFormatTag == "dupe":
-				# bitmap is a reference to another glyph's bitmap
-				gid, = struct.unpack(">H", self.rawdata[sbixBitmapHeaderFormatSize:])
+				#print "Glyph %i header too short: Expected %x, got %x." % (self.gid, sbixGlyphHeaderFormatSize, len(self.rawdata))
+				raise ttLib.TTLibError("Glyph header too short.")
+
+			sstruct.unpack(sbixGlyphHeaderFormat, self.rawdata[:sbixGlyphHeaderFormatSize], self)
+
+			if self.graphicType == "dupe":
+				# this glyph is a reference to another glyph's image data
+				gid, = struct.unpack(">H", self.rawdata[sbixGlyphHeaderFormatSize:])
 				self.referenceGlyphName = ttFont.getGlyphName(gid)
 			else:
-				self.imageData = self.rawdata[sbixBitmapHeaderFormatSize:]
+				self.imageData = self.rawdata[sbixGlyphHeaderFormatSize:]
 				self.referenceGlyphName = None
 		# clean up
 		del self.rawdata
 		del self.gid
-		
+
 	def compile(self, ttFont):
 		if self.glyphName is None:
 			from fontTools import ttLib
-			raise ttLib.TTLibError, "Can't compile bitmap without glyph name"
+			raise ttLib.TTLibError("Can't compile Glyph without glyph name")
 			# TODO: if ttFont has no maxp, cmap etc., ignore glyph names and compile by index?
 			# (needed if you just want to compile the sbix table on its own)
 		self.gid = struct.pack(">H", ttFont.getGlyphID(self.glyphName))
-		if self.imageFormatTag is None:
+		if self.graphicType is None:
 			self.rawdata = ""
 		else:
-			self.rawdata = sstruct.pack(sbixBitmapHeaderFormat, self) + self.imageData
-	
+			self.rawdata = sstruct.pack(sbixGlyphHeaderFormat, self) + self.imageData
+
 	def toXML(self, xmlWriter, ttFont):
-		if self.imageFormatTag == None:
-			# TODO: ignore empty bitmaps?
-			# a bitmap entry is required for each glyph,
+		if self.graphicType == None:
+			# TODO: ignore empty glyphs?
+			# a glyph data entry is required for each glyph,
 			# but empty ones can be calculated at compile time
-			xmlWriter.simpletag("bitmap", glyphname=self.glyphName)
+			xmlWriter.simpletag("glyph", name=self.glyphName)
 			xmlWriter.newline()
 			return
-		xmlWriter.begintag("bitmap", format=self.imageFormatTag, glyphname=self.glyphName)
+		xmlWriter.begintag("glyph",
+			graphicType=self.graphicType,
+			name=self.glyphName,
+			originOffsetX=self.originOffsetX,
+			originOffsetY=self.originOffsetY,
+		)
 		xmlWriter.newline()
-		#xmlWriter.simpletag("usReserved1", value=self.usReserved1)
-		#xmlWriter.newline()
-		#xmlWriter.simpletag("usReserved2", value=self.usReserved2)
-		#xmlWriter.newline()
-		if self.imageFormatTag == "dupe":
-			# format == "dupe" is apparently a reference to another glyph id.
+		if self.graphicType == "dupe":
+			# graphicType == "dupe" is a reference to another glyph id.
 			xmlWriter.simpletag("ref", glyphname=self.referenceGlyphName)
 		else:
 			xmlWriter.begintag("hexdata")
@@ -81,20 +103,17 @@ class Bitmap(object):
 			xmlWriter.dumphex(self.imageData)
 			xmlWriter.endtag("hexdata")
 		xmlWriter.newline()
-		xmlWriter.endtag("bitmap")
+		xmlWriter.endtag("glyph")
 		xmlWriter.newline()
 
-	def fromXML(self, (name, attrs, content), ttFont):
-		#if name in ["usReserved1", "usReserved2"]:
-		#	setattr(self, name, int(attrs["value"]))
-		#elif
+	def fromXML(self, name, attrs, content, ttFont):
 		if name == "ref":
-			# bitmap is a "dupe", i.e. a reference to another bitmap.
+			# glyph is a "dupe", i.e. a reference to another glyph's image data.
 			# in this case imageData contains the glyph id of the reference glyph
 			# get glyph id from glyphname
-			self.imageData = struct.pack(">H", ttFont.getGlyphID(attrs["glyphname"]))
+			self.imageData = struct.pack(">H", ttFont.getGlyphID(safeEval("'''" + attrs["glyphname"] + "'''")))
 		elif name == "hexdata":
 			self.imageData = readHex(content)
 		else:
 			from fontTools import ttLib
-			raise ttLib.TTLibError, "can't handle '%s' element" % name
+			raise ttLib.TTLibError("can't handle '%s' element" % name)
