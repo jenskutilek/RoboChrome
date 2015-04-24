@@ -239,14 +239,14 @@ def get_drawer(window_controller):
     )
     y += 20
     d.generateMSFormat = vanilla.CheckBox(
-        (10, y, 200, -10),
+        (10, y, 200, 20),
         "COLR/CPAL (Windows)",
         callback = window_controller._callback_select_formats,
         value = window_controller.cfont.write_colr,
         sizeStyle = "small"
     )
     d.generateAppleFormat = vanilla.CheckBox(
-        (235, y, 200, -10),
+        (235, y, 200, 20),
         "sbix (Mac OS/iOS)",
         callback = window_controller._callback_select_formats,
         value = window_controller.cfont.write_sbix,
@@ -254,14 +254,14 @@ def get_drawer(window_controller):
     )
     y += 20
     d.generateSVGFormat = vanilla.CheckBox(
-        (10, y, 200, -10),
+        (10, y, 200, 20),
         "SVG (Mozilla/Adobe)",
         callback = window_controller._callback_select_formats,
         value = window_controller.cfont.write_svg,
         sizeStyle = "small",
     )
     d.generateGoogleFormat = vanilla.CheckBox(
-        (235, y, 200, -10),
+        (235, y, 200, 20),
         "CBDT/CBLC (Google)",
         callback = window_controller._callback_select_formats,
         value = window_controller.cfont.write_cbdt,
