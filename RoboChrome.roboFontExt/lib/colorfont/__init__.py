@@ -710,7 +710,7 @@ class ColorGlyph(object):
                 print "       Expected a list with 2 elements, but got %i elements." % len(entry)
         
         # read SVG from base64-encoded data
-        _svg_data = self.font.rfont[self.basename].lib.get("%s.svg" % self.font.libkey, None)
+        _svg_data = self.font.rfont[self.basename].lib.get("%s.svg" % self.font.libkey, "")
         if _svg_data != "":
             self.svg = _svg_data.data
     
