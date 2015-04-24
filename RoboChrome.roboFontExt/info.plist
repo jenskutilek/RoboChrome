@@ -30,9 +30,9 @@
 	<key>requiresVersionMinor</key>
 	<string>5</string>
 	<key>timeStamp</key>
-	<real>1411565316</real>
+	<real>1429891362.0</real>
 	<key>version</key>
-	<string>0.4</string>
+	<string>0.5</string>
 	<key>repository</key>
     <string>fontfont/RoboChrome</string>
 </dict>
