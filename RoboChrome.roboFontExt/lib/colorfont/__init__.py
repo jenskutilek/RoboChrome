@@ -659,7 +659,7 @@ class ColorGlyph(object):
         self.layers = []
         self.colors = []
         self.bitmaps = {}
-        self.svg = None
+        self.svg = ""
         if basename != "":
             self.read_from_rfont()
 
@@ -691,7 +691,7 @@ class ColorGlyph(object):
         """Load the ColorGlyph data from the ColorFont's RFont/RGlyph."""
         self.layers = []
         self.colors = []
-        self.svg = None
+        self.svg = ""
         if "%s.layers" % self.font.libkey in self.font.rfont[self.basename].lib.keys():
             entry = self.font.rfont[self.basename].lib["%s.layers" % self.font.libkey]
             if len(entry) == 2:
@@ -735,7 +735,7 @@ class ColorGlyph(object):
                             rfont[self.basename].update()
                 
                 # save SVG as base64-encoded data
-                if self.svg is not None:
+                if self.svg != "":
                     _svg_data = Data(self.svg)
                 else:
                     _svg_data = None
