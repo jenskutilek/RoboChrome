@@ -802,41 +802,42 @@ class ColorGlyph(object):
         """Return a special TT Glyph record for the sbix format. It contains
         two dummy contours with one point (bottom left and top right) each."""
         # make dummy contours
-        box = self.get_box()
-        contours = [
-            [(box[0], box[1], 1)],
-            [(box[2], box[3], 1)],
-        ]
         glyph = TTGlyph()
         glyph.program = NoProgram()
         glyph.numberOfContours = 0
-        for contour in contours:
-            coordinates = []
-            flags = []
-            for x, y, flag in contour:
-                if not hasattr(glyph, "xMin"):
-                    glyph.xMin = x
-                    glyph.yMin = y
-                    glyph.xMax = x
-                    glyph.yMax = y
+        box = self.get_box()
+        if box is not None:
+            contours = [
+                [(box[0], box[1], 1)],
+                [(box[2], box[3], 1)],
+            ]
+            for contour in contours:
+                coordinates = []
+                flags = []
+                for x, y, flag in contour:
+                    if not hasattr(glyph, "xMin"):
+                        glyph.xMin = x
+                        glyph.yMin = y
+                        glyph.xMax = x
+                        glyph.yMax = y
+                    else:
+                        glyph.xMin = min(glyph.xMin, x)
+                        glyph.yMin = min(glyph.yMin, y)
+                        glyph.xMax = max(glyph.xMax, x)
+                        glyph.yMax = max(glyph.yMax, y)
+                    coordinates.append([x, y])
+                    flags.append(flag)
+                coordinates = numpy.array(coordinates, numpy.int16)
+                flags = numpy.array(flags, numpy.int8)
+                if not hasattr(glyph, "coordinates"):
+                    glyph.coordinates = coordinates
+                    glyph.flags = flags
+                    glyph.endPtsOfContours = [len(coordinates)-1]
                 else:
-                    glyph.xMin = min(glyph.xMin, x)
-                    glyph.yMin = min(glyph.yMin, y)
-                    glyph.xMax = max(glyph.xMax, x)
-                    glyph.yMax = max(glyph.yMax, y)
-                coordinates.append([x, y])
-                flags.append(flag)
-            coordinates = numpy.array(coordinates, numpy.int16)
-            flags = numpy.array(flags, numpy.int8)
-            if not hasattr(glyph, "coordinates"):
-                glyph.coordinates = coordinates
-                glyph.flags = flags
-                glyph.endPtsOfContours = [len(coordinates)-1]
-            else:
-                glyph.coordinates = numpy.concatenate((glyph.coordinates, coordinates))
-                glyph.flags = numpy.concatenate((glyph.flags, flags))
-                glyph.endPtsOfContours.append(len(glyph.coordinates)-1)
-            glyph.numberOfContours += 1
+                    glyph.coordinates = numpy.concatenate((glyph.coordinates, coordinates))
+                    glyph.flags = numpy.concatenate((glyph.flags, flags))
+                    glyph.endPtsOfContours.append(len(glyph.coordinates)-1)
+                glyph.numberOfContours += 1
         return glyph
 
     def get_png(self, palette_index, size):
