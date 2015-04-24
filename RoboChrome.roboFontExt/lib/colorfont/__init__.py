@@ -711,7 +711,7 @@ class ColorGlyph(object):
         
         # read SVG from base64-encoded data
         _svg_data = self.font.rfont[self.basename].lib.get("%s.svg" % self.font.libkey, None)
-        if _svg_data is not None:
+        if _svg_data != "":
             self.svg = _svg_data.data
     
     def save_to_rfont(self):
