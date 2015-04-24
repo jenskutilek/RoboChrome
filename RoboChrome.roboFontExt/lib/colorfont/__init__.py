@@ -854,7 +854,8 @@ class ColorGlyph(object):
         box = self.font.rfont[self.basename].box
         for layername in self.layers:
             lbox = self.font.rfont[layername].box
-            box = (min(box[0], lbox[0]), min(box[1], lbox[1]), max(box[2], lbox[2]), max(box[3], lbox[3]))
+            if lbox is not None:
+                box = (min(box[0], lbox[0]), min(box[1], lbox[1]), max(box[2], lbox[2]), max(box[3], lbox[3]))
         return box
 
 
