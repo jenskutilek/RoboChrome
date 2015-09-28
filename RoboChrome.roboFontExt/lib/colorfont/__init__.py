@@ -232,7 +232,7 @@ class ColorFont(object):
             result += "        %s\n" % palette
         result += "    Glyphs: %s\n" % self.keys()
         for glyph in self.itervalues():
-            result += "        %s\n" % glyph
+            result += "%s\n" % glyph
         result += "</ColorFont>\n"
         return result
     
