@@ -165,7 +165,7 @@ def get_ui(window_controller, title):
         )
     y += 160
     w.show_only_glyphs_with_layers = vanilla.CheckBox(
-        (10, y, 176, -10),
+        (10, y, 176, 20),
         "Show only glyphs with layers",
         callback = window_controller._callback_set_show_only_glyphs_with_layers,
         value = window_controller.show_only_glyphs_with_layers,
@@ -313,7 +313,7 @@ def get_drawer(window_controller):
         sizeStyle = "small",
     )
     d.preferPlacedImages = vanilla.CheckBox(
-        (10, y+16, 280, -10),
+        (10, y+16, 280, 20),
         "Prefer placed images over outlines",
         callback = window_controller._callback_prefer_placed_images,
         value = False,
