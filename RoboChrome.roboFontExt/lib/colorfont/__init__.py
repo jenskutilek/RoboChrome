@@ -255,6 +255,18 @@ class ColorFont(object):
     
     def _get_fcolor(self, palette_index, color_index):
         # get a color by index, in "flat" format
+        if not palette_index in self.palettes:
+            print "ERROR: _get_fcolor(self, palette_index, color_index)"
+            print "       Requested palette key %s (%s) not in available palette keys." % (
+                palette_index, type(palette_index)
+            )
+            raise KeyError(palette_index)
+        if not color_index in self.palettes[palette_index]:
+            print "ERROR: _get_fcolor(self, palette_index, color_index)"
+            print "       Requested color key %s (%s) not in available color keys." % (
+                color_index, type(color_index)
+            )
+            raise KeyError(color_index)
         if color_index < 0xffff:
             _hexrgba = self.palettes[palette_index][str(color_index)]
         else:
