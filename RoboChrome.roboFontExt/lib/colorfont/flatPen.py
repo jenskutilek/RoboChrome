@@ -1,5 +1,6 @@
 from flat.command import *
 from fontTools.pens.basePen import BasePen
+from fontTools.pens.transformPen import TransformPen
 
 class FlatPen(BasePen):
     def __init__(self, f):
