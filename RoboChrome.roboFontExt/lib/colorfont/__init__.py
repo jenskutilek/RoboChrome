@@ -770,32 +770,37 @@ class ColorGlyph(object):
             sizes:         A list of sizes in pixels per em"""
         if not 0 in self.bitmaps.keys():
             _page = self._get_drawing(palette_index)
-            self.bitmaps[0] = _page.image(ppi=72, kind="rgba", samples=32).flip(False, True)
-        for size in sizes:
-            scale = float(size)/self.font.rfont.info.unitsPerEm
-            _width = int(ceil(self.bitmaps[0].width*scale))
-            _height = int(ceil(self.bitmaps[0].height*scale))
-            scale = min(float(_width)/(self.bitmaps[0].width+2), (float(_height)/(self.bitmaps[0].height+2)))
-            self.bitmaps[size] = self.bitmaps[0].resized(
-                int(round(self.bitmaps[0].width * scale)),
-                int(round(self.bitmaps[0].height * scale)),
-                ).png(optimized=True)
+            if _page is not None:
+                self.bitmaps[0] = _page.image(ppi=72, kind="rgba", samples=32).flip(False, True)
+        if 0 in self.bitmaps.keys():
+            for size in sizes:
+                scale = float(size)/self.font.rfont.info.unitsPerEm
+                _width = int(ceil(self.bitmaps[0].width*scale))
+                _height = int(ceil(self.bitmaps[0].height*scale))
+                scale = min(float(_width)/(self.bitmaps[0].width+2), (float(_height)/(self.bitmaps[0].height+2)))
+                self.bitmaps[size] = self.bitmaps[0].resized(
+                    int(round(self.bitmaps[0].width * scale)),
+                    int(round(self.bitmaps[0].height * scale)),
+                    ).png(optimized=True)
 
     def _get_drawing(self, palette_index=0):
         box = self.get_box()
-        width = box[2] - box[0]
-        height = box[3] - box[1]
-        d = document(width+2, height+2, "pt")
-        p = d.addpage()
-        _path = shape.path(shape())
-        for i in range(len(self.layers)):
-            layer = self.font.rfont[self.layers[i]]
-            colorindex = self.colors[i]
-            layer_color = self.font._get_fcolor(palette_index, colorindex)
-            pen = FlatPen(self.font.rfont)
-            layer.draw(pen)
-            g = p.place(shape().nostroke().fill(layer_color).path(*pen.path))
-            g.position(1 - box[0], 1 - box[1])
+        if box is None:
+            return None
+        else:
+            width = box[2] - box[0]
+            height = box[3] - box[1]
+            d = document(width+2, height+2, "pt")
+            p = d.addpage()
+            _path = shape.path(shape())
+            for i in range(len(self.layers)):
+                layer = self.font.rfont[self.layers[i]]
+                colorindex = self.colors[i]
+                layer_color = self.font._get_fcolor(palette_index, colorindex)
+                pen = FlatPen(self.font.rfont)
+                layer.draw(pen)
+                g = p.place(shape().nostroke().fill(layer_color).path(*pen.path))
+                g.position(1 - box[0], 1 - box[1])
         return p
 
     def get_tt_glyph(self):
