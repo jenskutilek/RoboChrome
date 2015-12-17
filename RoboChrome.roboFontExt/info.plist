@@ -28,11 +28,11 @@
 	<key>requiresVersionMajor</key>
 	<string>1</string>
 	<key>requiresVersionMinor</key>
-	<string>5</string>
+	<string>6</string>
 	<key>timeStamp</key>
-	<real>1443436659.0</real>
+	<real>1450353646.0</real>
 	<key>version</key>
-	<string>0.5.1</string>
+	<string>0.5.2</string>
 	<key>repository</key>
     <string>fontfont/RoboChrome</string>
 </dict>
