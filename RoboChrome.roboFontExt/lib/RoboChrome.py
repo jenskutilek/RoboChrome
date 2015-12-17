@@ -10,10 +10,9 @@ from os.path import basename, exists
 from re import search, compile
 from RoboChromeUI import get_ui, get_drawer
 
-# Check if the softlink to the "flat" module is available
-if not exists("flat"):
-    from os import symlink
-    symlink("external/flat/flat", "flat")
+# Fix import for flat module
+import os, sys
+sys.path.append(os.path.join(os.path.dirname(__file__), "external", "flat", "flat"))
 from colorfont import ColorFont
 
 
