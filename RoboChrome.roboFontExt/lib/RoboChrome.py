@@ -1,6 +1,5 @@
 from AppKit import NSColor, NSCalibratedRGBColorSpace
 #from AppKit import NSAttributedString, NSForegroundColorAttributeName # for popup listbox cells
-from colorfont import ColorFont
 from defconAppKit.windows.baseWindow import BaseWindowController
 from fontTools.misc.transform import Offset
 from mojo.events import addObserver, removeObserver
@@ -10,6 +9,13 @@ from mojo.UI import UpdateCurrentGlyphView, CurrentGlyphWindow
 from os.path import basename, exists
 from re import search, compile
 from RoboChromeUI import get_ui, get_drawer
+
+# Check if the softlink to the "flat" module is available
+if not exists("flat"):
+    from os import symlink
+    symlink("external/flat/flat", "flat")
+from colorfont import ColorFont
+
 
 
 class ColorFontEditor(BaseWindowController):
