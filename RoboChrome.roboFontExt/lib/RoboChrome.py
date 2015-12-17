@@ -12,7 +12,7 @@ from RoboChromeUI import get_ui, get_drawer
 
 # Fix import for flat module
 import os, sys
-sys.path.append(os.path.join(os.path.dirname(__file__), "external", "flat", "flat"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "external", "flat"))
 from colorfont import ColorFont
 
 
