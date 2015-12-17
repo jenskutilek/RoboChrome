@@ -1,8 +1,25 @@
 from operator import itemgetter
 from types import ListType
-import numpy
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import Glyph as TTGlyph
+
+# Try to adapt to different versions of FontTools
+try:
+    from mojo.roboFont import version as roboFontVersion
+    if roboFontVersion < "1.7":
+        use_old_FontTools = True
+    else:
+        use_old_FontTools = False
+except:
+    use_old_FontTools = False
+
+if use_old_FontTools:
+    # Up to RoboFont 1.6
+    import numpy
+else:
+    import array
+    from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
+
 from math import ceil
 from re import search, compile
 from tables.C_P_A_L_ import table_C_P_A_L_, Color
@@ -497,7 +514,10 @@ class ColorFont(object):
             #print glyphname, box
             if glyphname in glyf.keys():
                 alt_glyphname = alt_glyphname_string % glyphname
-                glyph = self[glyphname].get_tt_glyph()
+                if use_old_FontTools:
+                    glyph = self[glyphname].get_tt_glyph_old()
+                else:
+                    glyph = self[glyphname].get_tt_glyph()
                 if glyphname != alt_glyphname:
                     # add an alternate glyph for win
                     glyf[alt_glyphname] = glyf[glyphname]
@@ -821,10 +841,11 @@ class ColorGlyph(object):
                 g = p.place(shape().nostroke().fill(layer_color).path(*pen.path))
                 g.position(1 - box[0], 1 - box[1])
         return p
-
-    def get_tt_glyph(self):
+    
+    def get_tt_glyph_old(self):
         """Return a special TT Glyph record for the sbix format. It contains
-        two dummy contours with one point (bottom left and top right) each."""
+        two dummy contours with one point (bottom left and top right) each.
+        This is the version for older FontTools."""
         # make dummy contours
         glyph = TTGlyph()
         glyph.program = NoProgram()
@@ -860,6 +881,48 @@ class ColorGlyph(object):
                 else:
                     glyph.coordinates = numpy.concatenate((glyph.coordinates, coordinates))
                     glyph.flags = numpy.concatenate((glyph.flags, flags))
+                    glyph.endPtsOfContours.append(len(glyph.coordinates)-1)
+                glyph.numberOfContours += 1
+        return glyph
+    
+    def get_tt_glyph(self):
+        """Return a special TT Glyph record for the sbix format. It contains
+        two dummy contours with one point (bottom left and top right) each."""
+        # make dummy contours
+        glyph = TTGlyph()
+        glyph.program = NoProgram()
+        glyph.numberOfContours = 0
+        box = self.get_box()
+        if box is not None:
+            contours = [
+                [(box[0], box[1], 1)],
+                [(box[2], box[3], 1)],
+            ]
+            for contour in contours:
+                coordinates = []
+                flags = []
+                for x, y, flag in contour:
+                    if not hasattr(glyph, "xMin"):
+                        glyph.xMin = x
+                        glyph.yMin = y
+                        glyph.xMax = x
+                        glyph.yMax = y
+                    else:
+                        glyph.xMin = min(glyph.xMin, x)
+                        glyph.yMin = min(glyph.yMin, y)
+                        glyph.xMax = max(glyph.xMax, x)
+                        glyph.yMax = max(glyph.yMax, y)
+                    coordinates.append([x, y])
+                    flags.append(flag)
+                coordinates = GlyphCoordinates(coordinates)
+                flags = array.array("B", flags)
+                if not hasattr(glyph, "coordinates"):
+                    glyph.coordinates = coordinates
+                    glyph.flags = flags
+                    glyph.endPtsOfContours = [len(coordinates)-1]
+                else:
+                    glyph.coordinates.extend(coordinates)
+                    glyph.flags.extend(flags)
                     glyph.endPtsOfContours.append(len(glyph.coordinates)-1)
                 glyph.numberOfContours += 1
         return glyph
