@@ -19,6 +19,9 @@ try:
     have_flat = True
 except:
     have_flat = False
+    print "The 'flat' Python module is missing."
+    print "Raster output formats will not be available."
+    print "Please see <https://github.com/fontfont/RoboChrome/blob/master/README.md>"
 
 # for svg generation
 from svgPen import SVGpen
@@ -521,6 +524,10 @@ class ColorFont(object):
                     glyf[glyphname] = glyph
     
     def _export_sbix(self, otfpath, palette=0, image_format="png", replace_outlines=False, parent_window=None):
+        if not have_flat:
+            print "The 'flat' Python module is missing."
+            print "Please see <https://github.com/fontfont/RoboChrome/blob/master/README.md>"
+            return
         if replace_outlines:
             alt_glyphname_string = "%s"
         else:
