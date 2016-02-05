@@ -33,7 +33,12 @@
 	<real>1450362052.0</real>
 	<key>version</key>
 	<string>0.5.3</string>
-	<key>repository</key>
-    <string>fontfont/RoboChrome</string>
+	<key>com.robofontmechanic.Mechanic</key>
+	<dict>
+		<key>repository</key>
+		<string>fontfont/RoboChrome</string>
+		<key>summary</key>
+		<string>Edit and generate color fonts in various formats.</string>
+	</dict>
 </dict>
 </plist>
