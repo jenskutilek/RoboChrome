@@ -576,11 +576,12 @@ class ColorFont(object):
                     # TODO: handle tiff, jpg, (dupe, mask)
                     # fallback
                     image_data = self[glyphname].get_png(palette, current_ppem)
-                current_set.glyphs[alt_glyphname] = sbixGlyph(
-                    glyphName=glyphname,
-                    graphicType=image_format,
-                    imageData=image_data,
-                )
+                if image_data is not None:
+                    current_set.glyphs[alt_glyphname] = sbixGlyph(
+                        glyphName=glyphname,
+                        graphicType=image_format,
+                        imageData=image_data,
+                    )
             sbix.strikes[current_ppem] = current_set
         if parent_window is not None:
             progress.close()
@@ -811,16 +812,22 @@ class ColorGlyph(object):
             _page = self._get_drawing(palette_index)
             if _page is not None:
                 self.bitmaps[0] = _page.image(ppi=72, kind="rgba", samples=32).flip(False, True)
+            else:
+                self.bitmaps[0] = None
         if 0 in self.bitmaps.keys():
-            for size in sizes:
-                scale = float(size)/self.font.rfont.info.unitsPerEm
-                _width = int(ceil(self.bitmaps[0].width*scale))
-                _height = int(ceil(self.bitmaps[0].height*scale))
-                scale = min(float(_width)/(self.bitmaps[0].width+2), (float(_height)/(self.bitmaps[0].height+2)))
-                self.bitmaps[size] = self.bitmaps[0].resized(
-                    int(round(self.bitmaps[0].width * scale)),
-                    int(round(self.bitmaps[0].height * scale)),
-                    ).png(optimized=True)
+            if self.bitmaps[0] is None:
+                for size in sizes:
+                    self.bitmaps[size] = None
+            else:
+                for size in sizes:
+                    scale = float(size)/self.font.rfont.info.unitsPerEm
+                    _width = int(ceil(self.bitmaps[0].width*scale))
+                    _height = int(ceil(self.bitmaps[0].height*scale))
+                    scale = min(float(_width)/(self.bitmaps[0].width+2), (float(_height)/(self.bitmaps[0].height+2)))
+                    self.bitmaps[size] = self.bitmaps[0].resized(
+                        int(round(self.bitmaps[0].width * scale)),
+                        int(round(self.bitmaps[0].height * scale)),
+                        ).png(optimized=True)
 
     def _get_drawing(self, palette_index=0):
         box = self.get_box()
@@ -933,6 +940,8 @@ class ColorGlyph(object):
             size:          The size in pixels per em"""
         if size not in self.bitmaps.keys():
             self.rasterize(palette_index, [size])
+        if self.bitmaps[size] is None:
+            return None
         return self.bitmaps[size]
 
     def get_box(self):
