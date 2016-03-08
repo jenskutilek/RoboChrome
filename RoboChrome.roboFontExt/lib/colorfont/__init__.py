@@ -777,8 +777,8 @@ class ColorGlyph(object):
                 if self.svg != "":
                     _svg_data = Data(self.svg)
                 else:
-                    _svg_data = None
-                self._save_key_to_lib("svg", _svg_data, None)
+                    _svg_data = ""
+                self._save_key_to_lib("svg", _svg_data, "")
             else:
                 print "ERROR: Glyph %s does not exist in font %s (ColorGlyph.save_to_rfont)" % (self.basename, rfont)
     
