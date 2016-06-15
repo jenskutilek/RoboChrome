@@ -482,8 +482,7 @@ class ColorFont(object):
                 _pen.d = u""
                 rglyph.draw(_pen)
                 if _pen.d:
-                    _svg_doc += _layer + u'<path d="%s"/>' % (_pen.d)
-                _svg_doc +='</g>'
+                    _svg_doc += _layer + u'<path d="%s"/></g>' % (_pen.d)
             _svg_doc += "</svg>"
             _docList.append((_svg_doc, gid, gid))
         
