@@ -454,7 +454,7 @@ class ColorFont(object):
             _svg_palette.append((red, green, blue, alpha))
         #print "Palette:", len(_svg_palette), _svg_palette
         
-        _pen = SVGpen(self.rfont)
+        _pen = SVGpen(self.rfont, optimize_output=True)
 
         for glyphname in self.keys(): #["A", "P"]: #self.keys():
             
@@ -480,7 +480,7 @@ class ColorFont(object):
                     r, g, b, a = (0, 0, 0, 0xff)
                 else:
                     r, g, b, a = _svg_palette[_color_index]
-                _pen.d = u""
+                _pen.reset()
                 rglyph.draw(_pen)
                 if _pen.d:
                     contents += u'<g fill="#%02x%02x%02x"><path d="%s"/></g>' % (r, g, b, _pen.d)
