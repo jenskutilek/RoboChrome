@@ -2,32 +2,18 @@ from operator import itemgetter
 from types import ListType
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import Glyph as TTGlyph
+from fontTools.ttLib.tables.C_P_A_L_ import table_C_P_A_L_, Color
+from fontTools.ttLib.tables.C_O_L_R_ import table_C_O_L_R_, LayerRecord
+from fontTools.ttLib.tables._s_b_i_x import table__s_b_i_x
+from fontTools.ttLib.tables.sbixStrike import Strike
+from fontTools.ttLib.tables.sbixGlyph import Glyph as sbixGlyph
+from fontTools.ttLib.tables.S_V_G_ import table_S_V_G_
 
-# Try to adapt to different versions of FontTools
-try:
-    from mojo.roboFont import version as roboFontVersion
-    if roboFontVersion < "1.7":
-        use_old_FontTools = True
-    else:
-        use_old_FontTools = False
-except:
-    use_old_FontTools = False
-
-if use_old_FontTools:
-    # Up to RoboFont 1.6
-    import numpy
-else:
-    import array
-    from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
+import array
+from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 
 from math import ceil
 from re import search, compile
-from tables.C_P_A_L_ import table_C_P_A_L_, Color
-from tables.C_O_L_R_ import table_C_O_L_R_, LayerRecord
-from tables._s_b_i_x import table__s_b_i_x
-from tables.sbixStrike import Strike
-from tables.sbixGlyph import Glyph as sbixGlyph
-from tables.S_V_G_ import table_S_V_G_
 
 # for png generation
 try:
@@ -516,10 +502,7 @@ class ColorFont(object):
             #print glyphname, box
             if glyphname in glyf.keys():
                 alt_glyphname = alt_glyphname_string % glyphname
-                if use_old_FontTools:
-                    glyph = self[glyphname].get_tt_glyph_old()
-                else:
-                    glyph = self[glyphname].get_tt_glyph()
+                glyph = self[glyphname].get_tt_glyph()
                 if glyphname != alt_glyphname:
                     # add an alternate glyph for win
                     glyf[alt_glyphname] = glyf[glyphname]
