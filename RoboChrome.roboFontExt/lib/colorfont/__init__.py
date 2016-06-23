@@ -469,7 +469,8 @@ class ColorFont(object):
                 progress.update("Rendering SVG for /%s ..." % glyphname)
             
             # build svg glyph
-            _svg_doc = u"""<?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg  PUBLIC '-//W3C//DTD SVG 1.1//EN'  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg enable-background="new 0 0 64 64" id="glyph%i" transform="scale(1 -1)" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">""" % (gid)
+            #_svg_header = u"""<?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg  PUBLIC '-//W3C//DTD SVG 1.1//EN'  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>"""
+            _svg_doc = u"""<svg enable-background="new 0 0 64 64" id="glyph%i" transform="scale(1 -1)" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">""" % (gid)
             for i in range(len(self[glyphname].layers)):
                 _color_index = reindex[self[glyphname].colors[i]]
                 #print "    Layer %i, color %i" % (i, _color_index)
