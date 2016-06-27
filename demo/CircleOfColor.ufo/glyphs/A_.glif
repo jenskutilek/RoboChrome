@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="A" format="1">
+  <advance width="677"/>
+  <unicode hex="0041"/>
+  <outline>
+    <component base="circle"/>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.fontfont.colorfont.layers</key>
+      <array>
+        <array>
+          <string>A.layer00</string>
+          <string>A.layer01</string>
+          <string>A.layer02</string>
+          <string>A.layer03</string>
+        </array>
+        <array>
+          <integer>0</integer>
+          <integer>1</integer>
+          <integer>2</integer>
+          <integer>3</integer>
+        </array>
+      </array>
+      <key>com.typemytype.robofont.mark</key>
+      <array>
+        <real>0.7094</real>
+        <real>0.5639</real>
+        <real>0.6098</real>
+        <real>1.0</real>
+      </array>
+    </dict>
+  </lib>
+</glyph>

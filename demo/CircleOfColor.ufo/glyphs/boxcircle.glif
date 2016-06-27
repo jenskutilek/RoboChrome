@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="boxcircle" format="1">
+  <advance width="677"/>
+  <outline>
+    <component base="box" xOffset="89" yOffset="425"/>
+    <component base="circle"/>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.typemytype.robofont.mark</key>
+      <array>
+        <real>0.9366</real>
+        <real>0.9212</real>
+        <real>0.4821</real>
+        <real>1.0</real>
+      </array>
+    </dict>
+  </lib>
+</glyph>

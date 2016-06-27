@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="A.layer01" format="1">
+  <advance width="677"/>
+  <outline>
+    <component base="circle.layer01"/>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.typemytype.robofont.mark</key>
+      <array>
+        <real>0.7094</real>
+        <real>0.5639</real>
+        <real>0.6098</real>
+        <real>1.0</real>
+      </array>
+    </dict>
+  </lib>
+</glyph>

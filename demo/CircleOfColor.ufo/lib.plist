@@ -27,13 +27,23 @@
 			<key>3</key>
 			<string>#000000ff</string>
 		</dict>
+		<dict>
+			<key>0</key>
+			<string>#410000ff</string>
+			<key>1</key>
+			<string>#fff1f7ff</string>
+			<key>2</key>
+			<string>#910001ff</string>
+			<key>3</key>
+			<string>#000000ff</string>
+		</dict>
 	</array>
 	<key>com.fontfont.colorfont.prefer_placed_images</key>
 	<integer>0</integer>
 	<key>com.fontfont.colorfont.write_cbdt</key>
 	<integer>0</integer>
 	<key>com.fontfont.colorfont.write_colr</key>
-	<integer>1</integer>
+	<integer>0</integer>
 	<key>com.fontfont.colorfont.write_sbix</key>
 	<integer>0</integer>
 	<key>com.fontfont.colorfont.write_svg</key>
