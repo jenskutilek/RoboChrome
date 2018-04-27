@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<glyph name="A.layer00" format="1">
+<glyph name="A.layer00" format="2">
   <advance width="677"/>
   <outline>
     <component base="circle.layer00"/>
   </outline>
   <lib>
     <dict>
-      <key>com.typemytype.robofont.mark</key>
-      <array>
-        <real>0.7094</real>
-        <real>0.5639</real>
-        <real>0.6098</real>
-        <real>1.0</real>
-      </array>
+      <key>public.markColor</key>
+      <string>0.7094,0.5639,0.6098,1</string>
     </dict>
   </lib>
 </glyph>

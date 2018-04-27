@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>circle.layer00</key>
+	<string>circle.layer00.glif</string>
+	<key>circle.layer01</key>
+	<string>circle.layer01.glif</string>
+	<key>circle.layer03</key>
+	<string>circle.layer03.glif</string>
+</dict>
+</plist>
