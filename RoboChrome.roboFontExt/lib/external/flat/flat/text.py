@@ -8,8 +8,8 @@ import re
 
 
 
-linebreaks = re.compile(ur'\r\n|[\n\v\f\r\x85\u2028\u2029]') # TODO python 3: ur -> r
-boundaries = re.compile(ur'([^\s-]+-?|-|^)(\s*)') # TODO python 3: ur -> r
+linebreaks = re.compile(r'\r\n|[\n\v\f\r\x85\u2028\u2029]')
+boundaries = re.compile(r'([^\s-]+-?|-|^)(\s*)')
 
 
 
