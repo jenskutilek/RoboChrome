@@ -1,5 +1,5 @@
 from Cocoa import NSColorPboardType
-from lib.cells.colorCell import ColorCell
+from lib.cells.colorCell import RFColorCell
 from mojo.canvas import Canvas
 import vanilla
 
@@ -57,7 +57,7 @@ def get_ui(window_controller, title):
         },
         {
             "title": "Color",
-            "cell": ColorCell.alloc().initWithDoubleClickCallack_(window_controller.paletteEditColorCell),
+            "cell": RFColorCell.alloc().initWithDoubleClickCallack_(window_controller.paletteEditColorCell),
             "typingSensitive": False,
             "editable": False,
         },
@@ -101,17 +101,17 @@ def get_ui(window_controller, title):
     )
     w.addPalette = vanilla.GradientButton(
         (340, 215, 24, 24),
-        imagePath = "iconColorFontPalette.pdf",
+        imagePath = "../resources/iconColorFontPalette.pdf",
         callback = window_controller.paletteDuplicate,
     )
     w.deletePalette = vanilla.GradientButton(
         (363, 215, 24, 24),
-        imagePath = "iconColorFontPaletteMinus.pdf",
+        imagePath = "../resources/iconColorFontPaletteMinus.pdf",
         callback = window_controller.paletteDelete,
     )
     w.addColorToPalette = vanilla.GradientButton(
         (410, 215, 24, 24),
-        imagePath = "iconColorFontPlus.pdf",
+        imagePath = "../resources/iconColorFontPlus.pdf",
         callback = window_controller.addColorToPalette,
     )
     y += 210
@@ -173,7 +173,7 @@ def get_ui(window_controller, title):
     )
     w.add_layer_button = vanilla.GradientButton(
         (col2+10, y-10, 24, 24),
-        imagePath = "iconColorFontPlus.pdf",
+        imagePath = "../resources/iconColorFontPlus.pdf",
         callback = window_controller._callback_layer_add,
     )
     #w.add_svg_button = vanilla.Button(

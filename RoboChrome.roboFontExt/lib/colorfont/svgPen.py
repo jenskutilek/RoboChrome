@@ -1,6 +1,5 @@
 #MenuTitle: SVG Pen
 from fontTools.pens.basePen import BasePen
-from robofab.pens.pointPen import PrintingSegmentPen
 
 
 # See also:
@@ -57,17 +56,17 @@ def drawSVGPath(pen, path=""):
 Draw an SVG path that is supplied as a string. This is limited to SVG paths that contain only elements that can be matched to the usual path elements found in a glyph.
 """
     path_data = list(parse_svg_path(path))
-    #print path_data
+    #print(path_data)
     i = 0
     prev_x = 0
     prev_y = 0
     while i < len(path_data):
-        #print i, path_data[i]
+        #print(i, path_data[i])
         v = path_data[i]
         if v in "Cc":
             # Cubic curve segment
             x1, y1, x2, y2, x3, y3 = path_data[i+1:i+7]
-            #print "    ", x1, y1, x2, y2, x3, y3
+            #print("    ", x1, y1, x2, y2, x3, y3)
             x1 = float(x1)
             y1 = float(y1)
             x2 = float(x2)
@@ -92,7 +91,7 @@ Draw an SVG path that is supplied as a string. This is limited to SVG paths that
         elif v in "Hh":
             # Horizontal line segment
             x = path_data[i+1]
-            #print "    ", x
+            #print("    ", x)
             x = float(x)
             if v == "h":
                 x += prev_x
@@ -102,7 +101,7 @@ Draw an SVG path that is supplied as a string. This is limited to SVG paths that
         elif v in "LlMm":
             # Move or Line segment
             x, y = path_data[i+1:i+3]
-            #print "    ", x, y
+            #print("    ", x, y)
             x = float(x)
             y = float(y)
             if v in "lm":
@@ -118,7 +117,7 @@ Draw an SVG path that is supplied as a string. This is limited to SVG paths that
         elif v in "Qq":
             # Quadratic curve segment
             x1, y1, x2, y2 = path_data[i+1:i+5]
-            #print "    ", x1, y1, x2, y2
+            #print("    ", x1, y1, x2, y2)
             x1 = float(x1)
             y1 = float(y1)
             x2 = float(x2)
@@ -138,7 +137,7 @@ Draw an SVG path that is supplied as a string. This is limited to SVG paths that
         elif v in "Vv":
             # Vertical line segment
             y = path_data[i+1]
-            #print y
+            #print(y)
             y = float(y)
             if v == "v":
                 y += prev_y
@@ -149,7 +148,7 @@ Draw an SVG path that is supplied as a string. This is limited to SVG paths that
             pen.closePath()
             i += 1
         else:
-            print "SVG path element '%s' is not supported for glyph paths." % path_data[i]
+            print("SVG path element '%s' is not supported for glyph paths." % path_data[i])
             break
 
 
@@ -188,7 +187,8 @@ A pen that converts a glyph outline to an SVG path. After drawing, SVGPen.d cont
         else:
             return ' %s' % value
     
-    def _moveTo(self, (x,y)):
+    def _moveTo(self, pt):
+        x, y = pt
         if self._rnd:
             a = 'M%s' % int(round(x))
             a += self._get_shorter_sign(int(round(y)))
@@ -209,7 +209,8 @@ A pen that converts a glyph outline to an SVG path. After drawing, SVGPen.d cont
         self.prev_x = x
         self.prev_y = y
     
-    def _lineTo(self, (x,y)):
+    def _lineTo(self, pt):
+        x, y = pt
         if y == self.prev_y:
             if self._rnd:
                 a = 'H%d' % (int(round(x)))
@@ -239,7 +240,10 @@ A pen that converts a glyph outline to an SVG path. After drawing, SVGPen.d cont
         self.prev_x = x
         self.prev_y = y
     
-    def _curveToOne(self, (x1,y1), (x2,y2), (x3,y3)):
+    def _curveToOne(self, pt1, pt2, pt3):
+        x1, y1 = pt1
+        x2, y2 = pt2
+        x3, y3 = pt3
         if self._rnd:
             a = 'C%s' % int(round(x1))
             for coord in [

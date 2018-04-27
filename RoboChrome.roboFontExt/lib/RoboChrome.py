@@ -10,9 +10,6 @@ from os.path import basename, exists
 from re import search, compile
 from RoboChromeUI import get_ui, get_drawer
 
-# Fix import for flat module
-import os, sys
-sys.path.append(os.path.join(os.path.dirname(__file__), "external", "flat"))
 from colorfont import ColorFont
 
 
@@ -61,7 +58,7 @@ class ColorFontEditor(BaseWindowController):
             )
         else:
             self.metrics = (-200, 500, 700, 800, 1000)
-            #print "Hey, I work better when there's an open font!"
+            #print("Hey, I work better when there's an open font!")
         self.scale = 180.0 / (self.metrics[3] - self.metrics[0])
         
         if self.font:
@@ -127,7 +124,7 @@ class ColorFontEditor(BaseWindowController):
     #    return [NSAttributedString.alloc().initWithString_attributes_(str(entry["layer_index"]), {NSForegroundColorAttributeName: entry["Color"]}) for entry in self.w.colorpalette]
 
     def _show_font_info(self, sender=None):
-        print self.cfont
+        print(self.cfont)
 
     def _choose_file_to_import(self, sender=None):
         self.showGetFile(["public.opentype-font", "public.truetype-ttf-font"], self._import_from_font)
@@ -159,16 +156,16 @@ class ColorFontEditor(BaseWindowController):
             self._export_to_font(_font)
     
     def _export_to_font(self, file_path=None):
-        print "_export_to_font", file_path
+        print("_export_to_font", file_path)
         if file_path is not None:
             if len(self.cfont.palettes[0]) > 0:
-                print "Exporting to", file_path
+                print("Exporting to", file_path)
                 self.cfont.export_to_otf(file_path,
                     palette_index=self.palette_index,
                     parent_window=self.w,
                 )
             else:
-                print "ERROR: No color data in UFO."
+                print("ERROR: No color data in UFO.")
     
     def _choose_png_to_export(self, sender=None):
         self.showPutFile(["public.png"], self._save_png, "%s.png" % self.glyph)
@@ -192,8 +189,8 @@ class ColorFontEditor(BaseWindowController):
                             "Layer Glyph": g,
                         })
                 else:
-                    print "Warning: Missing layer glyph '%s' referenced in glyph '%s'." % (g, self.glyph)
-        ##print "DEBUG: self.w.layer_list.set(_ui_list)"
+                    print("Warning: Missing layer glyph '%s' referenced in glyph '%s'." % (g, self.glyph))
+        ##print("DEBUG: self.w.layer_list.set(_ui_list)")
         self.w.layer_list.set(_ui_list)
         # cache for faster drawing
         self._cache_layer_info()
@@ -201,7 +198,7 @@ class ColorFontEditor(BaseWindowController):
         
     def _ui_layer_list_save_to_cfont(self):
         # save the ui layer list to colorfont
-        ##print "DEBUG ColorFontEditor._ui_layer_list_save_to_cfont"
+        ##print("DEBUG ColorFontEditor._ui_layer_list_save_to_cfont")
         if self.glyph is not None:
             if self.glyph in self.cfont.keys():
                 layerGlyphs = []
@@ -221,13 +218,13 @@ class ColorFontEditor(BaseWindowController):
                         self.cfont.save_glyph_to_rfont(self.glyph)
                 else:
                     # empty layers, delete from lib
-                    #print "DEBUG Delete info for glyph", self.glyph
+                    #print("DEBUG Delete info for glyph", self.glyph)
                     del self.cfont[self.glyph]
                     self.cfont.save_glyph_to_rfont(self.glyph)
             #else:
-            #    print "  Glyph is not in ColorFont, not saving:", self.glyph
+            #    print("  Glyph is not in ColorFont, not saving:", self.glyph)
         #else:
-        #    print "  Glyph is None."
+        #    print("  Glyph is None.")
 
     def _ui_get_sbix_sizes(self):
         # get the display string for a python list
@@ -284,7 +281,7 @@ class ColorFontEditor(BaseWindowController):
             self.cfont.save_settings = True
             self.currentPaletteChanged = True
         else:
-            print "ERROR: Color Index 0xffff is reserved."
+            print("ERROR: Color Index 0xffff is reserved.")
     
     def _get_palette_color_ui_index_for_layer_color_index(self, index):
         # find the index of a color in the palette (= ui list index, not layer_color_index)
@@ -308,7 +305,7 @@ class ColorFontEditor(BaseWindowController):
             self.layer_glyphs = _layers
     
     def _cache_color_info(self):
-        ##print "DEBUG _cache_color_info"
+        ##print("DEBUG _cache_color_info")
         # write colors for current glyph to self.layer_colors for faster drawing
         colorDict = self.getColorDict()
         _layer_colors = []
@@ -320,14 +317,14 @@ class ColorFontEditor(BaseWindowController):
                 if colorIndex in colorDict.keys():
                     _layer_colors.append(colorDict[colorIndex])
                 else:
-                    print "Missing color in palette %i: %i" % (self.palette_index, colorIndex)
+                    print("Missing color in palette %i: %i" % (self.palette_index, colorIndex))
         self.layer_colors = _layer_colors
         
         # update color list in layer list popup
         #self.w.layer_list["Color"].set(self._getColorPopupList())
     
     def _cache_color_info_glyph_window(self):
-        ##print "DEBUG _cache_color_info_glyph_window"
+        ##print("DEBUG _cache_color_info_glyph_window")
         # write colors for current glyph to self.layer_colors_glyph_window for faster drawing
         _layer_colors = []
         if self.glyphPreview is not None and self.glyphPreview in self.cfont.keys():
@@ -339,7 +336,7 @@ class ColorFontEditor(BaseWindowController):
                     if colorIndex in colorDict.keys():
                         _layer_colors.append(colorDict[colorIndex])
                     else:
-                        print "Missing color in palette %i: %i" % (self.palette_index, colorIndex)
+                        print("Missing color in palette %i: %i" % (self.palette_index, colorIndex))
         self.layer_colors_glyph_window = _layer_colors
     
     
@@ -363,7 +360,7 @@ class ColorFontEditor(BaseWindowController):
             })
             #self._ui_layer_list_save_to_cfont()
             if not self.glyph in self.cfont.keys():
-                #print "DEBUG: Add new layer glyph to cfont"
+                #print("DEBUG: Add new layer glyph to cfont")
                 self.cfont.add_glyph(self.glyph)
             #self._ui_layer_list_save_to_cfont()
             sel = self.w.glyph_list.getSelection()
@@ -372,8 +369,8 @@ class ColorFontEditor(BaseWindowController):
     
     def _callback_layer_edit(self, sender=None):
         # editing a layer (= change color index or glyph name or z-index)
-        ##print "DEBUG: _callback_layer_edit"
-        #print "  Sender:", sender.get()
+        ##print("DEBUG: _callback_layer_edit")
+        #print("  Sender:", sender.get())
         self._cache_layer_info()
         self._cache_color_info()
         self.w.preview.update()
@@ -426,7 +423,7 @@ class ColorFontEditor(BaseWindowController):
             # TODO: check if drop is acceptable
             return True
         else:
-            print "DEBUG: dropped color on row %i" % dropInfo["rowIndex"]
+            print("DEBUG: dropped color on row %i" % dropInfo["rowIndex"])
             # TODO: accept the drop (actually do something)
             return True
     
@@ -517,7 +514,7 @@ class ColorFontEditor(BaseWindowController):
         self.w.paletteswitch.setItems(["Palette %s" % i for i in range(len(self.cfont.palettes))])
     
     def paletteEdit(self, sender):
-        ##print "DEBUG ColorFontEditor.paletteEdit"
+        ##print("DEBUG ColorFontEditor.paletteEdit")
         sel = sender.getSelection()
         if sel != []:
             i = sel[0]
@@ -525,17 +522,17 @@ class ColorFontEditor(BaseWindowController):
                 if self.w.colorpalette[i] != sender.get()[i]:
                     self.w.colorpalette[i] = sender.get()[i]
                     self.currentPaletteChanged = True
-                    print "  Palette changed"
+                    print("  Palette changed")
             else:
-                print "Ignored edit of foreground color"
+                print("Ignored edit of foreground color")
         self.w.preview.update()
     
     def paletteEditColorCell(self, sender):
         # double-click on a color cell in the palette
-        print sender
+        print(sender)
     
     def _paletteWriteToColorFont(self):
-        #print "DEBUG _paletteWriteToColorFont"
+        #print("DEBUG _paletteWriteToColorFont")
         # make a dict for active palette and write it to self.cfont.palettes
         _dict = {}
         for _color in sorted(self.w.colorpalette.get(), key=lambda _key: _key["Index"]):
@@ -550,14 +547,14 @@ class ColorFontEditor(BaseWindowController):
         if self.currentPaletteChanged:
             self._paletteWriteToColorFont()
         self._ui_update_palette(sender.get())
-        ##print "DEBUG Active Palette is now #%i" % self.palette_index
+        ##print("DEBUG Active Palette is now #%i" % self.palette_index)
     
     def paletteDuplicate(self, sender):
         if self.currentPaletteChanged:
             self._paletteWriteToColorFont()
         sp = self.w.paletteswitch.get()
         if sp < len(self.cfont.palettes) and sp >= 0:
-            print "Duplicate palette %i ..." % sp
+            print("Duplicate palette %i ..." % sp)
             colorpalette = self.cfont.palettes[sp].copy()
         else:
             colorpalette = {}
@@ -611,7 +608,7 @@ class ColorFontEditor(BaseWindowController):
             self.w.preview.update()
     
     def windowCloseCallback(self, sender):
-        #print "DEBUG windowCloseCallback"
+        #print("DEBUG windowCloseCallback")
         #removeObserver(self, "fontDidOpen")
         #removeObserver(self, "fontWillClose")
         removeObserver(self, "currentGlyphChanged")
@@ -645,7 +642,7 @@ class ColorFontEditor(BaseWindowController):
     
     def _callback_update_ui_glyph_list(self, sender=None):
         _match = self.w.glyph_list_search_box.get()
-        #print "DEBUG: _callback_update_ui_glyph_list"
+        #print("DEBUG: _callback_update_ui_glyph_list")
         glyphlist = []
         if self.font is not None:
             # if no color glyphs in font, show all glyphs in list
@@ -737,13 +734,13 @@ class ColorFontEditor(BaseWindowController):
         save()
         strokeWidth(1.0/self.scale)
         stroke(0.8, 0.8, 0.8)
-        line(0, 0, self.width, 0)
-        line(0, self.metrics[0], self.width, self.metrics[0])
-        line(0, self.metrics[1], self.width, self.metrics[1])
-        line(0, self.metrics[2], self.width, self.metrics[2])
-        line(0, self.metrics[3], self.width, self.metrics[3])
-        line(0, self.metrics[3], 0, self.metrics[0])
-        line(self.width, self.metrics[3], self.width, self.metrics[0])
+        line((0, 0), (self.width, 0))
+        line((0, self.metrics[0]), (self.width, self.metrics[0]))
+        line((0, self.metrics[1]), (self.width, self.metrics[1]))
+        line((0, self.metrics[2]), (self.width, self.metrics[2]))
+        line((0, self.metrics[3]), (self.width, self.metrics[3]))
+        line((0, self.metrics[3]), (0, self.metrics[0]))
+        line((self.width, self.metrics[3]), (self.width, self.metrics[0]))
         restore()
 
     def _observer_glyph_changed(self, info=None):
@@ -770,9 +767,9 @@ class ColorFontEditor(BaseWindowController):
 
     def _observer_draw_glyph_window(self, info):
         # draw the color glyph in the glyph window
-        ##print "DEBUG: _observer_draw_glyph_window"
+        ##print("DEBUG: _observer_draw_glyph_window")
         if self.glyphPreview in self.cfont.keys():
-            ##print "DEBUG: draw glyph"
+            ##print("DEBUG: draw glyph")
             save()
             self.setFill(self.color)
             g = RGlyph()
@@ -788,7 +785,7 @@ class ColorFontEditor(BaseWindowController):
             self.w.preview.update()
 
     def _callback_auto_layers(self, sender=None):
-        print "Auto layers: %s" % self.cfont.auto_layer_regex
+        print("Auto layers: %s" % self.cfont.auto_layer_regex)
         if self.cfont.auto_layer_regex is not None:
             self.cfont.auto_layers()
             self.cfont.auto_palette()
@@ -802,7 +799,7 @@ class ColorFontEditor(BaseWindowController):
                 self.w.glyph_list.setSelection([0])
                 self.w.auto_layer_button.enable(False)
         else:
-            print "ERROR: Invalid auto layer regex"
+            print("ERROR: Invalid auto layer regex")
     
     def _callback_auto_palette(self, sender=None):
         self.cfont.auto_palette()
@@ -829,7 +826,7 @@ class ColorFontEditor(BaseWindowController):
         # select glyphs based on current regex
         regex = compile(self.cfont.auto_layer_regex)
         _glyph_list = [glyphname for glyphname in self.font.glyphOrder if regex.search(glyphname)]
-        #print "_callback_test_regex matched %i glyphs." % len(_glyph_list)
+        #print("_callback_test_regex matched %i glyphs." % len(_glyph_list))
         self.font.selection = _glyph_list
     
     def _callback_prefer_placed_images(self, sender=None):

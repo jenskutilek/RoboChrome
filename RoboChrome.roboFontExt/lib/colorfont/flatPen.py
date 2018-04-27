@@ -1,4 +1,4 @@
-from flat.command import *
+from flat.command import closepath, curveto, lineto, moveto
 from fontTools.pens.basePen import BasePen
 from fontTools.pens.transformPen import TransformPen
 
@@ -21,10 +21,10 @@ class FlatPen(BasePen):
             pt3[0], pt3[1]))
     
     def _closePath(self):
-        self.path.append(closepath())
+        self.path.append(closepath)
     
     def _endPath(self):
-        self.path.append(closepath())
+        self.path.append(closepath)
     
     def addComponent(self, baseName, transformation):
         glyph = self.glyphSet[baseName]

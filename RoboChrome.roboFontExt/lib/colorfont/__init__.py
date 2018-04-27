@@ -1,5 +1,4 @@
 from operator import itemgetter
-from types import ListType
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import Glyph as TTGlyph
 from fontTools.ttLib.tables.C_P_A_L_ import table_C_P_A_L_, Color
@@ -18,19 +17,19 @@ from re import search, compile
 # for png generation
 try:
     from flat import document, shape, rgba
-    from flatPen import FlatPen
+    from colorfont.flatPen import FlatPen
     have_flat = True
-except:
+except ImportError:
     have_flat = False
-    print "The 'flat' Python module is missing."
-    print "Raster output formats will not be available."
-    print "Please see <https://github.com/fontfont/RoboChrome/blob/master/README.md>"
+    print("colorfont: The 'flat' Python module is missing.")
+    print("Raster output formats will not be available.")
+    print("Please see <https://github.com/jenskutilek/RoboChrome/blob/master/README.md>")
 
 # for svg generation
-from svgPen import SVGpen
+from colorfont.svgPen import SVGpen
 
 # for svg storage in glyph lib
-from robofab.plistlib import Data
+from plistlib import Data
 
 from defconAppKit.windows.progressWindow import ProgressWindow
 
@@ -188,10 +187,9 @@ class ColorFont(object):
         """Return a list of the ColorFont's glyph names."""
         return self._glyphs.keys()
 
-    def itervalues(self):
-        """Iterate through the ColorFont's glyph objects."""
-        for glyph_name in self._glyphs.keys():
-            yield self[glyph_name]
+    def values(self):
+        """Return a list of the ColorFont's glyph objects."""
+        return self._glyphs.values()
     
     # normal methods
     
@@ -200,9 +198,9 @@ class ColorFont(object):
             otfpath: Path of the font file"""
         font = TTFont(otfpath)
         if not (font.has_key("COLR") and font.has_key("CPAL")):
-            print "ERROR: No COLR and CPAL table present in %s" % otfpath
+            print("ERROR: No COLR and CPAL table present in %s" % otfpath)
         else:
-            print "Reading palette data ..."
+            print("Reading palette data ...")
             cpal = table_C_P_A_L_("CPAL")
             cpal.decompile(font["CPAL"].data, font)
             for j in range(len(cpal.palettes)):
@@ -215,7 +213,7 @@ class ColorFont(object):
                 self.palettes.append(_palette)
             colr = table_C_O_L_R_("COLR")
             colr.decompile(font["COLR"].data, font)
-            print "Reading layer data ..."
+            print("Reading layer data ...")
             for glyphname in colr.ColorLayers:
                 layers = colr[glyphname]
                 _glyph = ColorGlyph(self)
@@ -224,7 +222,7 @@ class ColorFont(object):
                     _glyph.layers.append(layer.name)
                     _glyph.colors.append(layer.colorID)
                 self[glyphname] = _glyph
-            print "Done."
+            print("Done.")
         font.close()
 
     def __repr__(self):
@@ -237,7 +235,7 @@ class ColorFont(object):
         for palette in self.palettes:
             result += "        %s\n" % palette
         result += "    Glyphs: %s\n" % self.keys()
-        for glyph in self.itervalues():
+        for glyph in self.values():
             result += "%s\n" % glyph
         result += "</ColorFont>\n"
         return result
@@ -262,16 +260,16 @@ class ColorFont(object):
     def _get_fcolor(self, palette_index, color_index):
         # get a color by index, in "flat" format
         if not palette_index in range(len(self.palettes)):
-            print "ERROR: _get_fcolor(self, palette_index, color_index)"
-            print "       Requested palette key %s (%s) not in available palette keys." % (
+            print("ERROR: _get_fcolor(self, palette_index, color_index)")
+            print("       Requested palette key %s (%s) not in available palette keys." % (
                 palette_index, type(palette_index)
-            )
+            ))
             raise KeyError(palette_index)
         if not str(color_index) in self.palettes[palette_index]:
-            print "ERROR: _get_fcolor(self, palette_index, color_index)"
-            print "       Requested color key %s (%s) not in available color keys." % (
+            print("ERROR: _get_fcolor(self, palette_index, color_index)")
+            print("       Requested color key %s (%s) not in available color keys." % (
                 color_index, type(str(color_index))
-            )
+            ))
             raise KeyError(str(color_index))
         if color_index < 0xffff:
             _hexrgba = self.palettes[palette_index][str(color_index)]
@@ -288,13 +286,13 @@ class ColorFont(object):
     
     def read_from_rfont(self):
         """Read color data from RFont."""
-        #print "DEBUG ColorFont.read_from_rfont"
+        #print("DEBUG ColorFont.read_from_rfont")
         # Load color info from font lib
         
         if self.rfont is None:
-            print "ERROR: rfont is None in ColorFont.read_from_rfont."
+            print("ERROR: rfont is None in ColorFont.read_from_rfont.")
         else:
-            for propkey, default in self.settings.iteritems():
+            for propkey, default in self.settings.items():
                 if "%s.%s" % (self.libkey, propkey) in self.rfont.lib.keys():
                     setattr(self, propkey, self.rfont.lib["%s.%s" % (self.libkey, propkey)])
                 else:
@@ -321,8 +319,8 @@ class ColorFont(object):
             palette_index: Use colors from this palette
             sizes:         A list of sizes in pixels per em"""
         if not have_flat:
-            print "The 'flat' Python module is missing."
-            print "Please see <https://github.com/fontfont/RoboChrome/blob/master/README.md>"
+            print("ColorFont.rasterize: The 'flat' Python module is missing.")
+            print("Please see <https://github.com/jenskutilek/RoboChrome/blob/master/README.md>")
             return
         for g in self:
             self[g].rasterize(palette_index, sizes)
@@ -335,28 +333,28 @@ class ColorFont(object):
         if self.write_sbix:
             # export sbix first because it adds glyphs
             # (alternates for windows so it doesn't display the special outlines)
-            print "Exporting sbix format ..."
+            print("Exporting sbix format ...")
             if self.write_colr:
                 replace_outlines = False
             else:
                 replace_outlines = True
             self._export_sbix(otfpath, palette_index, "png", replace_outlines, parent_window)
-            print "Done."
+            print("Done.")
         if self.write_colr:
-            print "Exporting COLR/CPAL format ..."
+            print("Exporting COLR/CPAL format ...")
             self._export_colr(otfpath)
-            print "Done."
+            print("Done.")
         if self.write_svg:
-            print "Exporting SVG format with palette %i ..." % palette_index
+            print("Exporting SVG format with palette %i ..." % palette_index)
             self._export_svg(otfpath, palette_index, parent_window)
-            print "Done."
+            print("Done.")
 
     def _export_colr(self, otfpath):
         font = TTFont(otfpath)
         if (font.has_key("COLR") and font.has_key("CPAL")):
-            print "    WARNING: Replacing existing COLR and CPAL tables in %s" % otfpath
+            print("    WARNING: Replacing existing COLR and CPAL tables in %s" % otfpath)
         
-        print "    Writing palette data ..."
+        print("    Writing palette data ...")
         cpal = table_C_P_A_L_("CPAL")
         cpal.version = 0
         cpal.numPaletteEntries = len(self.palettes[0])
@@ -383,11 +381,11 @@ class ColorFont(object):
                     reindex[int(i)] = count
                     count += 1
                 _palette.append(_color)
-            print "        Appending palette", _palette
-            #print "ReIndex:", reindex
+            print("        Appending palette", _palette)
+            #print("ReIndex:", reindex)
             cpal.palettes.append(_palette)
 
-        print "    Writing layer data ..."
+        print("    Writing layer data ...")
         colr = table_C_O_L_R_("COLR")
         colr.version = 0
         colr.ColorLayers = {}
@@ -409,7 +407,7 @@ class ColorFont(object):
     def _export_svg(self, otfpath, palette=0, parent_window=None):
         font = TTFont(otfpath)
         if font.has_key("SVG "):
-            print "    WARNING: Replacing existing SVG table in %s" % otfpath
+            print("    WARNING: Replacing existing SVG table in %s" % otfpath)
         #font.getReverseGlyphMap(rebuild=1)
         
         svg = table_S_V_G_("SVG ")
@@ -438,7 +436,7 @@ class ColorFont(object):
             reindex[int(i)] = count
             count += 1
             _svg_palette.append((red, green, blue, alpha))
-        #print "Palette:", len(_svg_palette), _svg_palette
+        #print("Palette:", len(_svg_palette), _svg_palette)
         
         _pen = SVGpen(self.rfont, optimize_output=True)
 
@@ -460,7 +458,7 @@ class ColorFont(object):
             contents = u""
             for i in range(len(self[glyphname].layers)):
                 _color_index = reindex[self[glyphname].colors[i]]
-                #print "    Layer %i, color %i" % (i, _color_index)
+                #print("    Layer %i, color %i" % (i, _color_index))
                 rglyph = self.rfont[self[glyphname].layers[i]]
                 if _color_index == 0xffff:
                     r, g, b, a = (0, 0, 0, 0xff)
@@ -489,7 +487,7 @@ class ColorFont(object):
         if font.has_key("glyf"):
             glyf = font["glyf"]
         else:
-            print "ERROR: I need TTF outlines to make special glyph records for the sbix format."
+            print("ERROR: I need TTF outlines to make special glyph records for the sbix format.")
             return
         if replace_outlines:
             alt_glyphname_string = "%s"
@@ -499,7 +497,7 @@ class ColorFont(object):
             cmap = font["cmap"]
         for glyphname in self.keys():
             box = self[glyphname].get_box()
-            #print glyphname, box
+            #print(glyphname, box)
             if glyphname in glyf.keys():
                 alt_glyphname = alt_glyphname_string % glyphname
                 glyph = self[glyphname].get_tt_glyph()
@@ -513,7 +511,7 @@ class ColorFont(object):
                     #    if table.plaformID == 0 and table.platEncID == 3:
                     # ...
                     cmap_mac = cmap.getcmap(0, 3).cmap
-                    for k, v in cmap_mac.iteritems():
+                    for k, v in cmap_mac.items():
                         if v == glyphname:
                             # redirect current entry to alternate glyph
                             # FIXME: This changes the Windows cmap as well.
@@ -521,7 +519,7 @@ class ColorFont(object):
                     # FIXME: Reverse alternate glyph mapping for Win cmap, is this needed?
                     # FIXME: This doesn't work
                     cmap_win = cmap.getcmap(3, 1).cmap
-                    for k, v in cmap_win.iteritems():
+                    for k, v in cmap_win.items():
                         if v == alt_glyphname:
                             # redirect current entry to alternate glyph
                             cmap_win[k] = glyphname
@@ -530,8 +528,8 @@ class ColorFont(object):
     
     def _export_sbix(self, otfpath, palette=0, image_format="png", replace_outlines=False, parent_window=None):
         if not have_flat:
-            print "The 'flat' Python module is missing."
-            print "Please see <https://github.com/fontfont/RoboChrome/blob/master/README.md>"
+            print("ColorFont._export_sbix: The 'flat' Python module is missing.")
+            print("Please see <https://github.com/jenskutilek/RoboChrome/blob/master/README.md>")
             return
         if replace_outlines:
             alt_glyphname_string = "%s"
@@ -539,7 +537,7 @@ class ColorFont(object):
             alt_glyphname_string = "%s.mac"
         font = TTFont(otfpath)
         if (font.has_key("sbix")):
-            print "    WARNING: Replacing existing sbix table in %s" % otfpath
+            print("    WARNING: Replacing existing sbix table in %s" % otfpath)
             replace_outlines = True
         # insert special nodes into glyphs
         self._format_outlines_special(font, replace_outlines)
@@ -577,29 +575,29 @@ class ColorFont(object):
     def save_to_rfont(self):
         """Save color data to RFont."""
         if self.rfont is not None:
-            for propkey in self.settings.iterkeys():
+            for propkey in self.settings.keys():
                 self._save_key_to_lib(propkey, getattr(self, propkey))
         
         # save each glyph color layer data
-        #for cglyph in self.itervalues():
+        #for cglyph in self.values():
         #    cglyph.save_to_rfont()
 
     def save_all_glyphs_to_rfont(self):
         """Save color data for each ColorGlyph to RFont."""
         # save each glyph color layer data
-        for cglyph in self.itervalues():
+        for cglyph in self.values():
             cglyph.save_to_rfont()
 
     def save_glyph_to_rfont(self, glyph_name):
         """Save color data for one ColorGlyph to RFont.
             glyph_name: The glyph name"""
-        #print "DEBUG ColorFont.save_glyph_to_rfont(%s)" % name
+        #print("DEBUG ColorFont.save_glyph_to_rfont(%s)" % name)
         if glyph_name in self.keys():
             self[glyph_name].save_to_rfont()
         else:
             # if the glyph is not in ColorFont, but has layer info in RFont,
             # delete layer info from RFont
-            #print "DEBUG Delete layer info from glyph not in ColorFont"
+            #print("DEBUG Delete layer info from glyph not in ColorFont")
             if glyph_name in self.rfont.keys():
                 if "%s.layers" % self.libkey in self.rfont[glyph_name].lib.keys():
                     del self.rfont[glyph_name].lib["%s.layers" % self.libkey]
@@ -639,16 +637,16 @@ class ColorFont(object):
         for glyphname in self.rfont.glyphOrder:
             if not regex.search(glyphname):
                 _layer_base_glyphs.append(glyphname)
-        #print "Found layer base glyphs:", _layer_base_glyphs
+        #print("Found layer base glyphs:", _layer_base_glyphs)
         
         for baseglyph in _layer_base_glyphs:
             layer_regex = "^%s%s" % (baseglyph.replace(".", "\."), self.auto_layer_regex)
             regex = compile(layer_regex)
-            #print "Looking for layer glyphs with regex", layer_regex
+            #print("Looking for layer glyphs with regex", layer_regex)
             has_layers = False
             for layername in self.rfont.glyphOrder:
                 if regex.search(layername):
-                    #print "  found"
+                    #print("  found")
                     if not baseglyph in self.keys():
                         self.add_glyph(baseglyph)
                     self[baseglyph].add_layer(layername, 0xffff)
@@ -664,7 +662,7 @@ class ColorFont(object):
         self.palettes = [{}]
         palette = self.palettes[0]
         max_layers = 0
-        for g in self.itervalues():
+        for g in self.values():
             if len(g.layers) > max_layers:
                 max_layers = len(g.layers)
             g.colors = range(len(g.layers))
@@ -722,17 +720,17 @@ class ColorGlyph(object):
             if len(entry) == 2:
                 layers = entry[0]
                 colors = entry[1]
-                if type(layers) == ListType and type(colors) == ListType:
+                if type(layers) == list and type(colors) == list:
                     self.layers = layers
                     self.colors = colors
                 else:
-                    print "\nERROR: %s: Failed reading layer or color information from glyph lib. Glyph will have no layers." % self.basename
-                    print "       Received data for layer and color, but one or both of them weren't a list."
-                    print "       Layers:", layers, type(layers)
-                    print "       Colors:", colors, type(colors)
+                    print("\nERROR: %s: Failed reading layer or color information from glyph lib. Glyph will have no layers." % self.basename)
+                    print("       Received data for layer and color, but one or both of them weren't a list.")
+                    print("       Layers:", layers, type(layers))
+                    print("       Colors:", colors, type(colors))
             else:
-                print "\nERROR: %s: Failed reading layer and color information from glyph lib. Glyph will have no layers." % self.basename
-                print "       Expected a list with 2 elements, but got %i elements." % len(entry)
+                print("\nERROR: %s: Failed reading layer and color information from glyph lib. Glyph will have no layers." % self.basename)
+                print("       Expected a list with 2 elements, but got %i elements." % len(entry))
         
         # read SVG from base64-encoded data
         _svg_data = self.font.rfont[self.basename].lib.get("%s.svg" % self.font.libkey, "")
@@ -766,7 +764,7 @@ class ColorGlyph(object):
                     _svg_data = ""
                 self._save_key_to_lib("svg", _svg_data, "")
             else:
-                print "ERROR: Glyph %s does not exist in font %s (ColorGlyph.save_to_rfont)" % (self.basename, rfont)
+                print("ERROR: Glyph %s does not exist in font %s (ColorGlyph.save_to_rfont)" % (self.basename, rfont))
     
     def _save_key_to_lib(self, name, value, empty_value):
         # save name-value-pair to glyph lib
@@ -796,7 +794,7 @@ class ColorGlyph(object):
         if not 0 in self.bitmaps.keys():
             _page = self._get_drawing(palette_index)
             if _page is not None:
-                self.bitmaps[0] = _page.image(ppi=72, kind="rgba", samples=32).flip(False, True)
+                self.bitmaps[0] = _page.image(ppi=72, kind="rgba").flip(False, True)
             else:
                 self.bitmaps[0] = None
         if 0 in self.bitmaps.keys():
@@ -809,10 +807,10 @@ class ColorGlyph(object):
                     _width = int(ceil(self.bitmaps[0].width*scale))
                     _height = int(ceil(self.bitmaps[0].height*scale))
                     scale = min(float(_width)/(self.bitmaps[0].width+2), (float(_height)/(self.bitmaps[0].height+2)))
-                    self.bitmaps[size] = self.bitmaps[0].resized(
+                    self.bitmaps[size] = self.bitmaps[0].resize(
                         int(round(self.bitmaps[0].width * scale)),
                         int(round(self.bitmaps[0].height * scale)),
-                        ).png(optimized=True)
+                        ).png(optimized=False)
 
     def _get_drawing(self, palette_index=0):
         box = self.get_box()
@@ -823,14 +821,14 @@ class ColorGlyph(object):
             height = box[3] - box[1]
             d = document(width+2, height+2, "pt")
             p = d.addpage()
-            _path = shape.path(shape())
+            #_path = shape.path(shape(), [])
             for i in range(len(self.layers)):
                 layer = self.font.rfont[self.layers[i]]
                 colorindex = self.colors[i]
                 layer_color = self.font._get_fcolor(palette_index, colorindex)
                 pen = FlatPen(self.font.rfont)
                 layer.draw(pen)
-                g = p.place(shape().nostroke().fill(layer_color).path(*pen.path))
+                g = p.place(shape().nostroke().fill(layer_color).path(pen.path))
                 g.position(1 - box[0], 1 - box[1])
         return p
     
