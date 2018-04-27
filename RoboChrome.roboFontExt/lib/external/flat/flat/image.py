@@ -61,7 +61,7 @@ class image(object):
     @staticmethod
     def open(path):
         with open(path, 'rb') as f:
-            data = bytearray(f.read()) # TODO python 3: bytearray -> bytes
+            data = bytes(f.read())
             if jpeg.valid(data):
                 source = jpeg(data)
                 rotation = source.rotation

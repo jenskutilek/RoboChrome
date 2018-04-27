@@ -114,7 +114,7 @@ def parsepath(data):
                 raise NotImplementedError
             
             result.append(previous)
-            arguments = [] # TODO python 3: list.clear()
+            arguments.clear()
             m = tokens.search(data, m.end())
             if not m or m.lastindex != 1: # number
                 break

@@ -501,7 +501,7 @@ def _scale_factor(table):
     return factor
 
 def _marker_segment(marker, data):
-    return bytes('\xff' + marker + pack('>H', len(data) + 2) + data) # TODO python 3: remove bytes
+    return '\xff' + marker + pack('>H', len(data) + 2) + data
 
 class _entropy_encoder(object):
     
@@ -556,7 +556,7 @@ class _entropy_encoder(object):
         self.length = length
     
     def dump(self):
-        return bytes(self.data) # TODO python 3: remove bytes
+        return self.data
 
 
 

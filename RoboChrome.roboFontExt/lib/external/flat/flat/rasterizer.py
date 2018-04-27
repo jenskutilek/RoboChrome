@@ -440,7 +440,7 @@ class rasterizer(object):
                             data[i+3] = u + v
                         i += n
                 coverage -= area
-            scanline[:] = [] # TODO python 3: list.clear()
+            scanline.clear()
         self.top, self.bottom = self.image.height, 0
         return self.image
 

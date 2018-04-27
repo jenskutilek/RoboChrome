@@ -245,7 +245,7 @@ class otf(object):
                 length = entry.length
                 padding = 4 - length & 3
                 data = r.read(length)
-                records.append(pack('>4s3L', bytes(entry.tag),
+                records.append(pack('>4s3L', entry.tag,
                     entry.checkSum, position, length)) # TODO python 3: remove bytes
                 tables.append(data)
                 tables.append('\0'*padding)

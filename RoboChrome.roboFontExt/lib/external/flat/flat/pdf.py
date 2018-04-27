@@ -274,7 +274,6 @@ class _document_resources(object):
         else:
             key = data = image.jpeg()
             flate = False
-        key = bytes(key) # TODO python 3: remove bytes
         if key not in self.images:
             if key not in self.cache:
                 setup = {

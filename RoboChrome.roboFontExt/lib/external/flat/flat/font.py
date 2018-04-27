@@ -9,7 +9,7 @@ class font(object):
     @staticmethod
     def open(path, index=0):
         with open(path, 'rb') as f:
-            data = bytearray(f.read()) # TODO python 3: bytearray -> bytes
+            data = bytes(f.read())
             if otf.valid(data):
                 source = otf(data, index)
                 return font(source)
@@ -17,7 +17,7 @@ class font(object):
     
     def __init__(self, source):
         self.source = source
-        self.name = bytes(source.psname()) # # TODO python 3: remove bytes
+        self.name = source.psname()
         self.density = source.density()
         self.ascender = source.ascender()
         self.descender = source.descender()

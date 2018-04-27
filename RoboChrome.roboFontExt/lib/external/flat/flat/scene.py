@@ -333,7 +333,7 @@ class scene(object):
         return up, right, forward
     
     def clear(self):
-        del self.items[:] # TODO python 3: list.clear()
+        self.items.clear()
     
     def add(self, mesh, material):
         self.items.append((mesh, material))
