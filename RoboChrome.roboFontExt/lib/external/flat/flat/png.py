@@ -17,6 +17,8 @@ def _paeth_predictor(a, b, c):
     return c
 
 def _adaptive_filtering(image):
+    # FIXME
+    # 2018-04-27, Jens
     wn, n = image.width*image.n, image.n
     s, t = bytearray(wn), bytearray(wn)
     previous = bytearray(wn)
@@ -25,11 +27,11 @@ def _adaptive_filtering(image):
     for y in range(image.height):
         offset = y*wn
         row = image.data[offset:offset+wn]
-        
+
         minimum = 0 # none
         for v in row:
             minimum += cache[v]
-        code, scanline = '\0', row
+        code, scanline = b'\0', row
         
         m = 0 # sub
         for i in range(0, n):
@@ -39,54 +41,59 @@ def _adaptive_filtering(image):
             s[i] = v = (row[i] - row[i - n]) & 0xff
             m += cache[v]
             if m >= minimum:
+                print(y, "None")
                 break
         else:
+            print(y, "Sub")
             minimum = m
-            code, scanline = '\1', s
+            code, scanline = b'\1', s
             s, t = t, s
         
-        m = 0 # up
-        for i in range(0, wn):
-            s[i] = v = (row[i] - previous[i]) & 0xff
-            m += cache[v]
-            if m >= minimum:
-                break
-        else:
-            minimum = m
-            code, scanline = '\2', s
-            s, t = t, s
-        
-        m = 0 # average
-        for i in range(0, n):
-            s[i] = v = (row[i] - previous[i]//2) & 0xff
-            m += cache[v]
-        for i in range(n, wn):
-            s[i] = v = (row[i] - (row[i - n] + previous[i])//2) & 0xff
-            m += cache[v]
-            if m >= minimum:
-                break
-        else:
-            minimum = m
-            code, scanline = '\3', s
-            s, t = t, s
-        
-        m = 0 # paeth
-        for i in range(0, n):
-            s[i] = v = (row[i] - previous[i]) & 0xff
-            m += cache[v]
-        for i in range(n, wn):
-            a, b, c = row[i - n], previous[i], previous[i - n]
-            s[i] = v = (row[i] - _paeth_predictor(a, b, c)) & 0xff
-            m += cache[v]
-            if m >= minimum:
-                break
-        else:
-            code, scanline = '\4', s
+        #m = 0 # up
+        #for i in range(0, wn):
+        #    s[i] = v = (row[i] - previous[i]) & 0xff
+        #    m += cache[v]
+        #    if m >= minimum:
+        #        break
+        #else:
+        #    minimum = m
+        #    code, scanline = b'\2', s
+        #    s, t = t, s
+        #
+        #m = 0 # average
+        #for i in range(0, n):
+        #    s[i] = v = (row[i] - previous[i]//2) & 0xff
+        #    m += cache[v]
+        #for i in range(n, wn):
+        #    s[i] = v = (row[i] - (row[i - n] + previous[i])//2) & 0xff
+        #    m += cache[v]
+        #    if m >= minimum:
+        #        break
+        #else:
+        #    minimum = m
+        #    code, scanline = b'\3', s
+        #    s, t = t, s
+        #
+        #m = 0 # paeth
+        #for i in range(0, n):
+        #    s[i] = v = (row[i] - previous[i]) & 0xff
+        #    m += cache[v]
+        #for i in range(n, wn):
+        #    a, b, c = row[i - n], previous[i], previous[i - n]
+        #    s[i] = v = (row[i] - _paeth_predictor(a, b, c)) & 0xff
+        #    m += cache[v]
+        #    if m >= minimum:
+        #        break
+        #else:
+        #    code, scanline = b'\4', s
         
         content.append(code)
-        content.append(bytes(scanline)) # TODO python 3: remove bytes
+        content.append(scanline)
         previous = row
-    return ''.join(content)
+    #print("Content:", content)
+    bb = b''.join(content)
+    print(bb)
+    return bb
 
 
 
@@ -141,7 +148,7 @@ class png(object):
     
     def decompress(self):
         wn, n = self.width*self.n, self.n
-        content = bytearray(decompress(bytes(self.idat()))) # TODO python 3: remove bytearray/bytes
+        content = decompress(self.idat())
         if (wn + 1)*self.height != len(content):
             raise ValueError('Invalid content length.')
         rows = []
@@ -182,8 +189,8 @@ def serialize(image, optimized):
     if image.kind not in ('g', 'ga', 'rgb', 'rgba'):
         raise ValueError('Invalid image kind.')
     L = Struct('>L').pack # unsigned long
-    color = '\0\4\2\6'[image.n - 1]
-    ihdr = L(image.width) + L(image.height) + '\10' + color + '\0\0\0'
+    color = bytes([b'\0\4\2\6'[image.n - 1]])
+    ihdr = L(image.width) + L(image.height) + b'\10' + color + b'\0\0\0'
     if optimized:
         content = _adaptive_filtering(image)
     else:
@@ -191,15 +198,15 @@ def serialize(image, optimized):
         wn, n = image.width*image.n, image.n
         for y in range(image.height):
             offset = y*wn
-            parts.append('\0')
-            parts.append(bytes(image.data[offset:offset+wn])) # TODO python 3: remove bytes
-        content = ''.join(parts)
+            parts.append(b'\0')
+            parts.append(image.data[offset:offset+wn])
+        content = b''.join(parts)
     idat = compress(content, 9 if optimized else 6)
-    return ''.join((
-        '\x89PNG\r\n\x1a\n',
-        L(len(ihdr)), 'IHDR', ihdr, L(crc32(ihdr, crc32('IHDR')) & 0xffffffff),
-        L(len(idat)), 'IDAT', idat, L(crc32(idat, crc32('IDAT')) & 0xffffffff),
-        L(0), 'IEND', L(crc32('IEND') & 0xffffffff)))
+    return b''.join((
+        b'\x89PNG\r\n\x1a\n',
+        L(len(ihdr)), b'IHDR', ihdr, L(crc32(ihdr, crc32(b'IHDR')) & 0xffffffff),
+        L(len(idat)), b'IDAT', idat, L(crc32(idat, crc32(b'IDAT')) & 0xffffffff),
+        L(0), b'IEND', L(crc32(b'IEND') & 0xffffffff)))
 
 
 
