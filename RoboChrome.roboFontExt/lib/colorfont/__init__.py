@@ -17,13 +17,14 @@ from re import search, compile
 # for png generation
 try:
     from flat import document, shape, rgba
-    from colorfont.flatPen import FlatPen
     have_flat = True
 except ImportError:
     have_flat = False
     print("colorfont: The 'flat' Python module is missing.")
     print("Raster output formats will not be available.")
     print("Please see <https://github.com/jenskutilek/RoboChrome/blob/master/README.md>")
+if have_flat:
+    from colorfont.flatPen import FlatPen
 
 # for svg generation
 from colorfont.svgPen import SVGpen
