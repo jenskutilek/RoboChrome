@@ -59,7 +59,7 @@ class ColorFontEditor(BaseWindowController):
         else:
             self.metrics = (-200, 500, 700, 800, 1000)
             #print("Hey, I work better when there's an open font!")
-        self.scale = 180.0 / (self.metrics[3] - self.metrics[0])
+        self.scale = 180 / (self.metrics[3] - self.metrics[0])
         
         if self.font:
             title = basename(self.font.fileName)
@@ -440,11 +440,13 @@ class ColorFontEditor(BaseWindowController):
     
     def getNSColor(self, hexrgba):
         # get NSColor for a HTML-style hex rgb(a) color
-        r = float(int(hexrgba[1:3], 16)) / 255
-        g = float(int(hexrgba[3:5], 16)) / 255
-        b = float(int(hexrgba[5:7], 16)) / 255
+        r = int(hexrgba[1:3], 16) / 255
+        g = int(hexrgba[3:5], 16) / 255
+        b = int(hexrgba[5:7], 16) / 255
         if len(hexrgba) == 9:
-            a = float(int(hexrgba[7:9], 16)) / 255
+            a = int(hexrgba[7:9], 16) / 255
+        else:
+            a = 1
         return NSColor.colorWithCalibratedRed_green_blue_alpha_(r, g, b, a)
     
     def getHexColor(self, nscolor):
@@ -732,7 +734,7 @@ class ColorFontEditor(BaseWindowController):
 
     def _canvas_draw_metrics(self):
         save()
-        strokeWidth(1.0/self.scale)
+        strokeWidth(1 / self.scale)
         stroke(0.8, 0.8, 0.8)
         line((0, 0), (self.width, 0))
         line((0, self.metrics[0]), (self.width, self.metrics[0]))
