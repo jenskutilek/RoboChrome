@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="Spanien.07" format="2">
+  <advance width="1488"/>
+  <outline>
+    <contour>
+      <point x="560" y="352" type="line"/>
+      <point x="560" y="336" type="line"/>
+      <point x="544" y="336" type="line"/>
+      <point x="544" y="320" type="line"/>
+      <point x="576" y="320" type="line"/>
+      <point x="576" y="288" type="line"/>
+      <point x="592" y="288" type="line"/>
+      <point x="592" y="352" type="line"/>
+    </contour>
+  </outline>
+</glyph>

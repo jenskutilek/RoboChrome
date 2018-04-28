@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>GSDimensionPlugin.Dimensions</key>
 	<dict>
 		<key>6BC6EBAD-254B-4F2A-A3B7-423E3045276D</key>
-		<dict>
-		</dict>
+		<dict/>
 	</dict>
 	<key>com.fontfont.colorfont.color</key>
 	<string>#000000</string>
@@ -125,30 +124,10 @@
 		<real>0.5</real>
 		<real>0.7</real>
 	</array>
-	<key>com.typemytype.robofont.guides</key>
-	<array>
-		<dict>
-			<key>angle</key>
-			<integer>0</integer>
-			<key>isGlobal</key>
-			<integer>1</integer>
-			<key>magnetic</key>
-			<integer>5</integer>
-			<key>name</key>
-			<string></string>
-			<key>x</key>
-			<integer>302</integer>
-			<key>y</key>
-			<integer>140</integer>
-		</dict>
-	</array>
+	<key>com.typemytype.robofont.guideline.magnetic.mO0kcq3MRm</key>
+	<integer>5</integer>
 	<key>com.typemytype.robofont.italicSlantOffset</key>
 	<integer>0</integer>
-	<key>com.typemytype.robofont.layerOrder</key>
-	<array>
-		<string>line</string>
-		<string>background</string>
-	</array>
 	<key>com.typemytype.robofont.line.layerStrokeColor</key>
 	<array>
 		<real>1.0</real>
@@ -160,7 +139,7 @@
 	<string>curve</string>
 	<key>com.typemytype.robofont.shouldAddPointsInSplineConversion</key>
 	<integer>1</integer>
-	<key>com.typemytype.robofont.sort</key>
+	<key>com.typesupply.defcon.sortDescriptor</key>
 	<array>
 		<dict>
 			<key>ascending</key>

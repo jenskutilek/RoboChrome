@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="Schweiz.02" format="2">
+  <advance width="1056"/>
+  <outline>
+    <contour>
+      <point x="608" y="400" type="line"/>
+      <point x="608" y="608" type="line"/>
+      <point x="448" y="608" type="line"/>
+      <point x="448" y="400" type="line"/>
+      <point x="240" y="400" type="line"/>
+      <point x="240" y="240" type="line"/>
+      <point x="448" y="240" type="line"/>
+      <point x="448" y="32" type="line"/>
+      <point x="608" y="32" type="line"/>
+      <point x="608" y="240" type="line"/>
+      <point x="816" y="240" type="line"/>
+      <point x="816" y="400" type="line"/>
+    </contour>
+  </outline>
+</glyph>

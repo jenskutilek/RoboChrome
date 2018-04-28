@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="Iran.01" format="2">
+  <advance width="1552"/>
+  <outline>
+    <contour>
+      <point x="64" y="-144" type="line"/>
+      <point x="1488" y="-144" type="line"/>
+      <point x="1488" y="784" type="line"/>
+      <point x="64" y="784" type="line"/>
+    </contour>
+  </outline>
+</glyph>

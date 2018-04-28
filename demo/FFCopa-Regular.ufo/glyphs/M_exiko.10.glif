@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="Mexiko.10" format="2">
+  <advance width="1712"/>
+  <outline>
+    <contour>
+      <point x="720" y="320" type="line"/>
+      <point x="720" y="336" type="line"/>
+      <point x="704" y="336" type="line"/>
+      <point x="704" y="320" type="line"/>
+    </contour>
+    <contour>
+      <point x="832" y="272" type="line"/>
+      <point x="832" y="288" type="line"/>
+      <point x="816" y="288" type="line"/>
+      <point x="816" y="272" type="line"/>
+    </contour>
+    <contour>
+      <point x="992" y="272" type="line"/>
+      <point x="992" y="288" type="line"/>
+      <point x="976" y="288" type="line"/>
+      <point x="976" y="272" type="line"/>
+    </contour>
+    <contour>
+      <point x="912" y="224" type="line"/>
+      <point x="912" y="240" type="line"/>
+      <point x="896" y="240" type="line"/>
+      <point x="896" y="224" type="line"/>
+    </contour>
+  </outline>
+</glyph>

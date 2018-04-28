@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="USA.02" format="2">
+  <advance width="1856"/>
+  <outline>
+    <contour>
+      <point x="1792" y="720" type="line"/>
+      <point x="1792" y="784" type="line"/>
+      <point x="768" y="784" type="line"/>
+      <point x="768" y="720" type="line"/>
+    </contour>
+    <contour>
+      <point x="1792" y="576" type="line"/>
+      <point x="1792" y="640" type="line"/>
+      <point x="768" y="640" type="line"/>
+      <point x="768" y="576" type="line"/>
+    </contour>
+    <contour>
+      <point x="1792" y="432" type="line"/>
+      <point x="1792" y="496" type="line"/>
+      <point x="768" y="496" type="line"/>
+      <point x="768" y="432" type="line"/>
+    </contour>
+    <contour>
+      <point x="1792" y="288" type="line"/>
+      <point x="1792" y="352" type="line"/>
+      <point x="768" y="352" type="line"/>
+      <point x="768" y="288" type="line"/>
+    </contour>
+    <contour>
+      <point x="1792" y="144" type="line"/>
+      <point x="1792" y="208" type="line"/>
+      <point x="64" y="208" type="line"/>
+      <point x="64" y="144" type="line"/>
+    </contour>
+    <contour>
+      <point x="1792" y="0" type="line"/>
+      <point x="1792" y="64" type="line"/>
+      <point x="64" y="64" type="line"/>
+      <point x="64" y="0" type="line"/>
+    </contour>
+    <contour>
+      <point x="1792" y="-144" type="line"/>
+      <point x="1792" y="-80" type="line"/>
+      <point x="64" y="-80" type="line"/>
+      <point x="64" y="-144" type="line"/>
+    </contour>
+  </outline>
+</glyph>

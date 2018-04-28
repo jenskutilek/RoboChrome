@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="CostaRica.02" format="2">
+  <advance width="1680"/>
+  <outline>
+    <contour>
+      <point x="1616" y="632" type="line"/>
+      <point x="1616" y="784" type="line"/>
+      <point x="64" y="784" type="line"/>
+      <point x="64" y="632" type="line"/>
+    </contour>
+    <contour>
+      <point x="1616" y="-144" type="line"/>
+      <point x="1616" y="8" type="line"/>
+      <point x="64" y="8" type="line"/>
+      <point x="64" y="-144" type="line"/>
+    </contour>
+  </outline>
+</glyph>

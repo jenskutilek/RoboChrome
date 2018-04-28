@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="Kroatien.03" format="2">
+  <advance width="1936"/>
+  <outline>
+    <contour>
+      <point x="1872" y="-144" type="line"/>
+      <point x="1872" y="160" type="line"/>
+      <point x="64" y="160" type="line"/>
+      <point x="64" y="-144" type="line"/>
+    </contour>
+  </outline>
+</glyph>

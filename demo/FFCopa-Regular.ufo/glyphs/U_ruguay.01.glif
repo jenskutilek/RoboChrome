@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="Uruguay.01" format="2">
+  <advance width="1488"/>
+  <outline>
+    <contour>
+      <point x="1424" y="-144" type="line"/>
+      <point x="1424" y="784" type="line"/>
+      <point x="64" y="784" type="line"/>
+      <point x="64" y="-144" type="line"/>
+    </contour>
+  </outline>
+</glyph>

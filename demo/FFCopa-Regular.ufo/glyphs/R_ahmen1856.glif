@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="Rahmen1856" format="2">
+  <advance width="1856"/>
+  <outline>
+    <contour>
+      <point x="1776" y="768" type="line"/>
+      <point x="1776" y="-128" type="line"/>
+      <point x="80" y="-128" type="line"/>
+      <point x="80" y="768" type="line"/>
+    </contour>
+    <contour>
+      <point x="1792" y="-144" type="line"/>
+      <point x="1792" y="784" type="line"/>
+      <point x="64" y="784" type="line"/>
+      <point x="64" y="-144" type="line"/>
+    </contour>
+  </outline>
+</glyph>

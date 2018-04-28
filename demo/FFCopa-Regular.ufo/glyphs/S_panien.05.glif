@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="Spanien.05" format="2">
+  <advance width="1488"/>
+  <outline>
+    <contour>
+      <point x="400" y="368" type="line"/>
+      <point x="400" y="384" type="line"/>
+      <point x="368" y="384" type="line"/>
+      <point x="368" y="368" type="line"/>
+    </contour>
+    <contour>
+      <point x="672" y="368" type="line"/>
+      <point x="672" y="384" type="line"/>
+      <point x="640" y="384" type="line"/>
+      <point x="640" y="368" type="line"/>
+    </contour>
+    <contour>
+      <point x="400" y="336" type="line"/>
+      <point x="400" y="352" type="line"/>
+      <point x="368" y="352" type="line"/>
+      <point x="368" y="336" type="line"/>
+    </contour>
+    <contour>
+      <point x="672" y="336" type="line"/>
+      <point x="672" y="352" type="line"/>
+      <point x="640" y="352" type="line"/>
+      <point x="640" y="336" type="line"/>
+    </contour>
+    <contour>
+      <point x="416" y="160" type="line"/>
+      <point x="416" y="176" type="line"/>
+      <point x="352" y="176" type="line"/>
+      <point x="352" y="160" type="line"/>
+    </contour>
+    <contour>
+      <point x="688" y="160" type="line"/>
+      <point x="688" y="176" type="line"/>
+      <point x="624" y="176" type="line"/>
+      <point x="624" y="160" type="line"/>
+    </contour>
+  </outline>
+</glyph>
