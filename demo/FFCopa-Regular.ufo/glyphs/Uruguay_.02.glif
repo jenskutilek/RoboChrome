@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="Uruguay.02" format="1">
+  <advance width="1488"/>
+  <outline>
+    <contour>
+      <point x="560" y="576" type="line"/>
+      <point x="1424" y="576" type="line"/>
+      <point x="1424" y="688" type="line"/>
+      <point x="560" y="688" type="line"/>
+    </contour>
+    <contour>
+      <point x="1424" y="368" type="line"/>
+      <point x="1424" y="480" type="line"/>
+      <point x="560" y="480" type="line"/>
+      <point x="560" y="368" type="line"/>
+    </contour>
+    <contour>
+      <point x="1424" y="160" type="line"/>
+      <point x="1424" y="272" type="line"/>
+      <point x="64" y="272" type="line"/>
+      <point x="64" y="160" type="line"/>
+    </contour>
+    <contour>
+      <point x="1424" y="-48" type="line"/>
+      <point x="1424" y="64" type="line"/>
+      <point x="64" y="64" type="line"/>
+      <point x="64" y="-48" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.typemytype.robofont.layerData</key>
+      <dict>
+        <key>background</key>
+        <dict>
+          <key>anchors</key>
+          <array>
+          </array>
+          <key>components</key>
+          <array>
+          </array>
+          <key>contours</key>
+          <array>
+          </array>
+          <key>lib</key>
+          <dict>
+          </dict>
+          <key>name</key>
+          <string>Uruguay.02</string>
+          <key>unicodes</key>
+          <array>
+          </array>
+          <key>width</key>
+          <integer>1488</integer>
+        </dict>
+        <key>line</key>
+        <dict>
+          <key>anchors</key>
+          <array>
+          </array>
+          <key>components</key>
+          <array>
+          </array>
+          <key>contours</key>
+          <array>
+          </array>
+          <key>lib</key>
+          <dict>
+          </dict>
+          <key>name</key>
+          <string>Uruguay.02</string>
+          <key>unicodes</key>
+          <array>
+          </array>
+          <key>width</key>
+          <integer>1488</integer>
+        </dict>
+      </dict>
+    </dict>
+  </lib>
+</glyph>

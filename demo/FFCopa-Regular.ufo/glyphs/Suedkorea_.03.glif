@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="Suedkorea.03" format="1">
+  <advance width="1520"/>
+  <outline>
+    <contour>
+      <point x="976" y="416" type="line"/>
+      <point x="960" y="416" type="line"/>
+      <point x="960" y="448" type="line"/>
+      <point x="944" y="448" type="line"/>
+      <point x="944" y="464" type="line"/>
+      <point x="928" y="464" type="line"/>
+      <point x="928" y="480" type="line"/>
+      <point x="912" y="480" type="line"/>
+      <point x="912" y="496" type="line"/>
+      <point x="896" y="496" type="line"/>
+      <point x="896" y="512" type="line"/>
+      <point x="864" y="512" type="line"/>
+      <point x="864" y="528" type="line"/>
+      <point x="832" y="528" type="line"/>
+      <point x="832" y="544" type="line"/>
+      <point x="688" y="544" type="line"/>
+      <point x="688" y="528" type="line"/>
+      <point x="656" y="528" type="line"/>
+      <point x="656" y="512" type="line"/>
+      <point x="624" y="512" type="line"/>
+      <point x="624" y="496" type="line"/>
+      <point x="608" y="496" type="line"/>
+      <point x="608" y="480" type="line"/>
+      <point x="592" y="480" type="line"/>
+      <point x="592" y="464" type="line"/>
+      <point x="576" y="464" type="line"/>
+      <point x="576" y="448" type="line"/>
+      <point x="560" y="448" type="line"/>
+      <point x="560" y="336" type="line"/>
+      <point x="576" y="336" type="line"/>
+      <point x="576" y="304" type="line"/>
+      <point x="592" y="304" type="line"/>
+      <point x="592" y="288" type="line"/>
+      <point x="624" y="288" type="line"/>
+      <point x="624" y="272" type="line"/>
+      <point x="704" y="272" type="line"/>
+      <point x="704" y="288" type="line"/>
+      <point x="736" y="288" type="line"/>
+      <point x="736" y="304" type="line"/>
+      <point x="752" y="304" type="line"/>
+      <point x="752" y="336" type="line"/>
+      <point x="768" y="336" type="line"/>
+      <point x="768" y="352" type="line"/>
+      <point x="800" y="352" type="line"/>
+      <point x="800" y="368" type="line"/>
+      <point x="832" y="368" type="line"/>
+      <point x="832" y="384" type="line"/>
+      <point x="880" y="384" type="line"/>
+      <point x="880" y="368" type="line"/>
+      <point x="912" y="368" type="line"/>
+      <point x="912" y="352" type="line"/>
+      <point x="944" y="352" type="line"/>
+      <point x="944" y="336" type="line"/>
+      <point x="960" y="336" type="line"/>
+      <point x="960" y="304" type="line"/>
+      <point x="976" y="304" type="line"/>
+      <point x="976" y="272" type="line"/>
+      <point x="992" y="272" type="line"/>
+      <point x="992" y="368" type="line"/>
+      <point x="976" y="368" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.typemytype.robofont.layerData</key>
+      <dict>
+        <key>background</key>
+        <dict>
+          <key>anchors</key>
+          <array>
+          </array>
+          <key>components</key>
+          <array>
+          </array>
+          <key>contours</key>
+          <array>
+          </array>
+          <key>lib</key>
+          <dict>
+          </dict>
+          <key>name</key>
+          <string>Suedkorea.03</string>
+          <key>unicodes</key>
+          <array>
+          </array>
+          <key>width</key>
+          <integer>1520</integer>
+        </dict>
+        <key>line</key>
+        <dict>
+          <key>anchors</key>
+          <array>
+          </array>
+          <key>components</key>
+          <array>
+          </array>
+          <key>contours</key>
+          <array>
+          </array>
+          <key>lib</key>
+          <dict>
+          </dict>
+          <key>name</key>
+          <string>Suedkorea.03</string>
+          <key>unicodes</key>
+          <array>
+          </array>
+          <key>width</key>
+          <integer>1520</integer>
+        </dict>
+      </dict>
+    </dict>
+  </lib>
+</glyph>

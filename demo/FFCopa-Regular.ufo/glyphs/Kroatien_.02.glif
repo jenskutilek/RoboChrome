@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="Kroatien.02" format="1">
+  <advance width="1936"/>
+  <outline>
+    <contour>
+      <point x="992" y="96" type="line"/>
+      <point x="1024" y="96" type="line"/>
+      <point x="1024" y="112" type="line"/>
+      <point x="1056" y="112" type="line"/>
+      <point x="1056" y="160" type="line"/>
+      <point x="1872" y="160" type="line"/>
+      <point x="1872" y="480" type="line"/>
+      <point x="64" y="480" type="line"/>
+      <point x="64" y="160" type="line"/>
+      <point x="864" y="160" type="line"/>
+      <point x="864" y="112" type="line"/>
+      <point x="896" y="112" type="line"/>
+      <point x="896" y="96" type="line"/>
+      <point x="928" y="96" type="line"/>
+      <point x="928" y="160" type="line"/>
+      <point x="992" y="160" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.typemytype.robofont.layerData</key>
+      <dict>
+        <key>background</key>
+        <dict>
+          <key>anchors</key>
+          <array>
+          </array>
+          <key>components</key>
+          <array>
+          </array>
+          <key>contours</key>
+          <array>
+          </array>
+          <key>lib</key>
+          <dict>
+          </dict>
+          <key>name</key>
+          <string>Kroatien.02</string>
+          <key>unicodes</key>
+          <array>
+          </array>
+          <key>width</key>
+          <integer>1936</integer>
+        </dict>
+        <key>line</key>
+        <dict>
+          <key>anchors</key>
+          <array>
+          </array>
+          <key>components</key>
+          <array>
+          </array>
+          <key>contours</key>
+          <array>
+          </array>
+          <key>lib</key>
+          <dict>
+          </dict>
+          <key>name</key>
+          <string>Kroatien.02</string>
+          <key>unicodes</key>
+          <array>
+          </array>
+          <key>width</key>
+          <integer>1936</integer>
+        </dict>
+      </dict>
+    </dict>
+  </lib>
+</glyph>

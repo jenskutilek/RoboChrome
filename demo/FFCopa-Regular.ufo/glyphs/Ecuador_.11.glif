@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="Ecuador.11" format="1">
+  <advance width="1488"/>
+  <outline>
+    <contour>
+      <point x="736" y="368" type="line"/>
+      <point x="752" y="368" type="line"/>
+      <point x="752" y="384" type="line"/>
+      <point x="768" y="384" type="line"/>
+      <point x="768" y="400" type="line"/>
+      <point x="752" y="400" type="line"/>
+      <point x="752" y="416" type="line"/>
+      <point x="736" y="416" type="line"/>
+      <point x="736" y="400" type="line"/>
+      <point x="720" y="400" type="line"/>
+      <point x="720" y="384" type="line"/>
+      <point x="736" y="384" type="line"/>
+    </contour>
+    <contour>
+      <point x="608" y="336" type="line"/>
+      <point x="592" y="336" type="line"/>
+      <point x="592" y="192" type="line"/>
+      <point x="608" y="192" type="line"/>
+      <point x="608" y="176" type="line"/>
+      <point x="624" y="176" type="line"/>
+      <point x="624" y="160" type="line"/>
+      <point x="688" y="160" type="line"/>
+      <point x="688" y="192" type="line"/>
+      <point x="656" y="192" type="line"/>
+      <point x="656" y="208" type="line"/>
+      <point x="640" y="208" type="line"/>
+      <point x="640" y="224" type="line"/>
+      <point x="624" y="224" type="line"/>
+      <point x="624" y="400" type="line"/>
+      <point x="608" y="400" type="line"/>
+    </contour>
+    <contour>
+      <point x="880" y="400" type="line"/>
+      <point x="864" y="400" type="line"/>
+      <point x="864" y="224" type="line"/>
+      <point x="848" y="224" type="line"/>
+      <point x="848" y="208" type="line"/>
+      <point x="832" y="208" type="line"/>
+      <point x="832" y="192" type="line"/>
+      <point x="800" y="192" type="line"/>
+      <point x="800" y="160" type="line"/>
+      <point x="864" y="160" type="line"/>
+      <point x="864" y="176" type="line"/>
+      <point x="880" y="176" type="line"/>
+      <point x="880" y="192" type="line"/>
+      <point x="896" y="192" type="line"/>
+      <point x="896" y="336" type="line"/>
+      <point x="880" y="336" type="line"/>
+    </contour>
+    <contour>
+      <point x="768" y="256" type="line"/>
+      <point x="768" y="272" type="line"/>
+      <point x="720" y="272" type="line"/>
+      <point x="720" y="256" type="line"/>
+    </contour>
+    <contour>
+      <point x="704" y="144" type="line"/>
+      <point x="688" y="144" type="line"/>
+      <point x="688" y="128" type="line"/>
+      <point x="720" y="128" type="line"/>
+      <point x="720" y="144" type="line"/>
+      <point x="736" y="144" type="line"/>
+      <point x="736" y="160" type="line"/>
+      <point x="704" y="160" type="line"/>
+    </contour>
+    <contour>
+      <point x="784" y="160" type="line"/>
+      <point x="752" y="160" type="line"/>
+      <point x="752" y="144" type="line"/>
+      <point x="768" y="144" type="line"/>
+      <point x="768" y="128" type="line"/>
+      <point x="800" y="128" type="line"/>
+      <point x="800" y="144" type="line"/>
+      <point x="784" y="144" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.typemytype.robofont.layerData</key>
+      <dict>
+        <key>background</key>
+        <dict>
+          <key>anchors</key>
+          <array>
+          </array>
+          <key>components</key>
+          <array>
+          </array>
+          <key>contours</key>
+          <array>
+          </array>
+          <key>lib</key>
+          <dict>
+          </dict>
+          <key>name</key>
+          <string>Ecuador.11</string>
+          <key>unicodes</key>
+          <array>
+          </array>
+          <key>width</key>
+          <integer>1488</integer>
+        </dict>
+        <key>line</key>
+        <dict>
+          <key>anchors</key>
+          <array>
+          </array>
+          <key>components</key>
+          <array>
+          </array>
+          <key>contours</key>
+          <array>
+          </array>
+          <key>lib</key>
+          <dict>
+          </dict>
+          <key>name</key>
+          <string>Ecuador.11</string>
+          <key>unicodes</key>
+          <array>
+          </array>
+          <key>width</key>
+          <integer>1488</integer>
+        </dict>
+      </dict>
+    </dict>
+  </lib>
+</glyph>

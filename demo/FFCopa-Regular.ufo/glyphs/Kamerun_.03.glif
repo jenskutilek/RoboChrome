@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="Kamerun.03" format="1">
+  <advance width="1520"/>
+  <outline>
+    <contour>
+      <point x="1456" y="-144" type="line"/>
+      <point x="1456" y="784" type="line"/>
+      <point x="992" y="784" type="line"/>
+      <point x="992" y="-144" type="line"/>
+    </contour>
+    <contour>
+      <point x="720" y="256" type="line"/>
+      <point x="736" y="256" type="line"/>
+      <point x="736" y="272" type="line"/>
+      <point x="784" y="272" type="line"/>
+      <point x="784" y="256" type="line"/>
+      <point x="800" y="256" type="line"/>
+      <point x="800" y="240" type="line"/>
+      <point x="816" y="240" type="line"/>
+      <point x="816" y="272" type="line"/>
+      <point x="800" y="272" type="line"/>
+      <point x="800" y="320" type="line"/>
+      <point x="816" y="320" type="line"/>
+      <point x="816" y="336" type="line"/>
+      <point x="848" y="336" type="line"/>
+      <point x="848" y="352" type="line"/>
+      <point x="784" y="352" type="line"/>
+      <point x="784" y="368" type="line"/>
+      <point x="768" y="368" type="line"/>
+      <point x="768" y="416" type="line"/>
+      <point x="752" y="416" type="line"/>
+      <point x="752" y="368" type="line"/>
+      <point x="736" y="368" type="line"/>
+      <point x="736" y="352" type="line"/>
+      <point x="672" y="352" type="line"/>
+      <point x="672" y="336" type="line"/>
+      <point x="704" y="336" type="line"/>
+      <point x="704" y="320" type="line"/>
+      <point x="720" y="320" type="line"/>
+      <point x="720" y="272" type="line"/>
+      <point x="704" y="272" type="line"/>
+      <point x="704" y="240" type="line"/>
+      <point x="720" y="240" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.typemytype.robofont.layerData</key>
+      <dict>
+        <key>background</key>
+        <dict>
+          <key>anchors</key>
+          <array>
+          </array>
+          <key>components</key>
+          <array>
+          </array>
+          <key>contours</key>
+          <array>
+          </array>
+          <key>lib</key>
+          <dict>
+          </dict>
+          <key>name</key>
+          <string>Kamerun.03</string>
+          <key>unicodes</key>
+          <array>
+          </array>
+          <key>width</key>
+          <integer>1520</integer>
+        </dict>
+        <key>line</key>
+        <dict>
+          <key>anchors</key>
+          <array>
+          </array>
+          <key>components</key>
+          <array>
+          </array>
+          <key>contours</key>
+          <array>
+          </array>
+          <key>lib</key>
+          <dict>
+          </dict>
+          <key>name</key>
+          <string>Kamerun.03</string>
+          <key>unicodes</key>
+          <array>
+          </array>
+          <key>width</key>
+          <integer>1520</integer>
+        </dict>
+      </dict>
+    </dict>
+  </lib>
+</glyph>

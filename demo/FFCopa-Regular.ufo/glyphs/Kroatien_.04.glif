@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="Kroatien.04" format="1">
+  <advance width="1936"/>
+  <outline>
+    <contour>
+      <point x="960" y="592" type="line"/>
+      <point x="960" y="624" type="line"/>
+      <point x="944" y="624" type="line"/>
+      <point x="944" y="592" type="line"/>
+    </contour>
+    <contour>
+      <point x="992" y="592" type="line"/>
+      <point x="992" y="624" type="line"/>
+      <point x="976" y="624" type="line"/>
+      <point x="976" y="592" type="line"/>
+    </contour>
+    <contour>
+      <point x="1040" y="592" type="line"/>
+      <point x="1024" y="592" type="line"/>
+      <point x="1024" y="560" type="line"/>
+      <point x="1040" y="560" type="line"/>
+      <point x="1040" y="544" type="line"/>
+      <point x="1072" y="544" type="line"/>
+      <point x="1072" y="576" type="line"/>
+      <point x="1040" y="576" type="line"/>
+    </contour>
+    <contour>
+      <point x="1152" y="576" type="line"/>
+      <point x="1152" y="592" type="line"/>
+      <point x="1120" y="592" type="line"/>
+      <point x="1120" y="576" type="line"/>
+    </contour>
+    <contour>
+      <point x="816" y="576" type="line"/>
+      <point x="816" y="592" type="line"/>
+      <point x="784" y="592" type="line"/>
+      <point x="784" y="576" type="line"/>
+    </contour>
+    <contour>
+      <point x="976" y="544" type="line"/>
+      <point x="976" y="576" type="line"/>
+      <point x="960" y="576" type="line"/>
+      <point x="960" y="544" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.typemytype.robofont.layerData</key>
+      <dict>
+        <key>background</key>
+        <dict>
+          <key>anchors</key>
+          <array>
+          </array>
+          <key>components</key>
+          <array>
+          </array>
+          <key>contours</key>
+          <array>
+          </array>
+          <key>lib</key>
+          <dict>
+          </dict>
+          <key>name</key>
+          <string>Kroatien.04</string>
+          <key>unicodes</key>
+          <array>
+          </array>
+          <key>width</key>
+          <integer>1936</integer>
+        </dict>
+        <key>line</key>
+        <dict>
+          <key>anchors</key>
+          <array>
+          </array>
+          <key>components</key>
+          <array>
+          </array>
+          <key>contours</key>
+          <array>
+          </array>
+          <key>lib</key>
+          <dict>
+          </dict>
+          <key>name</key>
+          <string>Kroatien.04</string>
+          <key>unicodes</key>
+          <array>
+          </array>
+          <key>width</key>
+          <integer>1936</integer>
+        </dict>
+      </dict>
+    </dict>
+  </lib>
+</glyph>

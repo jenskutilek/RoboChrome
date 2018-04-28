@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="Rahmen1856" format="1">
+  <advance width="1856"/>
+  <outline>
+    <contour>
+      <point x="1776" y="768" type="line"/>
+      <point x="1776" y="-128" type="line"/>
+      <point x="80" y="-128" type="line"/>
+      <point x="80" y="768" type="line"/>
+    </contour>
+    <contour>
+      <point x="1792" y="-144" type="line"/>
+      <point x="1792" y="784" type="line"/>
+      <point x="64" y="784" type="line"/>
+      <point x="64" y="-144" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.typemytype.robofont.layerData</key>
+      <dict>
+        <key>background</key>
+        <dict>
+          <key>anchors</key>
+          <array>
+          </array>
+          <key>components</key>
+          <array>
+          </array>
+          <key>contours</key>
+          <array>
+          </array>
+          <key>lib</key>
+          <dict>
+          </dict>
+          <key>name</key>
+          <string>Rahmen1856</string>
+          <key>unicodes</key>
+          <array>
+          </array>
+          <key>width</key>
+          <integer>1856</integer>
+        </dict>
+        <key>line</key>
+        <dict>
+          <key>anchors</key>
+          <array>
+          </array>
+          <key>components</key>
+          <array>
+          </array>
+          <key>contours</key>
+          <array>
+          </array>
+          <key>lib</key>
+          <dict>
+          </dict>
+          <key>name</key>
+          <string>Rahmen1856</string>
+          <key>unicodes</key>
+          <array>
+          </array>
+          <key>width</key>
+          <integer>1856</integer>
+        </dict>
+      </dict>
+    </dict>
+  </lib>
+</glyph>

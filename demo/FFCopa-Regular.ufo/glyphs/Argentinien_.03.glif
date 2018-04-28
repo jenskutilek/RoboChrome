@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="Argentinien.03" format="1">
+  <advance width="1616"/>
+  <outline>
+    <contour>
+      <point x="816" y="175" type="line"/>
+      <point x="816" y="191" type="line"/>
+      <point x="832" y="191" type="line"/>
+      <point x="832" y="207" type="line"/>
+      <point x="848" y="207" type="line"/>
+      <point x="848" y="191" type="line"/>
+      <point x="864" y="191" type="line"/>
+      <point x="864" y="223" type="line"/>
+      <point x="880" y="223" type="line"/>
+      <point x="880" y="207" type="line"/>
+      <point x="912" y="207" type="line"/>
+      <point x="912" y="223" type="line"/>
+      <point x="896" y="223" type="line"/>
+      <point x="896" y="255" type="line"/>
+      <point x="912" y="255" type="line"/>
+      <point x="912" y="239" type="line"/>
+      <point x="928" y="239" type="line"/>
+      <point x="928" y="271" type="line"/>
+      <point x="912" y="271" type="line"/>
+      <point x="912" y="287" type="line"/>
+      <point x="928" y="287" type="line"/>
+      <point x="928" y="303" type="line"/>
+      <point x="944" y="303" type="line"/>
+      <point x="944" y="319" type="line"/>
+      <point x="928" y="319" type="line"/>
+      <point x="928" y="335" type="line"/>
+      <point x="912" y="335" type="line"/>
+      <point x="912" y="351" type="line"/>
+      <point x="928" y="351" type="line"/>
+      <point x="928" y="383" type="line"/>
+      <point x="912" y="383" type="line"/>
+      <point x="912" y="367" type="line"/>
+      <point x="896" y="367" type="line"/>
+      <point x="896" y="399" type="line"/>
+      <point x="912" y="399" type="line"/>
+      <point x="912" y="415" type="line"/>
+      <point x="880" y="415" type="line"/>
+      <point x="880" y="399" type="line"/>
+      <point x="864" y="399" type="line"/>
+      <point x="864" y="431" type="line"/>
+      <point x="848" y="431" type="line"/>
+      <point x="848" y="415" type="line"/>
+      <point x="832" y="415" type="line"/>
+      <point x="832" y="431" type="line"/>
+      <point x="816" y="431" type="line"/>
+      <point x="816" y="447" type="line"/>
+      <point x="800" y="447" type="line"/>
+      <point x="800" y="431" type="line"/>
+      <point x="784" y="431" type="line"/>
+      <point x="784" y="415" type="line"/>
+      <point x="768" y="415" type="line"/>
+      <point x="768" y="431" type="line"/>
+      <point x="752" y="431" type="line"/>
+      <point x="752" y="399" type="line"/>
+      <point x="736" y="399" type="line"/>
+      <point x="736" y="415" type="line"/>
+      <point x="704" y="415" type="line"/>
+      <point x="704" y="399" type="line"/>
+      <point x="720" y="399" type="line"/>
+      <point x="720" y="367" type="line"/>
+      <point x="704" y="367" type="line"/>
+      <point x="704" y="383" type="line"/>
+      <point x="688" y="383" type="line"/>
+      <point x="688" y="351" type="line"/>
+      <point x="704" y="351" type="line"/>
+      <point x="704" y="335" type="line"/>
+      <point x="688" y="335" type="line"/>
+      <point x="688" y="319" type="line"/>
+      <point x="672" y="319" type="line"/>
+      <point x="672" y="303" type="line"/>
+      <point x="688" y="303" type="line"/>
+      <point x="688" y="287" type="line"/>
+      <point x="704" y="287" type="line"/>
+      <point x="704" y="271" type="line"/>
+      <point x="688" y="271" type="line"/>
+      <point x="688" y="239" type="line"/>
+      <point x="704" y="239" type="line"/>
+      <point x="704" y="255" type="line"/>
+      <point x="720" y="255" type="line"/>
+      <point x="720" y="223" type="line"/>
+      <point x="704" y="223" type="line"/>
+      <point x="704" y="207" type="line"/>
+      <point x="736" y="207" type="line"/>
+      <point x="736" y="223" type="line"/>
+      <point x="752" y="223" type="line"/>
+      <point x="752" y="191" type="line"/>
+      <point x="768" y="191" type="line"/>
+      <point x="768" y="207" type="line"/>
+      <point x="784" y="207" type="line"/>
+      <point x="784" y="191" type="line"/>
+      <point x="800" y="191" type="line"/>
+      <point x="800" y="175" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.typemytype.robofont.layerData</key>
+      <dict>
+        <key>background</key>
+        <dict>
+          <key>anchors</key>
+          <array>
+          </array>
+          <key>components</key>
+          <array>
+          </array>
+          <key>contours</key>
+          <array>
+          </array>
+          <key>lib</key>
+          <dict>
+          </dict>
+          <key>name</key>
+          <string>Argentinien.03</string>
+          <key>unicodes</key>
+          <array>
+          </array>
+          <key>width</key>
+          <integer>1616</integer>
+        </dict>
+        <key>line</key>
+        <dict>
+          <key>anchors</key>
+          <array>
+          </array>
+          <key>components</key>
+          <array>
+          </array>
+          <key>contours</key>
+          <array>
+          </array>
+          <key>lib</key>
+          <dict>
+          </dict>
+          <key>name</key>
+          <string>Argentinien.03</string>
+          <key>unicodes</key>
+          <array>
+          </array>
+          <key>width</key>
+          <integer>1616</integer>
+        </dict>
+      </dict>
+    </dict>
+  </lib>
+</glyph>

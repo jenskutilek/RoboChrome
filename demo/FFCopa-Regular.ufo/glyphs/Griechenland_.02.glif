@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="Griechenland.02" format="1">
+  <advance width="1520"/>
+  <outline>
+    <contour>
+      <point x="257" y="591" type="line"/>
+      <point x="257" y="784" type="line"/>
+      <point x="64" y="784" type="line"/>
+      <point x="64" y="591" type="line"/>
+    </contour>
+    <contour>
+      <point x="1456" y="784" type="line"/>
+      <point x="383" y="784" type="line"/>
+      <point x="383" y="591" type="line"/>
+      <point x="576" y="591" type="line"/>
+      <point x="576" y="684" type="line"/>
+      <point x="1456" y="684" type="line"/>
+    </contour>
+    <contour>
+      <point x="1456" y="477" type="line"/>
+      <point x="1456" y="577" type="line"/>
+      <point x="576" y="577" type="line"/>
+      <point x="576" y="477" type="line"/>
+    </contour>
+    <contour>
+      <point x="576" y="370" type="line"/>
+      <point x="576" y="464" type="line"/>
+      <point x="383" y="464" type="line"/>
+      <point x="383" y="270" type="line"/>
+      <point x="1456" y="270" type="line"/>
+      <point x="1456" y="370" type="line"/>
+    </contour>
+    <contour>
+      <point x="257" y="270" type="line"/>
+      <point x="257" y="464" type="line"/>
+      <point x="64" y="464" type="line"/>
+      <point x="64" y="270" type="line"/>
+    </contour>
+    <contour>
+      <point x="1456" y="63" type="line"/>
+      <point x="1456" y="163" type="line"/>
+      <point x="64" y="163" type="line"/>
+      <point x="64" y="63" type="line"/>
+    </contour>
+    <contour>
+      <point x="1456" y="-144" type="line"/>
+      <point x="1456" y="-44" type="line"/>
+      <point x="64" y="-44" type="line"/>
+      <point x="64" y="-144" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.typemytype.robofont.layerData</key>
+      <dict>
+        <key>background</key>
+        <dict>
+          <key>anchors</key>
+          <array>
+          </array>
+          <key>components</key>
+          <array>
+          </array>
+          <key>contours</key>
+          <array>
+          </array>
+          <key>lib</key>
+          <dict>
+          </dict>
+          <key>name</key>
+          <string>Griechenland.02</string>
+          <key>unicodes</key>
+          <array>
+          </array>
+          <key>width</key>
+          <integer>1520</integer>
+        </dict>
+        <key>line</key>
+        <dict>
+          <key>anchors</key>
+          <array>
+          </array>
+          <key>components</key>
+          <array>
+          </array>
+          <key>contours</key>
+          <array>
+          </array>
+          <key>lib</key>
+          <dict>
+          </dict>
+          <key>name</key>
+          <string>Griechenland.02</string>
+          <key>unicodes</key>
+          <array>
+          </array>
+          <key>width</key>
+          <integer>1520</integer>
+        </dict>
+      </dict>
+    </dict>
+  </lib>
+</glyph>
