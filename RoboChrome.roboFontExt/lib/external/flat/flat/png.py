@@ -1,4 +1,3 @@
-from __future__ import division
 from struct import Struct
 from zlib import compress, crc32, decompress
 from .readable import readable
@@ -17,8 +16,6 @@ def _paeth_predictor(a, b, c):
     return c
 
 def _adaptive_filtering(image):
-    # FIXME
-    # 2018-04-27, Jens
     wn, n = image.width*image.n, image.n
     s, t = bytearray(wn), bytearray(wn)
     previous = bytearray(wn)
@@ -27,7 +24,7 @@ def _adaptive_filtering(image):
     for y in range(image.height):
         offset = y*wn
         row = image.data[offset:offset+wn]
-
+        
         minimum = 0 # none
         for v in row:
             minimum += cache[v]
@@ -41,59 +38,54 @@ def _adaptive_filtering(image):
             s[i] = v = (row[i] - row[i - n]) & 0xff
             m += cache[v]
             if m >= minimum:
-                print(y, "None")
                 break
         else:
-            print(y, "Sub")
             minimum = m
             code, scanline = b'\1', s
             s, t = t, s
         
-        #m = 0 # up
-        #for i in range(0, wn):
-        #    s[i] = v = (row[i] - previous[i]) & 0xff
-        #    m += cache[v]
-        #    if m >= minimum:
-        #        break
-        #else:
-        #    minimum = m
-        #    code, scanline = b'\2', s
-        #    s, t = t, s
-        #
-        #m = 0 # average
-        #for i in range(0, n):
-        #    s[i] = v = (row[i] - previous[i]//2) & 0xff
-        #    m += cache[v]
-        #for i in range(n, wn):
-        #    s[i] = v = (row[i] - (row[i - n] + previous[i])//2) & 0xff
-        #    m += cache[v]
-        #    if m >= minimum:
-        #        break
-        #else:
-        #    minimum = m
-        #    code, scanline = b'\3', s
-        #    s, t = t, s
-        #
-        #m = 0 # paeth
-        #for i in range(0, n):
-        #    s[i] = v = (row[i] - previous[i]) & 0xff
-        #    m += cache[v]
-        #for i in range(n, wn):
-        #    a, b, c = row[i - n], previous[i], previous[i - n]
-        #    s[i] = v = (row[i] - _paeth_predictor(a, b, c)) & 0xff
-        #    m += cache[v]
-        #    if m >= minimum:
-        #        break
-        #else:
-        #    code, scanline = b'\4', s
+        m = 0 # up
+        for i in range(0, wn):
+            s[i] = v = (row[i] - previous[i]) & 0xff
+            m += cache[v]
+            if m >= minimum:
+                break
+        else:
+            minimum = m
+            code, scanline = b'\2', s
+            s, t = t, s
+        
+        m = 0 # average
+        for i in range(0, n):
+            s[i] = v = (row[i] - previous[i]//2) & 0xff
+            m += cache[v]
+        for i in range(n, wn):
+            s[i] = v = (row[i] - (row[i - n] + previous[i])//2) & 0xff
+            m += cache[v]
+            if m >= minimum:
+                break
+        else:
+            minimum = m
+            code, scanline = b'\3', s
+            s, t = t, s
+        
+        m = 0 # paeth
+        for i in range(0, n):
+            s[i] = v = (row[i] - previous[i]) & 0xff
+            m += cache[v]
+        for i in range(n, wn):
+            a, b, c = row[i - n], previous[i], previous[i - n]
+            s[i] = v = (row[i] - _paeth_predictor(a, b, c)) & 0xff
+            m += cache[v]
+            if m >= minimum:
+                break
+        else:
+            code, scanline = b'\4', s
         
         content.append(code)
         content.append(scanline)
         previous = row
-    #print("Content:", content)
-    bb = b''.join(content)
-    print(bb)
-    return bb
+    return b''.join(content)
 
 
 
@@ -102,13 +94,13 @@ class png(object):
     
     @staticmethod
     def valid(data):
-        return data.startswith('\x89PNG\r\n\x1a\n')
+        return data.startswith(b'\x89PNG\r\n\x1a\n')
     
     def __init__(self, data):
         self.readable = r = readable(data)
         r.skip(8) # header
         length, name = r.parse('>L4s')
-        if length != 13 or name != 'IHDR':
+        if length != 13 or name != b'IHDR':
             raise ValueError('Invalid IHDR chunk.')
         self.width, self.height, \
             depth, color, compression, fltr, interlace = r.parse('>LLBBBBB') # IHDR
@@ -137,18 +129,18 @@ class png(object):
         parts = []
         while True:
             length, name = r.parse('>L4s')
-            if name == 'IEND':
+            if name == b'IEND':
                 break
-            if name == 'IDAT':
+            if name == b'IDAT':
                 parts.append(r.read(length))
             else:
                 r.skip(length)
             r.skip(4) # CRC
-        return bytearray().join(parts)
+        return b''.join(parts)
     
     def decompress(self):
         wn, n = self.width*self.n, self.n
-        content = decompress(self.idat())
+        content = bytearray(decompress(self.idat()))
         if (wn + 1)*self.height != len(content):
             raise ValueError('Invalid content length.')
         rows = []
@@ -189,7 +181,7 @@ def serialize(image, optimized):
     if image.kind not in ('g', 'ga', 'rgb', 'rgba'):
         raise ValueError('Invalid image kind.')
     L = Struct('>L').pack # unsigned long
-    color = bytes([b'\0\4\2\6'[image.n - 1]])
+    color = (b'\0', b'\4', b'\2', b'\6')[image.n - 1]
     ihdr = L(image.width) + L(image.height) + b'\10' + color + b'\0\0\0'
     if optimized:
         content = _adaptive_filtering(image)

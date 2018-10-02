@@ -1,4 +1,3 @@
-from __future__ import division
 from math import cos, pi, sin, sqrt
 from multiprocessing import Pool
 from random import choice, random

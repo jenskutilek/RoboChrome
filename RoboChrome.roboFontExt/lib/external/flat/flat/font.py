@@ -1,4 +1,3 @@
-from __future__ import division
 from .otf import otf
 
 
@@ -9,7 +8,7 @@ class font(object):
     @staticmethod
     def open(path, index=0):
         with open(path, 'rb') as f:
-            data = bytes(f.read())
+            data = f.read()
             if otf.valid(data):
                 source = otf(data, index)
                 return font(source)
