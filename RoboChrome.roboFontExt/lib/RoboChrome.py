@@ -568,9 +568,9 @@ class ColorFontEditor(BaseWindowController):
         _dict = {}
         for _color in sorted(
             self.w.colorpalette.get(),
-            key=lambda _key: _key["Index"]
+            key=lambda _key: int(_key["Index"])
         ):
-            if _color["Index"] != 0xffff:
+            if int(_color["Index"]) != 0xffff:
                 _dict[str(_color["Index"])] = self.getHexColor(_color["Color"])
         self.cfont.palettes[self.palette_index] = _dict
         self.cfont.save_to_rfont()
