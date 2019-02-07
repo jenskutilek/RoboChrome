@@ -339,10 +339,11 @@ class ColorFontEditor(BaseWindowController):
                 if colorIndex in colorDict.keys():
                     _layer_colors.append(colorDict[colorIndex])
                 else:
-                    print("Missing color in palette %i: %i" % (
-                        self.palette_index,
-                        colorIndex
-                    ))
+                    print("Missing color index in palette %i: %i (in glyph /%s)" % (
+                            self.palette_index,
+                            colorIndex,
+                            g["Layer Glyph"]
+                        ))
         self.layer_colors = _layer_colors
 
         # update color list in layer list popup
@@ -361,7 +362,11 @@ class ColorFontEditor(BaseWindowController):
                     if colorIndex in colorDict.keys():
                         _layer_colors.append(colorDict[colorIndex])
                     else:
-                        print("Missing color in palette %i: %i" % (self.palette_index, colorIndex))
+                        print("Missing color in palette %i: %i (in glyph /%s)" % (
+                            self.palette_index,
+                            colorIndex,
+                            self.glyphPreview
+                        ))
         self.layer_colors_glyph_window = _layer_colors
 
     # layer callbacks
