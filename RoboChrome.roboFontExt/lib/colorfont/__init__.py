@@ -655,17 +655,18 @@ class ColorFont(object):
     def auto_palette(self):
         """Automatically build a color palette with max(layers) entries
         and assign it to all color glyphs."""
-        # FIXME: Doesn't work for non-continuous color indices
         from random import randint
         self.palettes = [{}]
         palette = self.palettes[0]
-        max_layers = 0
+        used_color_indices = set()
         for g in self.values():
-            if len(g.layers) > max_layers:
-                max_layers = len(g.layers)
-            g.colors = range(len(g.layers))
-        for i in range(max_layers):
-            palette[str(i)] = "#%02x%02x%02xff" % (randint(0, 255), randint(0, 255), randint(0, 255))
+            used_color_indices |= set(g.colors)
+        for i in used_color_indices:
+            palette[str(i)] = "#%02x%02x%02xff" % (
+                randint(0, 255),
+                randint(0, 255),
+                randint(0, 255)
+            )
 
 
 class ColorGlyph(object):
