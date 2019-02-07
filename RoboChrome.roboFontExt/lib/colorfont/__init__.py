@@ -482,7 +482,7 @@ class ColorFont(object):
         font.close()
 
     def _format_outlines_special(self, font, replace_outlines=False):
-        if font.has_key("glyf"):
+        if "glyf" in font:
             glyf = font["glyf"]
         else:
             print("ERROR: I need TTF outlines to make special glyph records for the sbix format.")
@@ -788,7 +788,7 @@ class ColorGlyph(object):
         in a range of sizes.
             palette_index: Use colors from this palette
             sizes:         A list of sizes in pixels per em"""
-        if not 0 in self.bitmaps.keys():
+        if 0 not in self.bitmaps.keys():
             _page = self._get_drawing(palette_index)
             if _page is not None:
                 self.bitmaps[0] = _page.image(ppi=72, kind="rgba").flip(False, True)
@@ -818,7 +818,7 @@ class ColorGlyph(object):
             height = box[3] - box[1]
             d = document(width+2, height+2, "pt")
             p = d.addpage()
-            #_path = shape.path(shape(), [])
+            # _path = shape.path(shape(), [])
             for i in range(len(self.layers)):
                 layer = self.font.rfont[self.layers[i]]
                 colorindex = self.colors[i]
@@ -908,7 +908,13 @@ def test():
     # _font._export_sbix(r"/Users/jenskutilek/Documents/Color Fonts MS/Dingbats2SamplerOT.ttf", 0, [20, 40, 72, 96, 128, 160, 256, 512], "png")
     # _font.rasterize(0, [16])
     # _font.export_png("six", "/Users/jenskutilek/Desktop/six.png", 0, 1000)
-    _font._export_sbix(r"/Users/jenskutilek/Documents/Color Fonts MS/Dingbats2SamplerOT.ttf", 0, [128], "png", replace_outlines=True)
+    _font._export_sbix(
+        otfpath=r"/Users/jenskutilek/Documents/Color Fonts MS/Dingbats2SamplerOT.ttf",
+        palette=0,
+        image_format="png",
+        replace_outlines=True,
+        parent_window=None
+    )
 
 
 if __name__ == "__main__":

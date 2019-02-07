@@ -199,7 +199,7 @@ def get_ui(window_controller, title):
         "Export PNG",
         callback=window_controller._choose_png_to_export,
     )
-    y +=31
+    y += 31
     w.toggleSettingsButton = vanilla.Button(
         (10, y, 115, 20),
         "Settings...",
