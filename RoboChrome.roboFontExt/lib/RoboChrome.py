@@ -16,21 +16,7 @@ class ColorFontEditor(BaseWindowController):
 
     def __init__(self):
         self.libkey = "com.fontfont.colorfont"
-
-        self.font = CurrentFont()
-        self.cfont = ColorFont(self.font)
-        self.glyph = None
-        self.glyphPreview = None
-        self.width = 0
-        self.palette_index = 0  # currently active palette
-
-        self.currentPaletteChanged = False
-        self.currentGlyphChanged = False
-
-        self.layer_glyphs = []
-        self.layer_colors = []
-        self.layer_glyphs_glyph_window = []
-        self.layer_colors_glyph_window = []
+        self._font = None
 
         self.show_only_glyphs_with_layers = True
 
@@ -46,31 +32,78 @@ class ColorFontEditor(BaseWindowController):
         # self.oldDisplaySettings = getGlyphViewDisplaySettings()
         # setGlyphViewDisplaySettings({"On Curve Points": False, "Off Curve Points": False})
 
-        if self.font is not None:
-            self.metrics = (
-                self.font.info.descender,
-                self.font.info.xHeight,
-                self.font.info.capHeight,
-                self.font.info.ascender,
-                self.font.info.unitsPerEm,
-            )
-        else:
-            self.metrics = (-200, 500, 700, 800, 1000)
-            print("Please open a UFO before starting RoboChrome.")
-        self.scale = 180 / (self.metrics[3] - self.metrics[0])
-
-        if self.font:
-            title = basename(self.font.fileName)
-        else:
-            title = "None"
-
-        self.w = get_ui(self, title)
+        self.w = get_ui(self, "None")
         self.d = get_drawer(self)
         self.setUpBaseWindowBehavior()
 
-        # load color data from rfont
-        self.cfont.read_from_rfont()
+        # self._callback_ui_glyph_list_selection()
 
+        addObserver(self, "_observer_glyph_changed", "currentGlyphChanged")
+        addObserver(self, "_observer_draw_glyph_window", "drawBackground")
+        addObserver(self, "_observer_draw_glyph_window", "drawInactive")
+        addObserver(self, "_observer_font_will_close", "fontWillClose")
+        addObserver(self, "_observer_font_did_open", "fontDidOpen")
+
+        # grey out controls that are not implemented yet
+        self.d.generateGoogleFormat.enable(False)
+        self.d.preferPlacedImages.enable(False)
+
+        # disable regex check box, because it is read only
+        self.d.auto_layer_regex_ok.enable(False)
+
+        # If sbix or cbdt is inactive, disable bitmap sizes box
+        # self._check_bitmap_ui_active()
+
+        self.w.open()
+
+        self.font = CurrentFont()
+        # self._update_ui()
+        # if CurrentGlyph() is not None:
+        #     self.glyphPreview = CurrentGlyph().name
+        #     if self.glyphPreview in self.cfont.keys():
+        #         self.layer_glyphs_glyph_window = self.cfont[self.glyphPreview].layers
+        #         self._cache_color_info_glyph_window()
+        #     UpdateCurrentGlyphView()
+
+    @property
+    def font(self):
+        return self._font
+
+    @font.setter
+    def font(self, value):
+        self._font = value
+        self.cfont = ColorFont(self._font)
+
+        self.glyph = None
+        self.glyphPreview = None
+        self.width = 0
+        self.palette_index = 0  # currently active palette
+
+        self.currentPaletteChanged = False
+        self.currentGlyphChanged = False
+
+        self.layer_glyphs = []
+        self.layer_colors = []
+        self.layer_glyphs_glyph_window = []
+        self.layer_colors_glyph_window = []
+
+        if self._font is not None:
+            self.metrics = (
+                self._font.info.descender,
+                self._font.info.xHeight,
+                self._font.info.capHeight,
+                self._font.info.ascender,
+                self._font.info.unitsPerEm,
+            )
+        else:
+            self.metrics = (-200, 500, 700, 800, 1000)
+        self.scale = 180 / (self.metrics[3] - self.metrics[0])
+
+        # load color data from rfont
+        if self._font:
+            self.cfont.read_from_rfont()
+
+    def _update_ui(self):
         # update ui
         self._callback_update_ui_formats()
         self.d.generate_sbix_sizes.set(self._ui_get_sbix_sizes())
@@ -84,35 +117,15 @@ class ColorFontEditor(BaseWindowController):
 
         if len(self.cfont) > 0:
             self.w.glyph_list.setSelection([0])
-        # self._callback_ui_glyph_list_selection()
-
-        addObserver(self, "_observer_glyph_changed", "currentGlyphChanged")
-        addObserver(self, "_observer_draw_glyph_window", "drawBackground")
-        addObserver(self, "_observer_draw_glyph_window", "drawInactive")
-        # addObserver(self, "removeFontFromList", "fontWillClose")
-        # addObserver(self, "updateFontList", "fontDidOpen")
-
-        if CurrentGlyph() is not None:
-            self.glyphPreview = CurrentGlyph().name
-            if self.glyphPreview in self.cfont.keys():
-                self.layer_glyphs_glyph_window = self.cfont[self.glyphPreview].layers
-                self._cache_color_info_glyph_window()
-            UpdateCurrentGlyphView()
-
-        # grey out controls that are not implemented yet
-        self.d.generateGoogleFormat.enable(False)
-        self.d.preferPlacedImages.enable(False)
-
-        # disable regex check box, because it is read only
-        self.d.auto_layer_regex_ok.enable(False)
 
         if len(self.cfont) > 0:
             self.w.auto_layer_button.enable(False)
-
-        # If sbix or cbdt is inactive, disable bitmap sizes box
-        self._check_bitmap_ui_active()
-
-        self.w.open()
+        
+        if self._font:
+            title = basename(self._font.fileName)
+        else:
+            title = "None"
+        self.w.setTitle("%s – RoboChrome" % title)
 
     # def  _getColorPopupList(self):
     #    # build a list of current palette's colors that can be assigned
@@ -648,8 +661,8 @@ class ColorFontEditor(BaseWindowController):
 
     def windowCloseCallback(self, sender):
         # print("DEBUG windowCloseCallback")
-        # removeObserver(self, "fontDidOpen")
-        # removeObserver(self, "fontWillClose")
+        removeObserver(self, "fontDidOpen")
+        removeObserver(self, "fontWillClose")
         removeObserver(self, "currentGlyphChanged")
         removeObserver(self, "drawBackground")
         removeObserver(self, "drawInactive")
@@ -754,7 +767,7 @@ class ColorFontEditor(BaseWindowController):
 
     def draw(self):
         # draw the color glyph on the canvas
-        if self.font is not None:
+        if self._font is not None:
             save()
             self.setFill(self.colorbg)
             rect(0, 0, 310, 200)
@@ -790,6 +803,24 @@ class ColorFontEditor(BaseWindowController):
         line((0, self.metrics[3]), (0, self.metrics[0]))
         line((self.width, self.metrics[3]), (self.width, self.metrics[0]))
         restore()
+
+    def _observer_font_did_open(self, info=None):
+        if self.font is None:
+            self.font = info['font']
+            self._update_ui()
+
+    def _observer_font_will_close(self, info=None):
+        # When a font closes, save color font information
+        # if it is the currently active font in RoboChrome.
+        font_to_close = info['font']
+        if self.font == font_to_close:
+            self._ui_layer_list_save_to_cfont()
+            if self.cfont.save_settings and self.currentPaletteChanged:
+                self._paletteWriteToColorFont()
+            if self.cfont.save_settings:
+                self.cfont.save_to_rfont()
+            self.font = None
+            self._update_ui()
 
     def _observer_glyph_changed(self, info=None):
         # Current Glyph has changed

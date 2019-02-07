@@ -244,14 +244,14 @@ def get_drawer(window_controller):
         (10, y, 200, 20),
         "COLR/CPAL (Windows)",
         callback=window_controller._callback_select_formats,
-        value=window_controller.cfont.write_colr,
+        value=False,
         sizeStyle="small"
     )
     d.generateAppleFormat = vanilla.CheckBox(
         (235, y, 200, 20),
         "sbix (Mac OS/iOS)",
         callback=window_controller._callback_select_formats,
-        value=window_controller.cfont.write_sbix,
+        value=False,
         sizeStyle="small"
     )
     y += 20
@@ -259,14 +259,14 @@ def get_drawer(window_controller):
         (10, y, 200, 20),
         "SVG (Mozilla/Adobe)",
         callback=window_controller._callback_select_formats,
-        value=window_controller.cfont.write_svg,
+        value=False,
         sizeStyle="small",
     )
     d.generateGoogleFormat = vanilla.CheckBox(
         (235, y, 200, 20),
         "CBDT/CBLC (Google)",
         callback=window_controller._callback_select_formats,
-        value=window_controller.cfont.write_cbdt,
+        value=False,
         sizeStyle="small",
     )
     y += 32
@@ -290,13 +290,13 @@ def get_drawer(window_controller):
     d.generate_sbix_sizes = vanilla.EditText(
         (10, y, 200, 36),
         callback=window_controller._callback_set_sbix_sizes,
-        text=window_controller._ui_get_sbix_sizes(),
+        text="",
         sizeStyle="small"
     )
     d.auto_layer_regex_box = vanilla.EditText(
         (235, y, 178, 20),
         callback=window_controller._callback_check_regex,
-        text=window_controller.cfont.auto_layer_regex,
+        text="",
         sizeStyle="small"
     )
     d.auto_layer_regex_ok = vanilla.CheckBox(
