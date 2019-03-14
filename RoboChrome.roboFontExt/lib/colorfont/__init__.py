@@ -441,7 +441,7 @@ class ColorFont(object):
         
         _pen = SVGpen(self.rfont, optimize_output=True)
 
-        for glyphname in self.keys(): #["A", "P"]: #self.keys():
+        for glyphname in self.keys():
             
             # look up glyph id
             try:
