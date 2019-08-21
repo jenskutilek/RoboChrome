@@ -366,18 +366,15 @@ class ColorFont(object):
                 reindex = {0xffff: 0xffff}
                 count = 0
             for i in sorted(palette.keys(), key=lambda k: int(k)):
-                _color = Color(None, None, None, None)
                 _blue, _green, _red, _alpha = 0, 0, 0, 0
                 _red   = int(palette[i][1:3], 16)
                 _green = int(palette[i][3:5], 16)
                 _blue  = int(palette[i][5:7], 16)
-                _color = (_blue, _green, _red, _alpha)
                 if len(palette[i]) >= 9:
                     _alpha  = int(palette[i][7:9], 16)
-                    _color = (_blue, _green, _red, _alpha)
                 else:
                     _alpha = 0xff
-                    _color = (_blue, _green, _red, _alpha)
+                _color = Color(_blue, _green, _red, _alpha)
                 if j == 0:
                     reindex[int(i)] = count
                     count += 1
