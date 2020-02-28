@@ -1,34 +1,34 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>A</key>
-	<string>A_.glif</string>
-	<key>A.layer00</key>
-	<string>A_.layer00.glif</string>
-	<key>A.layer01</key>
-	<string>A_.layer01.glif</string>
-	<key>A.layer02</key>
-	<string>A_.layer02.glif</string>
-	<key>A.layer03</key>
-	<string>A_.layer03.glif</string>
-	<key>box</key>
-	<string>box.glif</string>
-	<key>box.layer00</key>
-	<string>box.layer00.glif</string>
-	<key>box.layer01</key>
-	<string>box.layer01.glif</string>
-	<key>boxcircle</key>
-	<string>boxcircle.glif</string>
-	<key>circle</key>
-	<string>circle.glif</string>
-	<key>circle.layer00</key>
-	<string>circle.layer00.glif</string>
-	<key>circle.layer01</key>
-	<string>circle.layer01.glif</string>
-	<key>circle.layer02</key>
-	<string>circle.layer02.glif</string>
-	<key>circle.layer03</key>
-	<string>circle.layer03.glif</string>
-</dict>
+  <dict>
+    <key>A</key>
+    <string>A_.glif</string>
+    <key>A.layer00</key>
+    <string>A_.layer00.glif</string>
+    <key>A.layer01</key>
+    <string>A_.layer01.glif</string>
+    <key>A.layer02</key>
+    <string>A_.layer02.glif</string>
+    <key>A.layer03</key>
+    <string>A_.layer03.glif</string>
+    <key>box</key>
+    <string>box.glif</string>
+    <key>box.layer00</key>
+    <string>box.layer00.glif</string>
+    <key>box.layer01</key>
+    <string>box.layer01.glif</string>
+    <key>boxcircle</key>
+    <string>boxcircle.glif</string>
+    <key>circle</key>
+    <string>circle.glif</string>
+    <key>circle.layer00</key>
+    <string>circle.layer00.glif</string>
+    <key>circle.layer01</key>
+    <string>circle.layer01.glif</string>
+    <key>circle.layer02</key>
+    <string>circle.layer02.glif</string>
+    <key>circle.layer03</key>
+    <string>circle.layer03.glif</string>
+  </dict>
 </plist>
