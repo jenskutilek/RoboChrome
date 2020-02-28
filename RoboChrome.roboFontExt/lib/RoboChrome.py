@@ -102,6 +102,8 @@ class ColorFontEditor(BaseWindowController):
         # load color data from rfont
         if self._font:
             self.cfont.read_from_rfont()
+            self._update_ui()
+            UpdateCurrentGlyphView()
 
     def _update_ui(self):
         # update ui
