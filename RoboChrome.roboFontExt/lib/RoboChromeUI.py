@@ -58,7 +58,7 @@ def get_ui(window_controller, title):
         },
         {
             "title": "Color",
-            "cell": RFColorCell.alloc().initWithDoubleClickCallback_(window_controller.paletteEditColorCell),
+            "cell": RFColorCell(window_controller.paletteEditColorCell),
             "typingSensitive": False,
             "editable": False,
         },
