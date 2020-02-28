@@ -294,6 +294,15 @@ class ColorFont(object):
                     setattr(self, propkey, self.rfont.lib["%s.%s" % (self.libkey, propkey)])
                 else:
                     setattr(self, propkey, default)
+            if self.colorpalette:
+                # Convert palette keys to integer
+                new_palettes = []
+                for palette in self.colorpalette:
+                    new_palettes.append({
+                        int(color_index): color
+                        for color_index, color in palette.items()
+                    })
+                self.colorpalette = new_palettes
 
             # load layer info from glyph libs
             for glyph in self.rfont:
@@ -575,7 +584,17 @@ class ColorFont(object):
         """Save color data to RFont."""
         if self.rfont is not None:
             for propkey in self.settings.keys():
-                self._save_key_to_lib(propkey, getattr(self, propkey))
+                if propkey == "colorpalette":
+                    # Convert color indices to strings
+                    lib_palettes = []
+                    for palette in self.colorpalette:
+                        lib_palettes.append({
+                            str(color_index): color
+                            for color_index, color in palette.items()
+                        })
+                    self._save_key_to_lib(propkey, lib_palettes)
+                else:
+                    self._save_key_to_lib(propkey, getattr(self, propkey))
 
         # save each glyph color layer data
         # for cglyph in self.values():
