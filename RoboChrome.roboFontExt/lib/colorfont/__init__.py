@@ -190,7 +190,7 @@ class ColorFont(object):
         """Import color data (CPAL/COLR) from a font file.
             otfpath: Path of the font file"""
         font = TTFont(otfpath)
-        if not (font.has_key("COLR") and font.has_key("CPAL")):
+        if not ("COLR" in font and "CPAL" in font):
             print("ERROR: No COLR and CPAL table present in %s" % otfpath)
         else:
             print("Reading palette data ...")
@@ -256,7 +256,7 @@ class ColorFont(object):
 
     def _get_fcolor(self, palette_index, color_index):
         # get a color by index, in "flat" format
-        if not palette_index in range(len(self.palettes)):
+        if palette_index not in range(len(self.palettes)):
             print("ERROR: _get_fcolor(self, palette_index, color_index)")
             print("       Requested palette key %s (%s) not in available palette keys." % (
                 palette_index, type(palette_index)
@@ -291,18 +291,22 @@ class ColorFont(object):
         else:
             for propkey, default in self.settings.items():
                 if "%s.%s" % (self.libkey, propkey) in self.rfont.lib.keys():
-                    setattr(self, propkey, self.rfont.lib["%s.%s" % (self.libkey, propkey)])
+                    setattr(
+                        self,
+                        propkey,
+                        self.rfont.lib["%s.%s" % (self.libkey, propkey)]
+                    )
                 else:
                     setattr(self, propkey, default)
-            if self.colorpalette:
+            if self.palettes:
                 # Convert palette keys to integer
                 new_palettes = []
-                for palette in self.colorpalette:
+                for palette in self.palettes:
                     new_palettes.append({
                         int(color_index): color
                         for color_index, color in palette.items()
                     })
-                self.colorpalette = new_palettes
+                self.palettes = new_palettes
 
             # load layer info from glyph libs
             for glyph in self.rfont:
@@ -357,7 +361,7 @@ class ColorFont(object):
 
     def _export_colr(self, otfpath):
         font = TTFont(otfpath)
-        if (font.has_key("COLR") and font.has_key("CPAL")):
+        if ("COLR" in font and "CPAL" in font):
             print("    WARNING: Replacing existing COLR and CPAL tables in %s" % otfpath)
 
         print("    Writing palette data ...")
@@ -389,7 +393,7 @@ class ColorFont(object):
                     count += 1
                 _palette.append(_color)
             print("        Appending palette", _palette)
-            #print("ReIndex:", reindex)
+            # print("ReIndex:", reindex)
             cpal.palettes.append(_palette)
 
         print("    Writing layer data ...")
@@ -414,7 +418,7 @@ class ColorFont(object):
 
     def _export_svg(self, otfpath, palette=0, parent_window=None):
         font = TTFont(otfpath)
-        if font.has_key("SVG "):
+        if "SVG " in font:
             print("    WARNING: Replacing existing SVG table in %s" % otfpath)
         # font.getReverseGlyphMap(rebuild=1)
 
@@ -424,7 +428,11 @@ class ColorFont(object):
         svg.colorPalettes = None
 
         if parent_window is not None:
-            progress = ProgressWindow("Rendering SVG ...", tickCount=len(self.keys()), parentWindow=parent_window)
+            progress = ProgressWindow(
+                "Rendering SVG ...",
+                tickCount=len(self.keys()),
+                parentWindow=parent_window
+            )
 
         _palette = self.palettes[palette]
         _svg_palette = []
@@ -448,13 +456,13 @@ class ColorFont(object):
 
         _pen = SVGpen(self.rfont, optimize_output=True)
 
-        for glyphname in self.keys():  # ["A", "P"]: #self.keys():
+        for glyphname in self.keys():
 
             # look up glyph id
             try:
                 gid = font.getGlyphID(glyphname)
             except:
-                assert 0, "SVG table contains a glyph name not in font.getGlyphNames(): " + str(glyphname)
+                assert 0, "SVG table contains a glyph name not in font: " + str(glyphname)
 
             # update progress bar
             if parent_window is not None:
@@ -534,7 +542,8 @@ class ColorFont(object):
                 else:
                     glyf[glyphname] = glyph
 
-    def _export_sbix(self, otfpath, palette=0, image_format="png", replace_outlines=False, parent_window=None):
+    def _export_sbix(self, otfpath, palette=0, image_format="png",
+                     replace_outlines=False, parent_window=None):
         if not have_flat:
             print("ColorFont._export_sbix: The 'flat' Python module is missing.")
             print("Please see <https://github.com/jenskutilek/RoboChrome/blob/master/README.md>")
@@ -544,7 +553,7 @@ class ColorFont(object):
         else:
             alt_glyphname_string = "%s.mac"
         font = TTFont(otfpath)
-        if (font.has_key("sbix")):
+        if "sbix" in font:
             print("    WARNING: Replacing existing sbix table in %s" % otfpath)
             replace_outlines = True
         # insert special nodes into glyphs
@@ -552,12 +561,21 @@ class ColorFont(object):
         # build sbix table
         sbix = table__s_b_i_x("sbix")
         if parent_window is not None:
-            progress = ProgressWindow("Rendering bitmaps ...", tickCount=len(self.bitmap_sizes)*len(self.keys()), parentWindow=parent_window)
+            progress = ProgressWindow(
+                "Rendering bitmaps ...",
+                tickCount=len(self.bitmap_sizes) * len(self.keys()),
+                parentWindow=parent_window
+            )
         for current_ppem in sorted(self.bitmap_sizes):
             current_set = Strike(ppem=current_ppem)
             for glyphname in self.keys():
                 if parent_window is not None:
-                    progress.update("Rendering /%s @ %i px ..." % (glyphname, current_ppem))
+                    progress.update(
+                        "Rendering /%s @ %i px ..." % (
+                            glyphname,
+                            current_ppem
+                        )
+                    )
                 alt_glyphname = alt_glyphname_string % glyphname
                 if image_format == "png":
                     image_data = self[glyphname].get_png(palette, current_ppem)
@@ -665,7 +683,7 @@ class ColorFont(object):
             for layername in self.rfont.glyphOrder:
                 if regex.search(layername):
                     # print("  found")
-                    if not baseglyph in self.keys():
+                    if baseglyph not in self.keys():
                         self.add_glyph(baseglyph)
                     self[baseglyph].add_layer(layername, 0xffff)
                     has_layers = True

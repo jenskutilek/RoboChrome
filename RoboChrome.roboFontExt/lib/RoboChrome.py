@@ -122,7 +122,7 @@ class ColorFontEditor(BaseWindowController):
 
         if len(self.cfont) > 0:
             self.w.auto_layer_button.enable(False)
-        
+
         if self._font:
             title = basename(self._font.fileName)
         else:
@@ -140,7 +140,13 @@ class ColorFontEditor(BaseWindowController):
         print(self.cfont)
 
     def _choose_file_to_import(self, sender=None):
-        self.showGetFile(["public.opentype-font", "public.truetype-ttf-font"], self._import_from_font)
+        self.showGetFile(
+            [
+                "public.opentype-font",
+                "public.truetype-ttf-font"
+            ],
+            self._import_from_font
+        )
 
     def _import_from_font(self, file_paths=None):
         if file_paths is not None:
@@ -165,7 +171,10 @@ class ColorFontEditor(BaseWindowController):
                 _font = -1
         if _font == -1:
             self.showPutFile(
-                ["public.opentype-font", "public.truetype-ttf-font"],
+                [
+                    "public.opentype-font",
+                    "public.truetype-ttf-font"
+                ],
                 self._export_to_font
             )
         else:
@@ -185,7 +194,11 @@ class ColorFontEditor(BaseWindowController):
                 print("ERROR: No color data in UFO.")
 
     def _choose_png_to_export(self, sender=None):
-        self.showPutFile(["public.png"], self._save_png, "%s.png" % self.glyph)
+        self.showPutFile(
+            ["public.png"],
+            self._save_png,
+            "%s.png" % self.glyph
+        )
 
     def _save_png(self, png_path=None):
         # save current glyph as PNG
@@ -273,7 +286,7 @@ class ColorFontEditor(BaseWindowController):
                     self.layer_colors = []
             self.font.update()
 
-        self.cfont = ColorFont(self.font) 
+        self.cfont = ColorFont(self.font)
         self.color = self.getNSColor(self.cfont.color)
         self.colorbg = self.getNSColor(self.cfont.colorbg)
 
@@ -296,7 +309,7 @@ class ColorFontEditor(BaseWindowController):
             key=lambda k: int(k)
         )
         if len(paletteIndices) > 0:
-            newIndex = int(paletteIndices[-1])+1
+            newIndex = int(paletteIndices[-1]) + 1
         else:
             newIndex = 0
 
@@ -304,15 +317,16 @@ class ColorFontEditor(BaseWindowController):
             # add new color to current palette
             self.w.colorpalette.append(
                 {
-                    "Index": str(newIndex),
+                    "Index": newIndex,
                     "Color": NSColor.yellowColor()
                 }
             )
             # add new color to all other palettes
             for p in self.cfont.palettes:
-                p[newIndex] = NSColor.yellowColor()
+                p[newIndex] = "#ffff0bff"
             self.cfont.save_settings = True
-            self.currentPaletteChanged = True
+            self._paletteWriteToColorFont()
+            self.currentPaletteChanged = False
         else:
             print("ERROR: Color Index 0xffff is reserved.")
 
@@ -343,7 +357,8 @@ class ColorFontEditor(BaseWindowController):
 
     def _cache_color_info(self):
         # print("DEBUG _cache_color_info")
-        # write colors for current glyph to self.layer_colors for faster drawing
+        # write colors for current glyph to self.layer_colors
+        # for faster drawing
         colorDict = self.getColorDict()
         _layer_colors = []
         for g in self.layer_glyphs:
@@ -472,7 +487,10 @@ class ColorFontEditor(BaseWindowController):
             return True
 
     def _choose_svg_to_import(self, sender=None):
-        self.showGetFile(["public.svg-image"], self._layer_add_svg_from_file)
+        self.showGetFile(
+            ["public.svg-image"],
+            self._layer_add_svg_from_file
+        )
 
     def _layer_add_svg_from_file(self, file_paths=None):
         # Add an SVG from external file
@@ -567,7 +585,8 @@ class ColorFontEditor(BaseWindowController):
             if i < len(self.w.colorpalette):
                 if self.w.colorpalette[i] != sender.get()[i]:
                     self.w.colorpalette[i] = sender.get()[i]
-                    self.currentPaletteChanged = True
+                    self._paletteWriteToColorFont()
+                    self.currentPaletteChanged = False
                     print("  Palette changed")
             else:
                 print("Ignored edit of foreground color")
@@ -585,8 +604,9 @@ class ColorFontEditor(BaseWindowController):
             self.w.colorpalette.get(),
             key=lambda _key: int(_key["Index"])
         ):
-            if int(_color["Index"]) != 0xffff:
-                _dict[str(_color["Index"])] = self.getHexColor(_color["Color"])
+            color_index = int(_color["Index"])
+            if color_index != 0xffff:
+                _dict[color_index] = self.getHexColor(_color["Color"])
         self.cfont.palettes[self.palette_index] = _dict
         self.cfont.save_to_rfont()
 
@@ -599,18 +619,19 @@ class ColorFontEditor(BaseWindowController):
         # print("DEBUG Active Palette is now #%i" % self.palette_index)
 
     def paletteDuplicate(self, sender):
-        if self.currentPaletteChanged:
-            self._paletteWriteToColorFont()
         sp = self.w.paletteswitch.get()
         if sp < len(self.cfont.palettes) and sp >= 0:
             print("Duplicate palette %i ..." % sp)
+            self._paletteWriteToColorFont()
             colorpalette = self.cfont.palettes[sp].copy()
         else:
             colorpalette = {}
         self.cfont.palettes.append(colorpalette)
         self._ui_update_palette_chooser()
         # new palette should be active
-        self._ui_update_palette(len(self.cfont.palettes)-1)
+        self._ui_update_palette(len(self.cfont.palettes) - 1)
+        self._paletteWriteToColorFont()
+        self.currentPaletteChanged = False
 
     def _ui_update_palette(self, palette_index):
         # load a different palette from the color font and show it in UI
@@ -621,11 +642,12 @@ class ColorFontEditor(BaseWindowController):
             colorpalette = self.cfont.palettes[self.palette_index]
         else:
             colorpalette = {}
+        int_keys = [int(k) for k in colorpalette.keys()]
         newColorpalette = [
             {
-                "Index": str(k),
+                "Index": k,
                 "Color": self.getNSColor(colorpalette[k])
-            } for k in sorted(colorpalette.keys())
+            } for k in sorted(int_keys)
         ]
         newColorpalette.append({"Index": 0xffff, "Color": self.color})
 
@@ -650,14 +672,16 @@ class ColorFontEditor(BaseWindowController):
             return self.w.colorpalette.get()[i[0]]["Index"]
 
     def _callback_color_changed_layer(self, sender):
-        # a color has been edited in the palette
+        # a color has been changed in the palette
+        # by editing the color well below it
         if sender is not None:
             _selected_color = self.w.colorpalette.getSelection()
             if _selected_color != []:
                 _colors = self.w.colorpalette.get()
                 _colors[_selected_color[0]]["Color"] = sender.get()
                 self.w.colorpalette.set(_colors)
-            self.currentPaletteChanged = True
+            self._paletteWriteToColorFont()
+            self.currentPaletteChanged = False
             self._cache_color_info()
             self.w.preview.update()
 
