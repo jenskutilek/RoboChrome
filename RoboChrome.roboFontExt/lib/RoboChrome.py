@@ -317,15 +317,16 @@ class ColorFontEditor(BaseWindowController):
             # add new color to current palette
             self.w.colorpalette.append(
                 {
-                    "Index": str(newIndex),
+                    "Index": newIndex,
                     "Color": NSColor.yellowColor()
                 }
             )
             # add new color to all other palettes
             for p in self.cfont.palettes:
-                p[newIndex] = NSColor.yellowColor()
+                p[newIndex] = "#ffff0bff"
             self.cfont.save_settings = True
-            self.currentPaletteChanged = True
+            self._paletteWriteToColorFont()
+            self.currentPaletteChanged = False
         else:
             print("ERROR: Color Index 0xffff is reserved.")
 
@@ -584,7 +585,8 @@ class ColorFontEditor(BaseWindowController):
             if i < len(self.w.colorpalette):
                 if self.w.colorpalette[i] != sender.get()[i]:
                     self.w.colorpalette[i] = sender.get()[i]
-                    self.currentPaletteChanged = True
+                    self._paletteWriteToColorFont()
+                    self.currentPaletteChanged = False
                     print("  Palette changed")
             else:
                 print("Ignored edit of foreground color")
@@ -602,8 +604,9 @@ class ColorFontEditor(BaseWindowController):
             self.w.colorpalette.get(),
             key=lambda _key: int(_key["Index"])
         ):
-            if int(_color["Index"]) != 0xffff:
-                _dict[str(_color["Index"])] = self.getHexColor(_color["Color"])
+            color_index = int(_color["Index"])
+            if color_index != 0xffff:
+                _dict[color_index] = self.getHexColor(_color["Color"])
         self.cfont.palettes[self.palette_index] = _dict
         self.cfont.save_to_rfont()
 
@@ -616,18 +619,19 @@ class ColorFontEditor(BaseWindowController):
         # print("DEBUG Active Palette is now #%i" % self.palette_index)
 
     def paletteDuplicate(self, sender):
-        if self.currentPaletteChanged:
-            self._paletteWriteToColorFont()
         sp = self.w.paletteswitch.get()
         if sp < len(self.cfont.palettes) and sp >= 0:
             print("Duplicate palette %i ..." % sp)
+            self._paletteWriteToColorFont()
             colorpalette = self.cfont.palettes[sp].copy()
         else:
             colorpalette = {}
         self.cfont.palettes.append(colorpalette)
         self._ui_update_palette_chooser()
         # new palette should be active
-        self._ui_update_palette(len(self.cfont.palettes)-1)
+        self._ui_update_palette(len(self.cfont.palettes) - 1)
+        self._paletteWriteToColorFont()
+        self.currentPaletteChanged = False
 
     def _ui_update_palette(self, palette_index):
         # load a different palette from the color font and show it in UI
@@ -638,11 +642,12 @@ class ColorFontEditor(BaseWindowController):
             colorpalette = self.cfont.palettes[self.palette_index]
         else:
             colorpalette = {}
+        int_keys = [int(k) for k in colorpalette.keys()]
         newColorpalette = [
             {
-                "Index": str(k),
+                "Index": k,
                 "Color": self.getNSColor(colorpalette[k])
-            } for k in sorted(colorpalette.keys())
+            } for k in sorted(int_keys)
         ]
         newColorpalette.append({"Index": 0xffff, "Color": self.color})
 
@@ -667,14 +672,16 @@ class ColorFontEditor(BaseWindowController):
             return self.w.colorpalette.get()[i[0]]["Index"]
 
     def _callback_color_changed_layer(self, sender):
-        # a color has been edited in the palette
+        # a color has been changed in the palette
+        # by editing the color well below it
         if sender is not None:
             _selected_color = self.w.colorpalette.getSelection()
             if _selected_color != []:
                 _colors = self.w.colorpalette.get()
                 _colors[_selected_color[0]]["Color"] = sender.get()
                 self.w.colorpalette.set(_colors)
-            self.currentPaletteChanged = True
+            self._paletteWriteToColorFont()
+            self.currentPaletteChanged = False
             self._cache_color_info()
             self.w.preview.update()
 
