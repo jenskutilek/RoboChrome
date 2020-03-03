@@ -574,27 +574,55 @@ class ColorFontEditor(BaseWindowController):
                 self.w.colorPaletteColorChooser.set(sel[i[0]]["Color"])
                 self.w.colorPaletteColorChooser.enable(True)
 
+    def _callback_delete_from_palette(self, sender):
+        print("_callback_delete_from_palette")
+        sel = sender.getSelection()
+        if sel == []:
+            return
+
+        i = sel[0]
+        edited_entry = sender.get()[i]
+        color_index = edited_entry["Index"]
+        if color_index == 0xffff:
+            print("Can't delete foreground color")
+            return
+
+        del sender[i]
+        # Delete entry from all palettes
+        self.cfont.remove_from_palettes(color_index)
+
     def _ui_update_palette_chooser(self):
         self.w.paletteswitch.setItems(["Palette %s" % i for i in range(len(self.cfont.palettes))])
 
     def paletteEdit(self, sender):
+        print(sender)
+        print("paletteEdit: Not implemented")
+        # What is this supposed to do?
+        # It may allow the palettes to go out of sync when the color index is
+        # edited in one palette, but not the other ones.
+
         # print("DEBUG ColorFontEditor.paletteEdit")
-        sel = sender.getSelection()
-        if sel != []:
-            i = sel[0]
-            if i < len(self.w.colorpalette):
-                if self.w.colorpalette[i] != sender.get()[i]:
-                    self.w.colorpalette[i] = sender.get()[i]
-                    self._paletteWriteToColorFont()
-                    self.currentPaletteChanged = False
-                    print("  Palette changed")
-            else:
-                print("Ignored edit of foreground color")
-        self.w.preview.update()
+        # sel = sender.getSelection()
+        # print(sel)
+        # if sel != []:
+        #     i = sel[0]
+        #     # TODO: Sync changes to all other palettes
+        #     if i < len(self.w.colorpalette):
+        #         edited_entry = sender.get()[i]
+        #         if self.w.colorpalette[i] != sender.get()[i]:
+        #             self.w.colorpalette[i] = sender.get()[i]
+        #             self._paletteWriteToColorFont()
+        #             self.currentPaletteChanged = False
+        #             print("  Palette changed")
+        #     else:
+        #         # Something 
+        #         print("Ignored edit of foreground color")
+        # self.w.preview.update()
 
     def paletteEditColorCell(self, sender):
         # double-click on a color cell in the palette
         print(sender)
+        print("paletteEditColorCell: Not implemented")
 
     def _paletteWriteToColorFont(self):
         # print("DEBUG _paletteWriteToColorFont")

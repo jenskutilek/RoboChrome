@@ -2,6 +2,7 @@ from Cocoa import NSColorPboardType
 from lib.cells.colorCell import RFColorCell
 from mojo.canvas import Canvas
 import vanilla
+from RoboChromeLists import DeletableList
 
 window_width = 500
 
@@ -90,10 +91,11 @@ def get_ui(window_controller, title):
         [],
         callback=window_controller._paletteSwitchCallback,
     )
-    w.colorpalette = vanilla.List(
+    w.colorpalette = DeletableList(
         (340, y+30, -10, 170),
         [],
         columnDescriptions=palette_column_descriptions,
+        deleteCallback=window_controller._callback_delete_from_palette,
         drawFocusRing=True,
         editCallback=window_controller.paletteEdit,
         selectionCallback=window_controller._callback_color_select_in_palette,
