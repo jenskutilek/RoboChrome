@@ -298,15 +298,15 @@ class ColorFont(object):
                     )
                 else:
                     setattr(self, propkey, default)
-            if self.colorpalette:
+            if self.palettes:
                 # Convert palette keys to integer
                 new_palettes = []
-                for palette in self.colorpalette:
+                for palette in self.palettes:
                     new_palettes.append({
                         int(color_index): color
                         for color_index, color in palette.items()
                     })
-                self.colorpalette = new_palettes
+                self.palettes = new_palettes
 
             # load layer info from glyph libs
             for glyph in self.rfont:
