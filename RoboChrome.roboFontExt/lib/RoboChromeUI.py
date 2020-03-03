@@ -98,7 +98,7 @@ def get_ui(window_controller, title):
         editCallback=window_controller.paletteEdit,
         selectionCallback=window_controller._callback_color_select_in_palette,
         allowsMultipleSelection=False,
-        enableDelete = True,
+        enableDelete=True,
     )
     w.addPalette = vanilla.GradientButton(
         (340, 215, 24, 24),

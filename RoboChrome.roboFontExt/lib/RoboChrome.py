@@ -122,7 +122,7 @@ class ColorFontEditor(BaseWindowController):
 
         if len(self.cfont) > 0:
             self.w.auto_layer_button.enable(False)
-        
+
         if self._font:
             title = basename(self._font.fileName)
         else:
@@ -140,7 +140,13 @@ class ColorFontEditor(BaseWindowController):
         print(self.cfont)
 
     def _choose_file_to_import(self, sender=None):
-        self.showGetFile(["public.opentype-font", "public.truetype-ttf-font"], self._import_from_font)
+        self.showGetFile(
+            [
+                "public.opentype-font",
+                "public.truetype-ttf-font"
+            ],
+            self._import_from_font
+        )
 
     def _import_from_font(self, file_paths=None):
         if file_paths is not None:
@@ -165,7 +171,10 @@ class ColorFontEditor(BaseWindowController):
                 _font = -1
         if _font == -1:
             self.showPutFile(
-                ["public.opentype-font", "public.truetype-ttf-font"],
+                [
+                    "public.opentype-font",
+                    "public.truetype-ttf-font"
+                ],
                 self._export_to_font
             )
         else:
@@ -185,7 +194,11 @@ class ColorFontEditor(BaseWindowController):
                 print("ERROR: No color data in UFO.")
 
     def _choose_png_to_export(self, sender=None):
-        self.showPutFile(["public.png"], self._save_png, "%s.png" % self.glyph)
+        self.showPutFile(
+            ["public.png"],
+            self._save_png,
+            "%s.png" % self.glyph
+        )
 
     def _save_png(self, png_path=None):
         # save current glyph as PNG
@@ -273,7 +286,7 @@ class ColorFontEditor(BaseWindowController):
                     self.layer_colors = []
             self.font.update()
 
-        self.cfont = ColorFont(self.font) 
+        self.cfont = ColorFont(self.font)
         self.color = self.getNSColor(self.cfont.color)
         self.colorbg = self.getNSColor(self.cfont.colorbg)
 
@@ -296,7 +309,7 @@ class ColorFontEditor(BaseWindowController):
             key=lambda k: int(k)
         )
         if len(paletteIndices) > 0:
-            newIndex = int(paletteIndices[-1])+1
+            newIndex = int(paletteIndices[-1]) + 1
         else:
             newIndex = 0
 
@@ -343,7 +356,8 @@ class ColorFontEditor(BaseWindowController):
 
     def _cache_color_info(self):
         # print("DEBUG _cache_color_info")
-        # write colors for current glyph to self.layer_colors for faster drawing
+        # write colors for current glyph to self.layer_colors
+        # for faster drawing
         colorDict = self.getColorDict()
         _layer_colors = []
         for g in self.layer_glyphs:
@@ -472,7 +486,10 @@ class ColorFontEditor(BaseWindowController):
             return True
 
     def _choose_svg_to_import(self, sender=None):
-        self.showGetFile(["public.svg-image"], self._layer_add_svg_from_file)
+        self.showGetFile(
+            ["public.svg-image"],
+            self._layer_add_svg_from_file
+        )
 
     def _layer_add_svg_from_file(self, file_paths=None):
         # Add an SVG from external file
