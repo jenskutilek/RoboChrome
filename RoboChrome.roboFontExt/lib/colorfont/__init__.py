@@ -129,6 +129,12 @@ class ColorFont(object):
 
     palettes = property(_get_palettes, _set_palettes)
 
+    def remove_from_palettes(self, color_index):
+        # Remove color with index `color_index` from all palettes
+        for p in self.palettes:
+            if color_index in p:
+                del p[color_index]
+
     def _get_prefer_placed_images(self):
         """boolean to indicate whether placed images in UFO
         should be preferred over generated bitmaps from vector
