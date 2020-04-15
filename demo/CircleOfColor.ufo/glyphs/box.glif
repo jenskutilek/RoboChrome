@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <glyph name="box" format="2">
   <advance width="500"/>
   <unicode hex="0062"/>
@@ -19,8 +19,8 @@
           <string>box.layer01</string>
         </array>
         <array>
-          <integer>0</integer>
-          <integer>2</integer>
+          <integer>65535</integer>
+          <integer>3</integer>
         </array>
       </array>
     </dict>
