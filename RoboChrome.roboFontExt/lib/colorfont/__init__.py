@@ -480,19 +480,18 @@ class ColorFont(object):
             contents = u""
             for i in range(len(self[glyphname].layers)):
                 _color_index = reindex[self[glyphname].colors[i]]
-                # print("    Layer %i, color %i" % (i, _color_index))
                 rglyph = self.rfont[self[glyphname].layers[i]]
-                if _color_index == 0xffff:
-                    r, g, b, a = (0, 0, 0, 0xff)
-                else:
-                    r, g, b, a = _svg_palette[_color_index]
                 _pen.reset()
                 rglyph.draw(_pen)
                 if _pen.d:
-                    contents += u'<g fill="#%02x%02x%02x"' % (r, g, b)
-                    if a != 0xff:
-                        contents += u' fill-opacity="%g"' % (a / 0xff)
-                    contents += u'><path d="%s"/></g>' % _pen.d
+                    if _color_index == 0xffff:
+                        contents += '<g fill="current"'
+                    else:
+                        r, g, b, a = _svg_palette[_color_index]
+                        contents += '<g fill="#%02x%02x%02x"' % (r, g, b)
+                        if a != 0xff:
+                            contents += ' fill-opacity="%g"' % (a / 0xff)
+                    contents += '><path d="%s"/></g>' % _pen.d
             if contents:
                 contents = _svg_transfrom_group % contents
             _svg_doc = (
