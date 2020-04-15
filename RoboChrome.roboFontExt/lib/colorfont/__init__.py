@@ -489,10 +489,20 @@ class ColorFont(object):
                 _pen.reset()
                 rglyph.draw(_pen)
                 if _pen.d:
-                    contents += u'<g fill="#%02x%02x%02x%02x"><path d="%s"/></g>' % (r, g, b, a, _pen.d)
+                    contents += u'<g fill="#%02x%02x%02x"' % (r, g, b)
+                    if a != 0xff:
+                        contents += u' fill-opacity="%g"' % (a / 0xff)
+                    contents += u'><path d="%s"/></g>' % _pen.d
             if contents:
                 contents = _svg_transfrom_group % contents
-            _svg_doc = u"""<svg enable-background="new 0 0 64 64" id="glyph%i" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">%s</svg>""" % (gid, contents)
+            _svg_doc = (
+                '<svg enable-background="new 0 0 64 64" id="glyph%i" '
+                'version="1.1" xmlns="http://www.w3.org/2000/svg" '
+                'xmlns:xlink="http://www.w3.org/1999/xlink">%s</svg>' % (
+                    gid,
+                    contents
+                )
+            )
             _docList.append((_svg_doc, gid, gid))
 
         svg.docList = sorted(_docList, key=itemgetter(1))
