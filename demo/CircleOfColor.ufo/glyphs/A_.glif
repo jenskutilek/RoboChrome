@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <glyph name="A" format="2">
   <advance width="677"/>
   <unicode hex="0041"/>
@@ -16,7 +16,7 @@
           <string>A.layer03</string>
         </array>
         <array>
-          <integer>0</integer>
+          <integer>65535</integer>
           <integer>1</integer>
           <integer>2</integer>
           <integer>3</integer>
